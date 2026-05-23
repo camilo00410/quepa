@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Quepa Console — Bienvenido</title>
+<meta name="theme-color" content="#0A0A0A" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230A0A0A'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --green:   #25D366;
+  --yg:      #D4F542;
+  --night:   #0A0A0A;
+  --cream:   #FFFFFF;
+  --paper:   #F3F1EC;
+  --ink:     #0A0A0A;
+  --ink-80:  rgba(10,10,10,.80);
+  --ink-60:  rgba(10,10,10,.60);
+  --ink-30:  rgba(10,10,10,.30);
+  --ink-12:  rgba(10,10,10,.12);
+  --ink-06:  rgba(10,10,10,.06);
+
+  --f-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--paper);
+  font-family: var(--f-sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+h1, h2, h3, p { margin: 0; padding: 0; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; }
+.mono { font-family: var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 40px;
+  border-bottom: 1px solid var(--ink-12);
+  background: var(--paper);
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand .word { font-weight: 700; font-size: 22px; letter-spacing: -0.04em; }
+.brand .badge {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: var(--night);
+  color: var(--yg);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+.session {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+}
+.session .email { color: var(--ink); font-weight: 600; }
+.logout {
+  font-family: var(--f-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  border: 1px solid var(--ink-12);
+  background: var(--cream);
+  border-radius: 999px;
+  padding: 8px 14px;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.logout:hover { background: var(--paper); border-color: var(--ink-30); }
+
+/* stage */
+.stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 60px 24px;
+  position: relative;
+}
+.stage::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--ink-06) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ink-06) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+  opacity: .55;
+}
+.card {
+  position: relative;
+  z-index: 1;
+  background: var(--cream);
+  border: 1px solid var(--ink-12);
+  border-radius: 22px;
+  padding: 48px 48px 36px;
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+}
+.card .eyebrow {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+  margin-bottom: 18px;
+}
+.card h1 {
+  font-size: clamp(36px, 5.5vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+.card h1 .yg { background: var(--yg); padding: 0 10px 4px; display: inline-block; line-height: 0.95; }
+.card .sub {
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-60);
+  max-width: 42ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modules {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  text-align: left;
+}
+.mod {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--ink-12);
+  border-radius: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+.mod:hover:not(.mod-disabled) {
+  background: var(--night);
+  border-color: var(--night);
+  color: var(--yg);
+  transform: translateY(-1px);
+}
+.mod:hover:not(.mod-disabled) .mod-icon { background: rgba(212,245,66,.15); color: var(--yg); border-color: rgba(212,245,66,.25); }
+.mod:hover:not(.mod-disabled) .mod-sub { color: rgba(255,255,255,.55); }
+.mod:hover:not(.mod-disabled) .mod-arrow { color: var(--yg); transform: translateX(2px); }
+.mod-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--cream);
+  border: 1px solid var(--ink-12);
+  display: grid; place-items: center;
+  color: var(--ink);
+  flex-shrink: 0;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.mod-body { flex: 1; min-width: 0; }
+.mod-name { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.mod-sub { font-size: 12px; color: var(--ink-60); margin-top: 2px; transition: color 120ms ease; }
+.mod-arrow { font-size: 18px; color: var(--ink-30); transition: color 120ms ease, transform 120ms ease; }
+.mod-disabled { cursor: not-allowed; opacity: .6; }
+.mod-disabled .mod-sub { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-30); }
+
+.meta {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--ink-12);
+  border-radius: 14px;
+  overflow: hidden;
+  text-align: left;
+}
+.meta .cell { padding: 14px 16px; border-right: 1px solid var(--ink-12); }
+.meta .cell:last-child { border-right: 0; }
+.meta .lbl {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-30);
+  margin-bottom: 4px;
+}
+.meta .val {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  word-break: break-word;
+}
+
+footer.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 20px 40px;
+  border-top: 1px solid var(--ink-12);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-30);
+  background: var(--paper);
+}
+
+/* loading state */
+.loading {
+  position: relative;
+  z-index: 1;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-30);
+}
+
+@media (max-width: 640px) {
+  .topbar { padding: 18px 20px; }
+  footer.foot { padding: 16px 20px; }
+  .card { padding: 32px 24px; }
+  .meta { grid-template-columns: 1fr; }
+  .meta .cell { border-right: 0; border-bottom: 1px solid var(--ink-12); }
+  .meta .cell:last-child { border-bottom: 0; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 100 100" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="#0a0a0a">
+        <rect x="44" y="4" width="12" height="92" rx="6"/>
+        <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/>
+        <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/>
+        <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/>
+      </g>
+    </svg>
+    <span class="word">Quepa</span>
+    <span class="badge">Console</span>
+  </div>
+  <div class="session">
+    <span>· Sesión · <span class="email" id="userEmail">—</span></span>
+    <button class="logout" type="button" id="logoutBtn">Cerrar sesión</button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="loading" id="loader">· Verificando sesión…</div>
+  <article class="card" id="card" hidden>
+    <div class="eyebrow">· Bienvenido al parche interno</div>
+    <h1>Hola,<br/><span class="yg" id="userName">staff</span> 👋</h1>
+    <p class="sub">Estás dentro del Console. Estos son los módulos disponibles. Pronto vivirán aquí comercios, agente WA y Stars.</p>
+
+    <div class="modules">
+      <a class="mod" href="lugares.html">
+        <div class="mod-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13z"/><circle cx="12" cy="9" r="3"/></svg>
+        </div>
+        <div class="mod-body">
+          <div class="mod-name">Lugares</div>
+          <div class="mod-sub">Catálogo curado de sitios</div>
+        </div>
+        <div class="mod-arrow">→</div>
+      </a>
+      <div class="mod mod-disabled">
+        <div class="mod-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+        </div>
+        <div class="mod-body">
+          <div class="mod-name">Comercios</div>
+          <div class="mod-sub">Próximamente</div>
+        </div>
+      </div>
+      <div class="mod mod-disabled">
+        <div class="mod-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </div>
+        <div class="mod-body">
+          <div class="mod-name">Agente WhatsApp</div>
+          <div class="mod-sub">Próximamente</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div class="cell">
+        <div class="lbl">Email</div>
+        <div class="val" id="metaEmail">—</div>
+      </div>
+      <div class="cell">
+        <div class="lbl">Último ingreso</div>
+        <div class="val" id="metaLast">—</div>
+      </div>
+      <div class="cell">
+        <div class="lbl">Sesión expira</div>
+        <div class="val" id="metaExpires">—</div>
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer class="foot">
+  <span>© 2026 · Quepa Internal</span>
+  <span>Console en construcción · v0.1</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+  const SUPABASE_URL = 'https://ttengnyhesunaqqbhmkc.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_piW0GXJJtYRitrVpvoM8Lg_3fvcu4Y4';
+  const LOGIN_URL = 'index.html';
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'quepa-console-auth' },
+  });
+
+  function nameFromEmail(email) {
+    const local = (email || '').split('@')[0] || 'staff';
+    return local
+      .split(/[._-]+/)
+      .filter(Boolean)
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join(' ');
+  }
+
+  function fmtDateTime(iso) {
+    if (!iso) return '—';
+    try {
+      return new Date(iso).toLocaleString('es-CO', {
+        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
+      });
+    } catch (_) { return iso; }
+  }
+
+  (async function () {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+      window.location.replace(LOGIN_URL);
+      return;
+    }
+
+    const user = session.user;
+    const fullName =
+      (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) ||
+      nameFromEmail(user.email);
+
+    document.getElementById('userName').textContent = fullName;
+    document.getElementById('userEmail').textContent = user.email || '—';
+    document.getElementById('metaEmail').textContent = user.email || '—';
+    document.getElementById('metaLast').textContent = fmtDateTime(user.last_sign_in_at);
+    document.getElementById('metaExpires').textContent = session.expires_at
+      ? fmtDateTime(new Date(session.expires_at * 1000).toISOString())
+      : '—';
+
+    document.getElementById('loader').hidden = true;
+    document.getElementById('card').hidden = false;
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.replace(LOGIN_URL);
+    });
+
+    sb.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') window.location.replace(LOGIN_URL);
+    });
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Quepa Console — Lugar</title>
+<meta name="theme-color" content="#0A0A0A" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230A0A0A'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --green: #25D366;
+  --yg: #D4F542;
+  --night: #0a0a0a;
+  --cream: #ffffff;
+  --paper: #f3f1ec;
+  --ink: #0a0a0a;
+  --ink-80: rgba(10,10,10,.80);
+  --ink-60: rgba(10,10,10,.60);
+  --ink-30: rgba(10,10,10,.30);
+  --ink-12: rgba(10,10,10,.12);
+  --ink-06: rgba(10,10,10,.06);
+  --amber: #f5b942;
+  --red: #d94a4a;
+  --f-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body { background: var(--paper); font-family: var(--f-sans); color: var(--ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: none; cursor: pointer; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; }
+input, select, textarea { font-family: inherit; }
+.mono { font-family: var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+[hidden] { display: none !important; }
+
+/* ===== SHELL ===== */
+.console { width: 100vw; height: 100vh; display: grid; grid-template-columns: 232px 1fr; background: var(--paper); color: var(--ink); position: relative; overflow: hidden; }
+.sidebar { background: var(--night); color: #fff; padding: 20px 16px; display: flex; flex-direction: column; gap: 18px; border-right: 1px solid var(--ink-12); overflow-y: auto; }
+.sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px; }
+.sidebar .brand .word { font-weight: 700; font-size: 19px; letter-spacing: -0.04em; }
+.sidebar .brand .tag { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--yg); background: rgba(212,245,66,.12); border: 1px solid rgba(212,245,66,.3); padding: 3px 7px; border-radius: 999px; font-weight: 600; }
+.sidebar .search { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 9px 12px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.55); font-size: 13px; }
+.sidebar .search .kbd { margin-left: auto; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.1em; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); padding: 2px 6px; border-radius: 4px; color: rgba(255,255,255,.7); }
+.sidebar .nav-group { display: flex; flex-direction: column; gap: 1px; }
+.sidebar .nav-label { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.4); margin: 8px 8px 6px; }
+.sidebar .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: rgba(255,255,255,.75); font-size: 13.5px; font-weight: 500; }
+.sidebar .nav-item:hover { background: rgba(255,255,255,.04); color: #fff; }
+.sidebar .nav-item.active { background: var(--yg); color: var(--night); font-weight: 700; }
+.sidebar .nav-item.active .ico { color: var(--night); opacity: 1; }
+.sidebar .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; opacity: .8; }
+.sidebar .nav-item .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); margin-left: auto; }
+.sidebar .user { margin-top: auto; border-top: 1px solid rgba(255,255,255,.1); padding-top: 14px; display: flex; align-items: center; gap: 10px; }
+.sidebar .user .av { width: 32px; height: 32px; border-radius: 50%; background: var(--yg); color: var(--night); display: grid; place-items: center; font-weight: 800; font-size: 12px; letter-spacing: -0.02em; }
+.sidebar .user .meta { font-size: 12px; line-height: 1.3; overflow: hidden; }
+.sidebar .user .meta b { color: #fff; font-weight: 600; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar .user .meta span { color: rgba(255,255,255,.5); display: block; font-family: var(--f-mono); letter-spacing: 0.1em; font-size: 9px; text-transform: uppercase; }
+.sidebar .user .logout { margin-left: auto; color: rgba(255,255,255,.4); }
+.sidebar .user .logout:hover { color: var(--yg); }
+
+.main { display: flex; flex-direction: column; height: 100%; overflow: hidden; min-width: 0; }
+.topbar { height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--ink-12); background: var(--paper); padding: 0 24px; display: flex; align-items: center; gap: 18px; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+.topbar .crumbs { display: flex; align-items: center; gap: 10px; }
+.topbar .crumbs b { color: var(--ink); font-weight: 600; }
+.topbar .crumbs a { color: var(--ink-60); }
+.topbar .crumbs a:hover { color: var(--ink); }
+.topbar .crumbs .sep { opacity: .5; }
+.topbar .right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.topbar .right .env { display: flex; align-items: center; gap: 6px; }
+.topbar .right .env .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 600; border: 1px solid var(--ink-12); background: var(--cream); color: var(--ink); letter-spacing: -0.005em; transition: background 120ms ease, filter 120ms ease; }
+.btn:hover { background: #fafaf6; }
+.btn .ico { width: 14px; height: 14px; }
+.btn.primary { background: var(--night); color: var(--yg); border-color: var(--night); }
+.btn.primary:hover { filter: brightness(1.15); background: var(--night); }
+.btn.danger { color: var(--red); }
+.btn.danger:hover { background: rgba(217,74,74,.08); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* ===== DETAIL HEAD ===== */
+.detail-page { flex: 1; overflow: hidden; display: grid; grid-template-rows: auto auto 1fr; min-height: 0; }
+.detail-head { padding: 22px 32px 14px; border-bottom: 1px solid var(--ink-12); background: var(--paper); }
+.detail-head .row1 { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.detail-head .id-line { font-family: var(--f-mono); font-size: 10px; color: var(--ink-60); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 8px; }
+.detail-head h1 { font-size: 38px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; display: flex; align-items: baseline; gap: 12px; }
+.detail-head h1 .placeholder-name { color: var(--ink-30); font-weight: 600; }
+.detail-head .star-row svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: -2px; opacity: .14; }
+.detail-head .meta-row { margin-top: 10px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.detail-head .meta-row .mtag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+.detail-head .meta-row .mtag b { color: var(--ink); font-weight: 600; }
+.detail-head .meta-row .sep { color: var(--ink-30); }
+.detail-head .meta-row .toggle { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 999px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.detail-head .meta-row .toggle.on { background: rgba(37,211,102,.12); color: #128c46; }
+.detail-head .meta-row .toggle.on .dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; }
+.detail-head .meta-row .toggle.off { background: var(--ink-06); color: var(--ink-60); border-color: var(--ink-12); }
+.detail-head .meta-row .toggle.off .dot { width: 7px; height: 7px; background: var(--ink-30); border-radius: 50%; }
+.detail-head .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.detail-tabs { padding: 0 32px; display: flex; align-items: center; gap: 0; background: var(--paper); border-bottom: 1px solid var(--ink-12); }
+.detail-tabs .tab { padding: 12px 14px; font-size: 13px; font-weight: 600; color: var(--ink-60); border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 8px; }
+.detail-tabs .tab.active { color: var(--ink); border-color: var(--ink); }
+.detail-tabs .tab.disabled { color: var(--ink-30); cursor: not-allowed; }
+.detail-tabs .tab .pill { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; background: var(--ink-06); padding: 1px 6px; border-radius: 999px; }
+
+.detail-body { display: grid; grid-template-columns: 1fr 460px; overflow: hidden; min-height: 0; }
+.detail-form { padding: 24px 32px; overflow: auto; }
+.detail-side { background: var(--paper); border-left: 1px solid var(--ink-12); padding: 24px; overflow: auto; }
+
+/* ===== SECTIONS ===== */
+.section { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 14px; padding: 22px; margin-bottom: 16px; }
+.section .hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+.section .hd .lbl { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-60); }
+.section .hd h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+.section .hd .title-wrap { display: flex; flex-direction: column; gap: 4px; }
+.section .hd .act { color: var(--ink-30); font-size: 12px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.grid-coord { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.field-d { display: flex; flex-direction: column; gap: 6px; }
+.field-d .label { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.field-d .label .req { color: var(--red); }
+.field-d .label .count { color: var(--ink-30); }
+.field-d .label .ok-pill { display: inline-flex; align-items: center; gap: 4px; color: #128c46; text-transform: none; letter-spacing: 0; font-family: var(--f-sans); font-size: 11px; font-weight: 500; }
+.field-d .label .ok-pill .dotg { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.field-d input, .field-d textarea, .field-d select {
+  background: var(--paper);
+  border: 1px solid var(--ink-12);
+  border-radius: 9px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  color: var(--ink);
+  outline: none;
+  width: 100%;
+}
+.field-d input:focus, .field-d textarea:focus, .field-d select:focus { border-color: var(--ink); background: var(--cream); }
+.field-d textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
+.field-d .help { font-size: 11.5px; color: var(--ink-60); line-height: 1.5; }
+.field-d .readonly { background: var(--ink-06); color: var(--ink); padding: 10px 12px; border-radius: 9px; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+.field-d .readonly .small { font-size: 12px; color: var(--ink-30); font-weight: 500; }
+
+/* tag input */
+.tag-input { background: var(--paper); border: 1px solid var(--ink-12); border-radius: 9px; padding: 8px 8px 6px; display: flex; flex-wrap: wrap; gap: 6px; min-height: 42px; align-items: center; }
+.tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 10px; background: var(--cream); border: 1px solid var(--ink-12); border-radius: 999px; font-size: 12px; font-weight: 500; }
+.tag .x { color: var(--ink-30); font-size: 10px; cursor: pointer; padding: 0 2px; }
+.tag .x:hover { color: var(--red); }
+.tag.solid { background: var(--night); color: var(--yg); border-color: var(--night); font-weight: 600; }
+.tag.solid .x { color: rgba(212,245,66,.5); }
+.tag.solid .x:hover { color: var(--yg); }
+.tag.yg { background: var(--yg); border-color: var(--yg); color: var(--night); font-weight: 600; }
+.tag.yg .x { color: var(--night); opacity: .5; }
+.tag.yg .x:hover { opacity: 1; }
+.tag-input .add-input { background: transparent; border: 0; padding: 4px 8px; color: var(--ink); font-size: 12px; outline: none; min-width: 100px; flex: 1; }
+.tag-input .add-input::placeholder { color: var(--ink-30); }
+
+/* price picker */
+.price-picker { display: flex; gap: 6px; }
+.price-picker .pp {
+  flex: 1;
+  border: 1px solid var(--ink-12);
+  background: var(--paper);
+  border-radius: 9px;
+  padding: 10px;
+  font-family: var(--f-mono); font-size: 13px; font-weight: 600;
+  color: var(--ink-60);
+  text-align: center;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+}
+.price-picker .pp.on { background: var(--night); color: var(--yg); border-color: var(--night); }
+.price-picker .pp .sub { display: block; font-size: 9px; letter-spacing: 0.14em; color: var(--ink-30); margin-top: 2px; font-weight: 500; }
+.price-picker .pp.on .sub { color: rgba(212,245,66,.6); }
+
+/* map */
+.map {
+  aspect-ratio: 4/3;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e8e6dc 0%, #f0eee3 100%);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ink-12);
+}
+.map::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(10,10,10,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(10,10,10,.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.map .road { position: absolute; height: 4px; background: rgba(10,10,10,.07); border-radius: 2px; }
+.map .road.r1 { left: 0; right: 0; top: 30%; transform: rotate(-3deg); }
+.map .road.r2 { left: 20%; right: -10%; top: 65%; transform: rotate(4deg); height: 6px; }
+.map .road.r3 { width: 4px; height: 100%; left: 35%; top: 0; transform: rotate(8deg); }
+.map .road.r4 { width: 4px; height: 70%; right: 22%; top: 10%; transform: rotate(-6deg); }
+.map .pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -100%); }
+.map .pin .ring { position: absolute; inset: -16px; border-radius: 50%; background: var(--yg); opacity: .4; animation: pulse 2s ease-out infinite; z-index: -1; }
+@keyframes pulse { 0% { transform: scale(.7); opacity: .6; } 100% { transform: scale(1.4); opacity: 0; } }
+.map .pin .core { width: 28px; height: 28px; background: var(--night); border: 3px solid var(--yg); border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,.2); display: grid; place-items: center; color: var(--yg); font-weight: 800; font-size: 11px; }
+.map .coords { position: absolute; bottom: 10px; left: 10px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em; background: var(--night); color: var(--yg); padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+.map .nodata { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-30); text-transform: uppercase; }
+
+/* side panel cards */
+.cura-card { background: var(--night); color: #fff; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+.cura-card .hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+.cura-card .hd .pill { background: rgba(255,255,255,.06); color: rgba(255,255,255,.7); padding: 2px 8px; border-radius: 999px; font-weight: 700; }
+.cura-card h4 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: var(--yg); }
+.cura-card p { margin-top: 8px; font-size: 13px; line-height: 1.55; color: rgba(255,255,255,.7); }
+
+.activity { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+.activity .hd { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-60); display: flex; justify-content: space-between; margin-bottom: 14px; }
+.activity .hd b { color: var(--ink); font-weight: 600; }
+.activity .empty { font-size: 12px; color: var(--ink-30); line-height: 1.55; text-align: center; padding: 14px 0; }
+
+.metric-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.metric-strip .m { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 12px; padding: 14px; }
+.metric-strip .m .lbl { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); margin-bottom: 6px; }
+.metric-strip .m .val { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink-30); }
+
+/* state + toast */
+.full-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; color: var(--ink-60); }
+.full-state .spinner { width: 28px; height: 28px; border: 2px solid var(--ink-12); border-right-color: var(--ink); border-radius: 50%; animation: spin 720ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.toast {
+  position: fixed;
+  left: 50%; bottom: 30px;
+  transform: translateX(-50%);
+  background: var(--night); color: #fff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 13.5px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 14px 32px -10px rgba(0,0,0,.35);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+.toast.err { background: var(--red); }
+.toast.ok { background: var(--night); color: var(--yg); }
+
+@media (max-width: 1100px) {
+  .detail-body { grid-template-columns: 1fr; }
+  .detail-side { border-left: 0; border-top: 1px solid var(--ink-12); }
+}
+@media (max-width: 960px) {
+  .console { grid-template-columns: 64px 1fr; }
+  .sidebar { padding: 16px 8px; }
+  .sidebar .brand .word, .sidebar .brand .tag, .sidebar .search span, .sidebar .nav-label, .sidebar .nav-item span, .sidebar .user .meta { display: none; }
+  .sidebar .nav-item { justify-content: center; padding: 10px; }
+  .sidebar .user { justify-content: center; }
+  .detail-head h1 { font-size: 30px; }
+  .detail-head, .detail-tabs, .detail-form { padding-left: 18px; padding-right: 18px; }
+  .grid-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="console">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="#D4F542">
+          <rect x="44" y="4" width="12" height="92" rx="6"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/>
+        </g>
+      </svg>
+      <span class="word">Quepa</span>
+      <span class="tag">Console</span>
+    </div>
+
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <span>Buscar</span>
+      <span class="kbd">⌘K</span>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Operación</div>
+      <a class="nav-item" href="welcome.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item active" href="lugares.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13z"/><circle cx="12" cy="9" r="3"/></svg>
+        <span>Lugares</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+        <span>Comercios</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Curaduría</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <span>Agente WhatsApp</span>
+        <span class="pulse"></span>
+      </a>
+    </div>
+
+    <div class="user">
+      <div class="av" id="userAvatar">—</div>
+      <div class="meta">
+        <b id="userName">—</b>
+        <span>Staff</span>
+      </div>
+      <button class="logout" id="logoutBtn" title="Cerrar sesión">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <section class="main">
+    <div class="topbar">
+      <div class="crumbs">
+        <span>Quepa Console</span>
+        <span class="sep">/</span>
+        <a href="lugares.html">Lugares</a>
+        <span class="sep">/</span>
+        <b id="crumbName">…</b>
+      </div>
+      <div class="right">
+        <span class="env"><span class="dot"></span> Prod · BOG-1</span>
+      </div>
+    </div>
+
+    <!-- Loading state (full) -->
+    <div class="full-state" id="loadingState"><div class="spinner"></div><div class="mono" style="font-size:11px; color:var(--ink-60);">· Cargando lugar…</div></div>
+
+    <!-- Detail (hidden until loaded) -->
+    <div class="detail-page" id="detailPage" hidden>
+
+      <div class="detail-head">
+        <div class="row1">
+          <div>
+            <div class="id-line" id="idLine">· PLC_— · Cargando</div>
+            <h1>
+              <span id="placeName">…</span>
+              <span class="star-row">
+                <svg viewBox="0 0 100 100" fill="#0a0a0a"><g><rect x="44" y="4" width="12" height="92" rx="6"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/></g></svg>
+                <svg viewBox="0 0 100 100" fill="#0a0a0a"><g><rect x="44" y="4" width="12" height="92" rx="6"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/></g></svg>
+                <svg viewBox="0 0 100 100" fill="#0a0a0a"><g><rect x="44" y="4" width="12" height="92" rx="6"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/></g></svg>
+              </span>
+            </h1>
+            <div class="meta-row">
+              <button type="button" class="toggle on" id="activeToggle"><span class="dot"></span><span id="activeLabel">Activo en producción</span></button>
+              <span class="mtag"><b id="metaCategory">—</b></span>
+              <span class="sep">·</span>
+              <span class="mtag"><b id="metaCity">—</b><span id="metaRegion"></span></span>
+              <span class="sep">·</span>
+              <span class="mtag">Curado por <b>—</b></span>
+              <span class="sep">·</span>
+              <span class="mtag">Última edición · <b id="metaUpdated">—</b></span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn danger" id="deleteBtn" hidden>
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Eliminar
+            </button>
+            <a class="btn" href="lugares.html">Cancelar</a>
+            <button class="btn primary" id="saveBtn">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+              <span id="saveLabel">Guardar cambios</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-tabs">
+        <a class="tab active">Datos generales</a>
+        <a class="tab disabled" title="Próximamente">Ubicación</a>
+        <a class="tab disabled" title="Próximamente">Contacto y reservas</a>
+        <a class="tab disabled" title="Próximamente">Curaduría y Stars</a>
+        <a class="tab disabled" title="Próximamente">Métricas</a>
+        <a class="tab disabled" title="Próximamente">Historial</a>
+      </div>
+
+      <div class="detail-body">
+
+        <!-- LEFT: FORM -->
+        <div class="detail-form">
+
+          <!-- IDENTIDAD -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 01 · IDENTIDAD</span>
+                <h3>¿Qué es este lugar?</h3>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field-d">
+                <div class="label"><span>Nombre <span class="req">*</span></span><span class="count" id="nameCount">0/80</span></div>
+                <input id="f-name" maxlength="80" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Categoría <span class="req">*</span></span></div>
+                <select id="f-category">
+                  <option value="">Selecciona…</option>
+                  <option value="cafe">Café</option>
+                  <option value="restaurant">Restaurante</option>
+                  <option value="bar">Bar</option>
+                  <option value="hotel">Hotel</option>
+                  <option value="activity">Actividad</option>
+                  <option value="beach">Playa</option>
+                  <option value="viewpoint">Mirador</option>
+                  <option value="other">Otro</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Descripción <span class="req">*</span></span><span class="count" id="descCount">0/500</span></div>
+              <textarea id="f-description" maxlength="500"></textarea>
+              <div class="help">Esta descripción la usa Quepa al recomendar el lugar por WhatsApp. Tono cálido y directo.</div>
+            </div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Highlights · qué lo hace especial</span><span style="color: var(--ink-30);">Hasta 6 tags</span></div>
+              <div class="tag-input" data-tag-field="highlights" data-variant="solid">
+                <input class="add-input" type="text" placeholder="Agrega y presiona Enter…" />
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 14px;">
+              <div class="field-d">
+                <div class="label"><span>Vibe</span></div>
+                <div class="tag-input" data-tag-field="vibe">
+                  <input class="add-input" type="text" placeholder="Tranquilo, rústico…" />
+                </div>
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Ideal para</span></div>
+                <div class="tag-input" data-tag-field="ideal_for">
+                  <input class="add-input" type="text" placeholder="Trabajar, primera cita…" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ECONÓMICO / AMENITIES -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 02 · ECONÓMICO Y SERVICIOS</span>
+                <h3>Precio y amenities</h3>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field-d">
+                <div class="label"><span>Rango de precio</span></div>
+                <div class="price-picker" id="pricePicker">
+                  <button type="button" class="pp" data-price="1">$<span class="sub">ECONÓMICO</span></button>
+                  <button type="button" class="pp" data-price="2">$$<span class="sub">MEDIO</span></button>
+                  <button type="button" class="pp" data-price="3">$$$<span class="sub">ALTO</span></button>
+                  <button type="button" class="pp" data-price="4">$$$$<span class="sub">TOP</span></button>
+                </div>
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Rating externo</span><span style="color: var(--ink-30);">Solo lectura · Google</span></div>
+                <div class="readonly" id="ratingReadonly">— <span class="small">sin sincronizar</span></div>
+              </div>
+            </div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Amenities</span></div>
+              <div class="tag-input" data-tag-field="amenities" data-variant="yg">
+                <input class="add-input" type="text" placeholder="Wi-Fi, pet friendly…" />
+              </div>
+            </div>
+          </div>
+
+          <!-- UBICACIÓN -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 03 · UBICACIÓN</span>
+                <h3>Dónde encontrar el sitio</h3>
+              </div>
+            </div>
+
+            <div class="field-d">
+              <div class="label"><span>Dirección</span></div>
+              <input id="f-address" />
+            </div>
+
+            <div class="grid-3" style="margin-top: 14px;">
+              <div class="field-d">
+                <div class="label"><span>Ciudad <span class="req">*</span></span></div>
+                <input id="f-city" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Región <span class="req">*</span></span></div>
+                <input id="f-region" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Barrio</span><span style="color:var(--ink-30);">No persiste</span></div>
+                <input id="f-barrio" disabled placeholder="—" />
+              </div>
+            </div>
+
+            <div class="grid-coord" style="margin-top: 14px;">
+              <div class="field-d">
+                <div class="label"><span>Latitud</span><span style="color: var(--ink-30);">float8</span></div>
+                <input id="f-lat" type="number" step="0.00001" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Longitud</span><span style="color: var(--ink-30);">float8</span></div>
+                <input id="f-lng" type="number" step="0.00001" />
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTACTO -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 04 · CONTACTO Y RESERVAS</span>
+                <h3>Cómo lo alcanzamos</h3>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field-d">
+                <div class="label"><span>Teléfono</span></div>
+                <input id="f-phone" placeholder="+57 …" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>WhatsApp</span><span class="ok-pill" id="whatsappPill" hidden><span class="dotg"></span>Verificado</span></div>
+                <input id="f-whatsapp" placeholder="+57 …" />
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 14px;">
+              <div class="field-d">
+                <div class="label"><span>Website</span></div>
+                <input id="f-website" type="url" placeholder="https://…" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Booking URL</span></div>
+                <input id="f-booking_url" type="url" placeholder="https://…" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: SIDE -->
+        <div class="detail-side">
+
+          <div class="section" style="padding: 16px;">
+            <div class="hd" style="margin-bottom: 12px;">
+              <span class="lbl">· UBICACIÓN EN MAPA</span>
+              <a class="act" id="mapOpen" target="_blank">Abrir →</a>
+            </div>
+            <div class="map" id="mapPreview">
+              <div class="road r1"></div>
+              <div class="road r2"></div>
+              <div class="road r3"></div>
+              <div class="road r4"></div>
+              <div class="pin" id="mapPin" hidden>
+                <div class="ring"></div>
+                <div class="core">★</div>
+              </div>
+              <div class="coords" id="mapCoords" hidden>—</div>
+              <div class="nodata" id="mapNoData">· Sin coordenadas</div>
+            </div>
+          </div>
+
+          <div class="metric-strip">
+            <div class="m">
+              <div class="lbl">· Recomendado</div>
+              <div class="val">— <span style="font-size:11px; color: var(--ink-30); font-weight: 500;">próximamente</span></div>
+            </div>
+            <div class="m">
+              <div class="lbl">· Clicks Booking</div>
+              <div class="val">—</div>
+            </div>
+          </div>
+
+          <div class="cura-card">
+            <div class="hd">
+              <span>· QUEPA STARS</span>
+              <span class="pill">SIN ASIGNAR</span>
+            </div>
+            <h4>Pendiente de curaduría.</h4>
+            <p>Las Quepa Stars no están aún en el schema. Cuando se agregue el campo, podrás asignar 0–3 estrellas directamente acá.</p>
+          </div>
+
+          <div class="activity">
+            <div class="hd">
+              <span>· ACTIVIDAD</span>
+              <b>—</b>
+            </div>
+            <div class="empty">Próximamente · feed de cambios y acciones del agente WA.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(() => {
+  const SUPABASE_URL = 'https://ttengnyhesunaqqbhmkc.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_piW0GXJJtYRitrVpvoM8Lg_3fvcu4Y4';
+  const LOGIN_URL = 'index.html';
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'quepa-console-auth' },
+  });
+
+  // ---------- helpers ----------
+  const CATEGORY_LABEL = {
+    cafe: 'Café', restaurant: 'Restaurante', bar: 'Bar', hotel: 'Hotel',
+    activity: 'Actividad', beach: 'Playa', viewpoint: 'Mirador', other: 'Otro',
+  };
+  function initials(s) { if (!s) return '—'; return s.trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join(''); }
+  function nameFromEmail(email) { const local = (email || '').split('@')[0] || 'staff'; return local.split(/[._-]+/).filter(Boolean).map(s => s[0].toUpperCase() + s.slice(1)).join(' '); }
+  function shortId(id) { if (!id) return 'PLC_—'; return 'PLC_' + id.replace(/-/g, '').slice(-4).toUpperCase(); }
+  function relTime(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return 'hace un momento';
+    if (diff < 3600) return 'hace ' + Math.floor(diff / 60) + ' min';
+    if (diff < 86400) return 'hace ' + Math.floor(diff / 3600) + ' h';
+    if (diff < 86400 * 7) return 'hace ' + Math.floor(diff / 86400) + ' d';
+    return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
+  }
+  const qs = new URLSearchParams(location.search);
+  const placeId = qs.get('id');
+  const isNew = !placeId || placeId === 'new';
+
+  function toast(msg, kind) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + (kind || '');
+    setTimeout(() => { t.classList.remove('show'); }, 2400);
+  }
+
+  // ---------- session ----------
+  async function ensureSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.replace(LOGIN_URL); return null; }
+    const user = session.user;
+    const displayName = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || nameFromEmail(user.email);
+    document.getElementById('userName').textContent = displayName;
+    document.getElementById('userAvatar').textContent = initials(displayName);
+    return session;
+  }
+
+  // ---------- state ----------
+  const state = {
+    id: isNew ? null : placeId,
+    isNew,
+    active: true,
+    tags: { highlights: [], vibe: [], ideal_for: [], amenities: [] },
+    price_range: null,
+    original: null, // copy for change detection / cancel
+  };
+
+  // ---------- tag input ----------
+  function renderTags(container) {
+    const field = container.dataset.tagField;
+    const variant = container.dataset.variant || '';
+    const tags = state.tags[field] || [];
+    // remove existing tags, keep the input
+    Array.from(container.querySelectorAll('.tag')).forEach(el => el.remove());
+    const input = container.querySelector('input');
+    tags.forEach(t => {
+      const span = document.createElement('span');
+      span.className = 'tag' + (variant ? ' ' + variant : '');
+      span.innerHTML = `<span class="tag-text"></span><span class="x">×</span>`;
+      span.querySelector('.tag-text').textContent = t;
+      span.querySelector('.x').addEventListener('click', () => {
+        state.tags[field] = state.tags[field].filter(x => x !== t);
+        renderTags(container);
+      });
+      container.insertBefore(span, input);
+    });
+  }
+  function wireTagInputs() {
+    document.querySelectorAll('[data-tag-field]').forEach(container => {
+      const field = container.dataset.tagField;
+      const input = container.querySelector('input');
+      const commit = () => {
+        const val = input.value.trim();
+        if (!val) return;
+        if (!state.tags[field].includes(val)) state.tags[field].push(val);
+        input.value = '';
+        renderTags(container);
+      };
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          commit();
+        } else if (e.key === 'Backspace' && !input.value && state.tags[field].length) {
+          state.tags[field].pop();
+          renderTags(container);
+        }
+      });
+      input.addEventListener('blur', commit);
+    });
+  }
+
+  // ---------- price picker ----------
+  function renderPrice() {
+    document.querySelectorAll('#pricePicker .pp').forEach(b => {
+      b.classList.toggle('on', Number(b.dataset.price) === state.price_range);
+    });
+  }
+  function wirePricePicker() {
+    document.getElementById('pricePicker').addEventListener('click', (e) => {
+      const b = e.target.closest('.pp');
+      if (!b) return;
+      const v = Number(b.dataset.price);
+      state.price_range = state.price_range === v ? null : v;
+      renderPrice();
+    });
+  }
+
+  // ---------- active toggle ----------
+  function renderActiveToggle() {
+    const t = document.getElementById('activeToggle');
+    t.classList.toggle('on', state.active);
+    t.classList.toggle('off', !state.active);
+    document.getElementById('activeLabel').textContent = state.active ? 'Activo en producción' : 'Inactivo';
+  }
+
+  // ---------- map ----------
+  function renderMap() {
+    const lat = parseFloat(document.getElementById('f-lat').value);
+    const lng = parseFloat(document.getElementById('f-lng').value);
+    const pin = document.getElementById('mapPin');
+    const coords = document.getElementById('mapCoords');
+    const noData = document.getElementById('mapNoData');
+    const open = document.getElementById('mapOpen');
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      pin.hidden = false; coords.hidden = false; noData.hidden = true;
+      coords.textContent = `${lat.toFixed(5)} · ${lng.toFixed(5)}`;
+      open.href = `https://www.google.com/maps?q=${lat},${lng}`;
+      open.style.color = 'var(--ink)';
+    } else {
+      pin.hidden = true; coords.hidden = true; noData.hidden = false;
+      open.removeAttribute('href');
+      open.style.color = 'var(--ink-30)';
+    }
+  }
+
+  // ---------- load ----------
+  async function loadPlace() {
+    if (state.isNew) {
+      // empty form
+      document.getElementById('idLine').textContent = '· Nuevo lugar · Borrador';
+      document.getElementById('placeName').innerHTML = '<span class="placeholder-name">Nuevo lugar</span>';
+      document.getElementById('crumbName').textContent = 'Nuevo lugar';
+      document.getElementById('saveLabel').textContent = 'Crear lugar';
+      document.getElementById('deleteBtn').hidden = true;
+      document.getElementById('metaCategory').textContent = '—';
+      document.getElementById('metaCity').textContent = '—';
+      document.getElementById('metaUpdated').textContent = 'borrador';
+      document.getElementById('ratingReadonly').innerHTML = '— <span class="small">no aplica</span>';
+      state.active = true;
+      renderActiveToggle();
+      renderMap();
+      finishLoad();
+      return;
+    }
+
+    const { data, error } = await sb.from('places').select('*').eq('id', state.id).single();
+    if (error || !data) {
+      document.getElementById('loadingState').innerHTML =
+        `<div class="title" style="font-weight:700; color: var(--red); font-size: 16px;">No encontramos este lugar</div>
+         <div style="font-size: 13px;">${error ? error.message : 'ID inexistente'}</div>
+         <a class="btn" href="lugares.html">← Volver al listado</a>`;
+      return;
+    }
+
+    state.original = data;
+    state.active = data.active !== false;
+    state.price_range = data.price_range || null;
+    state.tags = {
+      highlights: data.highlights || [],
+      vibe: data.vibe || [],
+      ideal_for: data.ideal_for || [],
+      amenities: data.amenities || [],
+    };
+
+    document.getElementById('idLine').textContent = `· ${shortId(data.id)} · ${data.active ? 'Editando' : 'Inactivo'}`;
+    document.getElementById('placeName').textContent = data.name || '—';
+    document.getElementById('crumbName').textContent = data.name || '…';
+    document.title = `Quepa Console — ${data.name || 'Lugar'}`;
+    document.getElementById('metaCategory').textContent = CATEGORY_LABEL[data.category] || data.category || '—';
+    document.getElementById('metaCity').textContent = data.city || '—';
+    document.getElementById('metaRegion').textContent = data.region ? ' · ' + data.region : '';
+    document.getElementById('metaUpdated').textContent = relTime(data.updated_at);
+
+    if (data.rating != null) {
+      document.getElementById('ratingReadonly').innerHTML = `${Number(data.rating).toFixed(1)} <span class="small">/ 5.0</span>`;
+    } else {
+      document.getElementById('ratingReadonly').innerHTML = '— <span class="small">sin sincronizar</span>';
+    }
+
+    // fill form
+    document.getElementById('f-name').value = data.name || '';
+    document.getElementById('f-category').value = data.category || '';
+    document.getElementById('f-description').value = data.description || '';
+    document.getElementById('f-address').value = data.address || '';
+    document.getElementById('f-city').value = data.city || '';
+    document.getElementById('f-region').value = data.region || '';
+    document.getElementById('f-lat').value = data.lat ?? '';
+    document.getElementById('f-lng').value = data.lng ?? '';
+    document.getElementById('f-phone').value = data.phone || '';
+    document.getElementById('f-whatsapp').value = data.whatsapp || '';
+    document.getElementById('f-website').value = data.website || '';
+    document.getElementById('f-booking_url').value = data.booking_url || '';
+    document.getElementById('whatsappPill').hidden = !data.whatsapp;
+    document.getElementById('deleteBtn').hidden = false;
+
+    document.getElementById('nameCount').textContent = (data.name || '').length + '/80';
+    document.getElementById('descCount').textContent = (data.description || '').length + '/500';
+
+    document.querySelectorAll('[data-tag-field]').forEach(c => renderTags(c));
+    renderPrice();
+    renderActiveToggle();
+    renderMap();
+    finishLoad();
+  }
+
+  function finishLoad() {
+    document.getElementById('loadingState').hidden = true;
+    document.getElementById('detailPage').hidden = false;
+  }
+
+  // ---------- save / delete ----------
+  function gather() {
+    const name = document.getElementById('f-name').value.trim();
+    const category = document.getElementById('f-category').value;
+    const description = document.getElementById('f-description').value.trim();
+    const city = document.getElementById('f-city').value.trim();
+    const region = document.getElementById('f-region').value.trim();
+    const address = document.getElementById('f-address').value.trim();
+    const latStr = document.getElementById('f-lat').value;
+    const lngStr = document.getElementById('f-lng').value;
+    const lat = latStr === '' ? null : Number(latStr);
+    const lng = lngStr === '' ? null : Number(lngStr);
+    const phone = document.getElementById('f-phone').value.trim();
+    const whatsapp = document.getElementById('f-whatsapp').value.trim();
+    const website = document.getElementById('f-website').value.trim();
+    const booking_url = document.getElementById('f-booking_url').value.trim();
+
+    return {
+      name, category, description,
+      city, region, address: address || null,
+      lat, lng,
+      price_range: state.price_range,
+      phone: phone || null,
+      whatsapp: whatsapp || null,
+      website: website || null,
+      booking_url: booking_url || null,
+      highlights: state.tags.highlights,
+      ideal_for: state.tags.ideal_for,
+      vibe: state.tags.vibe,
+      amenities: state.tags.amenities,
+      active: state.active,
+    };
+  }
+
+  function validate(p) {
+    const errs = [];
+    if (!p.name) errs.push('nombre');
+    if (!p.category) errs.push('categoría');
+    if (!p.description) errs.push('descripción');
+    if (!p.city) errs.push('ciudad');
+    if (!p.region) errs.push('región');
+    return errs;
+  }
+
+  async function save() {
+    const saveBtn = document.getElementById('saveBtn');
+    const label = document.getElementById('saveLabel');
+    const payload = gather();
+    const errs = validate(payload);
+    if (errs.length) {
+      toast('Falta(n): ' + errs.join(', '), 'err');
+      return;
+    }
+    saveBtn.disabled = true;
+    label.textContent = 'Guardando…';
+    try {
+      if (state.isNew) {
+        const { data, error } = await sb.from('places').insert(payload).select('id').single();
+        if (error) throw error;
+        toast('Lugar creado ✓', 'ok');
+        setTimeout(() => { window.location.replace('lugar.html?id=' + encodeURIComponent(data.id)); }, 600);
+      } else {
+        const { error } = await sb.from('places').update(payload).eq('id', state.id);
+        if (error) throw error;
+        toast('Cambios guardados ✓', 'ok');
+        // refresh meta lines
+        document.getElementById('metaUpdated').textContent = relTime(new Date().toISOString());
+        document.getElementById('placeName').textContent = payload.name;
+        document.getElementById('crumbName').textContent = payload.name;
+        document.getElementById('metaCategory').textContent = CATEGORY_LABEL[payload.category] || payload.category;
+        document.getElementById('metaCity').textContent = payload.city;
+        document.getElementById('metaRegion').textContent = payload.region ? ' · ' + payload.region : '';
+      }
+    } catch (e) {
+      toast(e.message || 'Error al guardar', 'err');
+    } finally {
+      saveBtn.disabled = false;
+      label.textContent = state.isNew ? 'Crear lugar' : 'Guardar cambios';
+    }
+  }
+
+  async function del() {
+    if (state.isNew || !state.id) return;
+    if (!confirm('¿Eliminar este lugar? Esta acción no se puede deshacer.')) return;
+    const { error } = await sb.from('places').delete().eq('id', state.id);
+    if (error) { toast(error.message, 'err'); return; }
+    window.location.replace('lugares.html');
+  }
+
+  // ---------- wiring ----------
+  function wire() {
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.replace(LOGIN_URL);
+    });
+
+    document.getElementById('activeToggle').addEventListener('click', () => {
+      state.active = !state.active;
+      renderActiveToggle();
+    });
+
+    // counters
+    document.getElementById('f-name').addEventListener('input', (e) => {
+      document.getElementById('nameCount').textContent = e.target.value.length + '/80';
+      if (state.isNew) {
+        document.getElementById('placeName').textContent = e.target.value || 'Nuevo lugar';
+        document.getElementById('crumbName').textContent = e.target.value || 'Nuevo lugar';
+      }
+    });
+    document.getElementById('f-description').addEventListener('input', (e) => {
+      document.getElementById('descCount').textContent = e.target.value.length + '/500';
+    });
+
+    // coords → map
+    document.getElementById('f-lat').addEventListener('input', renderMap);
+    document.getElementById('f-lng').addEventListener('input', renderMap);
+
+    // whatsapp pill
+    document.getElementById('f-whatsapp').addEventListener('input', (e) => {
+      document.getElementById('whatsappPill').hidden = !e.target.value.trim();
+    });
+
+    wireTagInputs();
+    wirePricePicker();
+
+    document.getElementById('saveBtn').addEventListener('click', save);
+    document.getElementById('deleteBtn').addEventListener('click', del);
+
+    // keyboard: ⌘S / Ctrl+S save
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        save();
+      }
+    });
+  }
+
+  // ---------- boot ----------
+  (async function boot() {
+    const session = await ensureSession();
+    if (!session) return;
+    wire();
+    await loadPlace();
+  })();
+})();
+</script>
+</body>
+</html>

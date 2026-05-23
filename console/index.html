@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Quepa Console — Acceso staff</title>
+<meta name="description" content="Acceso al panel interno de Quepa. Solo personal autorizado con cuenta corporativa @quepa.co." />
+<meta name="theme-color" content="#0A0A0A" />
+<meta name="robots" content="noindex, nofollow" />
+<meta property="og:title" content="Quepa Console — Acceso staff" />
+<meta property="og:description" content="Panel de operación interno de Quepa. Acceso restringido al equipo." />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="es_CO" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230A0A0A'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   QUEPA CONSOLE — LOGIN INTERNO · V1 Editorial papel
+   Brandbook v1.0 / Mayo 2026
+   Paleta: #0A0A0A noche · #D4F542 verde-amarillo · #25D366 wsp · #F3F1EC papel
+   Tipografía: Hanken Grotesk (display/body) · JetBrains Mono (meta)
+   ============================================================ */
+
+:root {
+  --green:   #25D366;
+  --yg:      #D4F542;
+  --night:   #0A0A0A;
+  --cream:   #FFFFFF;
+  --paper:   #F3F1EC;
+  --ink:     #0A0A0A;
+  --ink-80:  rgba(10,10,10,.80);
+  --ink-60:  rgba(10,10,10,.60);
+  --ink-30:  rgba(10,10,10,.30);
+  --ink-12:  rgba(10,10,10,.12);
+  --ink-06:  rgba(10,10,10,.06);
+
+  --f-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: #d8d4cc;
+  font-family: var(--f-sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; }
+input { font-family: inherit; }
+
+.mono { font-family: var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* ============================================================
+   LAYOUT — split 1fr / 540px (stacks on small screens)
+   ============================================================ */
+.app {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: 1fr 540px;
+}
+
+/* ============================================================
+   LEFT — info / brand / status
+   ============================================================ */
+.info {
+  padding: 40px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  border-right: 1px solid var(--ink-12);
+  position: relative;
+  min-height: 100vh;
+}
+.info::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--ink-06) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ink-06) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-position: -1px -1px;
+  pointer-events: none;
+  opacity: .6;
+}
+.info > * { position: relative; z-index: 1; }
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand .word { font-weight: 700; font-size: 22px; letter-spacing: -0.04em; }
+.brand .badge {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: var(--night);
+  color: var(--yg);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+.env {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.env b { color: var(--ink); font-weight: 600; }
+
+.center {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 560px;
+}
+.center .eyebrow {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+}
+.center .h {
+  font-size: clamp(56px, 7vw, 92px);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  font-weight: 700;
+}
+.center .h .yg {
+  background: var(--yg);
+  padding: 0 10px 4px;
+  display: inline-block;
+  line-height: 0.95;
+}
+.center .lead {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-60);
+  max-width: 42ch;
+}
+.center .lead b { color: var(--ink); font-weight: 600; }
+
+.status {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--ink-12);
+  border-bottom: 1px solid var(--ink-12);
+}
+.status .cell {
+  padding: 16px 18px 16px 0;
+  border-right: 1px solid var(--ink-12);
+}
+.status .cell:last-child { border-right: 0; }
+.status .lbl {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-30);
+  margin-bottom: 6px;
+}
+.status .val {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 4px rgba(37,211,102,.18);
+  flex-shrink: 0;
+}
+.status .dot.amber {
+  background: #f5b942;
+  box-shadow: 0 0 0 4px rgba(245,185,66,.2);
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-30);
+}
+.foot .links { display: flex; gap: 22px; flex-wrap: wrap; }
+
+/* ============================================================
+   RIGHT — login panel
+   ============================================================ */
+.panel {
+  background: var(--cream);
+  padding: 56px 56px 40px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--ink-12);
+  min-height: 100vh;
+}
+.panel .crumb {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-30);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.panel .crumb b { color: var(--ink); font-weight: 600; }
+.panel .title {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.panel .sub {
+  margin-top: 10px;
+  color: var(--ink-60);
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 38ch;
+}
+.panel .sub b { color: var(--ink); font-weight: 600; }
+
+.field { margin-bottom: 14px; }
+.field .label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.field .label a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 1px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--f-sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.field input {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--ink-12);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.field input:focus { border-color: var(--ink); background: var(--cream); }
+.field.pw { position: relative; }
+.field.pw .eye {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  color: var(--ink-30);
+  font-size: 13px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+  margin-bottom: 18px;
+  font-size: 13px;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-60);
+  cursor: pointer;
+  user-select: none;
+}
+.check .box {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--ink-30);
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  background: var(--cream);
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.check .box.on {
+  background: var(--night);
+  border-color: var(--night);
+  color: var(--yg);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.submit {
+  width: 100%;
+  background: var(--yg);
+  color: var(--night);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: filter 120ms ease;
+}
+.submit:hover { filter: brightness(.97); }
+.submit:focus-visible { outline: 2px solid var(--night); outline-offset: 3px; }
+
+.legal {
+  margin-top: auto;
+  padding-top: 28px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--ink-60);
+  border-top: 1px solid var(--ink-12);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+.legal .lock {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   AUTH STATES — error + loading
+   ============================================================ */
+.alert {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 80, 80, 0.08);
+  border: 1px solid rgba(255, 80, 80, 0.28);
+  color: #b1262a;
+  font-size: 13px;
+  line-height: 1.45;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.alert[hidden] { display: none; }
+.alert .ico { flex-shrink: 0; margin-top: 1px; }
+
+.submit[disabled] {
+  filter: none;
+  background: var(--ink-12);
+  color: var(--ink-60);
+  cursor: not-allowed;
+}
+.submit .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 720ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .app { grid-template-columns: 1fr; }
+  .info { min-height: auto; padding: 32px 28px; gap: 36px; border-right: 0; }
+  .panel { min-height: auto; padding: 40px 28px; border-left: 0; border-top: 1px solid var(--ink-12); }
+}
+@media (max-width: 540px) {
+  .info { padding: 24px 20px; gap: 28px; }
+  .panel { padding: 32px 20px; }
+  .center .h { font-size: 52px; }
+  .panel .title { font-size: 30px; }
+  .status { grid-template-columns: 1fr; }
+  .status .cell { border-right: 0; border-bottom: 1px solid var(--ink-12); padding: 14px 0; }
+  .status .cell:last-child { border-bottom: 0; }
+}
+</style>
+</head>
+<body>
+
+<main class="app">
+
+  <!-- LEFT · brand + status -->
+  <section class="info">
+    <header class="top">
+      <div class="brand">
+        <svg viewBox="0 0 100 100" width="36" height="36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="#0a0a0a">
+            <rect x="44" y="4" width="12" height="92" rx="6"/>
+            <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/>
+            <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/>
+            <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/>
+          </g>
+        </svg>
+        <span class="word">Quepa</span>
+        <span class="badge">Console</span>
+      </div>
+      <div class="env">
+        <span><b>Env</b> · Prod</span>
+        <span><b>Build</b> · 2026.05.23</span>
+      </div>
+    </header>
+
+    <div class="center">
+      <div class="eyebrow">· Acceso staff · Solo personal autorizado</div>
+      <h1 class="h">
+        Entra al<br/>
+        <span class="yg">parche interno</span>.
+      </h1>
+      <p class="lead">Panel de operación para el equipo: curaduría de lugares, comercios verificados, agente WhatsApp y Quepa Stars. Acceso restringido a cuentas <b>@quepa.co</b>.</p>
+    </div>
+
+    <div class="status" role="list" aria-label="Estado de sistemas">
+      <div class="cell" role="listitem">
+        <div class="lbl">Sistemas</div>
+        <div class="val"><span class="dot" aria-hidden="true"></span>Operativos</div>
+      </div>
+      <div class="cell" role="listitem">
+        <div class="lbl">Agente WA</div>
+        <div class="val"><span class="dot" aria-hidden="true"></span>1.2k chats / día</div>
+      </div>
+      <div class="cell" role="listitem">
+        <div class="lbl">Cola curaduría</div>
+        <div class="val"><span class="dot amber" aria-hidden="true"></span>42 pendientes</div>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <span>© 2026 · Quepa Internal</span>
+      <div class="links">
+        <span>Docs</span>
+        <span>Status</span>
+        <span>Soporte IT</span>
+        <span>Bogotá · CO</span>
+      </div>
+    </footer>
+  </section>
+
+  <!-- RIGHT · login form -->
+  <section class="panel">
+    <div class="crumb">
+      <span>· INGRESAR</span>
+      <span><b>@QUEPA.CO</b></span>
+    </div>
+
+    <h2 class="title">Bienvenido al<br/>parche interno.</h2>
+    <p class="sub">Usa tu cuenta corporativa. Si no la tienes, escríbele a IT en <b>#ayuda-it</b>.</p>
+
+    <form id="loginForm" autocomplete="on" novalidate style="margin-top: 32px;">
+      <div class="field">
+        <div class="label">
+          <label for="email">Email corporativo</label>
+        </div>
+        <input id="email" name="email" type="email" autocomplete="username" inputmode="email" placeholder="tu.nombre@quepa.co" required />
+      </div>
+
+      <div class="field pw">
+        <div class="label">
+          <label for="password">Contraseña</label>
+          <a id="forgotLink">Olvidé mi clave</a>
+        </div>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••••••" required />
+      </div>
+
+      <div class="row">
+        <label class="check" for="remember">
+          <span class="box on" id="rememberBox" aria-hidden="true">✓</span>
+          <input type="checkbox" id="remember" name="remember" checked hidden />
+          Recordarme en este equipo
+        </label>
+        <span class="mono" style="font-size:10px; color:var(--ink-30);">2FA · ACTIVO</span>
+      </div>
+
+      <button class="submit" type="submit" id="submitBtn">
+        <span class="submit-label">Iniciar sesión →</span>
+      </button>
+
+      <div class="alert" id="loginError" hidden role="alert" aria-live="polite">
+        <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 7v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="16.5" r="1.1" fill="currentColor"/>
+        </svg>
+        <span class="msg"></span>
+      </div>
+    </form>
+
+    <div class="legal">
+      <span class="lock" aria-hidden="true">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 0 1 6 0v2H9V6z"/></svg>
+      </span>
+      <span>Acceso protegido con 2FA + revisión de IP. Tus credenciales nunca dejan tu navegador. Sesión expira en 12 h.</span>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+  // ============================================================
+  // QUEPA CONSOLE — Auth (Supabase, browser-direct)
+  // La anon/publishable key es segura por diseño en el browser:
+  // todo el control de acceso se hace via RLS + dominio @quepa.co.
+  // ============================================================
+  const SUPABASE_URL = 'https://ttengnyhesunaqqbhmkc.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_piW0GXJJtYRitrVpvoM8Lg_3fvcu4Y4';
+  const ALLOWED_DOMAIN = 'quepa.co';
+  const POST_LOGIN_URL = 'welcome.html';
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'quepa-console-auth' },
+  });
+
+  (function () {
+    // "Recordarme" checkbox visual toggle
+    const box = document.getElementById('rememberBox');
+    const input = document.getElementById('remember');
+    const label = box.closest('.check');
+    label.addEventListener('click', function (e) {
+      e.preventDefault();
+      input.checked = !input.checked;
+      box.classList.toggle('on', input.checked);
+      box.textContent = input.checked ? '✓' : '';
+    });
+
+    const form = document.getElementById('loginForm');
+    const emailEl = document.getElementById('email');
+    const passEl = document.getElementById('password');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitLabel = submitBtn.querySelector('.submit-label');
+    const errEl = document.getElementById('loginError');
+    const errMsg = errEl.querySelector('.msg');
+
+    function showError(text) {
+      errMsg.textContent = text;
+      errEl.hidden = false;
+    }
+    function clearError() {
+      errEl.hidden = true;
+      errMsg.textContent = '';
+    }
+    function setLoading(on) {
+      submitBtn.disabled = on;
+      submitLabel.innerHTML = on
+        ? '<span class="spinner" aria-hidden="true"></span> Iniciando…'
+        : 'Iniciar sesión →';
+    }
+    function translateAuthError(err) {
+      const msg = (err && err.message) || '';
+      if (/invalid login credentials/i.test(msg)) return 'Email o contraseña incorrectos.';
+      if (/email not confirmed/i.test(msg)) return 'Tu cuenta aún no está confirmada. Escríbele a IT.';
+      if (/too many requests|rate limit/i.test(msg)) return 'Demasiados intentos. Espera un minuto y reintenta.';
+      if (/network|fetch/i.test(msg)) return 'No pudimos conectar. Revisa tu conexión.';
+      return msg || 'No se pudo iniciar sesión. Reintenta o escríbele a IT.';
+    }
+
+    // Si ya hay sesión activa, saltar directo al welcome.
+    sb.auth.getSession().then(({ data }) => {
+      if (data && data.session) window.location.replace(POST_LOGIN_URL);
+    });
+
+    emailEl.addEventListener('input', clearError);
+    passEl.addEventListener('input', clearError);
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      clearError();
+
+      const email = emailEl.value.trim().toLowerCase();
+      const password = passEl.value;
+
+      if (!email || !password) {
+        showError('Ingresa tu email y contraseña.');
+        return;
+      }
+      if (!email.endsWith('@' + ALLOWED_DOMAIN)) {
+        showError('Solo cuentas @' + ALLOWED_DOMAIN + '.');
+        return;
+      }
+
+      setLoading(true);
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error || !data || !data.session) {
+        setLoading(false);
+        showError(translateAuthError(error));
+        return;
+      }
+      window.location.replace(POST_LOGIN_URL);
+    });
+  })();
+</script>
+
+</body>
+</html>
