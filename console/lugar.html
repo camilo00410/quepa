@@ -180,6 +180,27 @@ input, select, textarea { font-family: inherit; }
 .price-picker .pp .sub { display: block; font-size: 9px; letter-spacing: 0.14em; color: var(--ink-30); margin-top: 2px; font-weight: 500; }
 .price-picker .pp.on .sub { color: rgba(212,245,66,.6); }
 
+/* hours */
+.hours-meta { display: flex; align-items: center; gap: 10px; }
+.hours-meta .src-chip { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--ink-06); color: var(--ink-60); border: 1px solid var(--ink-12); }
+.hours-meta .src-chip.manual { background: var(--night); color: var(--yg); border-color: var(--night); }
+.hours-meta .verified { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-30); }
+.hours-empty { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--paper); border: 1px dashed var(--ink-12); border-radius: 10px; padding: 12px 16px; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-30); }
+.hday { display: flex; align-items: flex-start; gap: 12px; padding: 9px 0; border-bottom: 1px dashed var(--ink-06); }
+.hday:last-child { border-bottom: 0; }
+.hday .dname { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-60); width: 40px; padding-top: 9px; flex-shrink: 0; }
+.hday .slots { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; flex: 1; min-width: 0; }
+.hday .closed { font-size: 12.5px; color: var(--ink-30); padding: 7px 0; }
+.hslot { display: inline-flex; align-items: center; gap: 4px; background: var(--paper); border: 1px solid var(--ink-12); border-radius: 9px; padding: 3px 6px; }
+.hslot input.ht { font-family: var(--f-mono); font-size: 12.5px; width: 52px; text-align: center; background: transparent; border: 0; outline: none; color: var(--ink); padding: 4px 0; }
+.hslot input.ht:focus { background: var(--cream); border-radius: 5px; }
+.hslot .dash { color: var(--ink-30); font-size: 12px; }
+.hslot .flag { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-60); background: var(--ink-06); padding: 2px 5px; border-radius: 4px; white-space: nowrap; }
+.hslot .hx { color: var(--ink-30); font-size: 12px; padding: 0 3px; }
+.hslot .hx:hover { color: var(--red); }
+.hadd { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-60); border: 1px dashed var(--ink-12); border-radius: 999px; padding: 6px 10px; }
+.hadd:hover { border-color: var(--ink); color: var(--ink); }
+
 /* map */
 .map {
   aspect-ratio: 4/3;
@@ -260,6 +281,9 @@ input, select, textarea { font-family: inherit; }
   .detail-head h1 { font-size: 30px; }
   .detail-head, .detail-tabs, .detail-form { padding-left: 18px; padding-right: 18px; }
   .grid-3 { grid-template-columns: 1fr; }
+  .hday { flex-direction: column; gap: 4px; }
+  .hday .dname { padding-top: 0; }
+  .hours-empty { flex-direction: column; align-items: flex-start; }
 }
 </style>
 </head>
@@ -296,6 +320,14 @@ input, select, textarea { font-family: inherit; }
       <a class="nav-item active" href="lugares.html">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13z"/><circle cx="12" cy="9" r="3"/></svg>
         <span>Lugares</span>
+      </a>
+      <a class="nav-item" href="mapa.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><path d="M9 3v15"/><path d="M15 6v15"/></svg>
+        <span>Mapa</span>
+      </a>
+      <a class="nav-item" href="descubrir.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+        <span>Descubrir</span>
       </a>
       <a class="nav-item">
         <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
@@ -560,6 +592,33 @@ input, select, textarea { font-family: inherit; }
             </div>
           </div>
 
+          <!-- HORARIOS -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 05 · HORARIOS</span>
+                <h3>¿Cuándo abre?</h3>
+              </div>
+              <div class="hours-meta">
+                <span class="src-chip" id="hoursSourceChip">—</span>
+                <span class="verified" id="hoursVerified" hidden></span>
+              </div>
+            </div>
+
+            <div class="hours-empty" id="hoursEmpty" hidden>
+              <span>· Sin horario registrado</span>
+              <button type="button" class="btn" id="hoursRegisterBtn">Registrar horario</button>
+            </div>
+
+            <div id="hoursGrid" hidden></div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Nota de horario</span></div>
+              <input id="f-hours_note" placeholder="Domingos y festivos cerrado…" />
+              <div class="help">Excepciones que la grilla semanal no captura (festivos, temporadas). Quepa la comparte tal cual al recomendar.</div>
+            </div>
+          </div>
+
         </div>
 
         <!-- RIGHT: SIDE -->
@@ -680,7 +739,193 @@ input, select, textarea { font-family: inherit; }
     tags: { highlights: [], vibe: [], ideal_for: [], amenities: [] },
     price_range: null,
     original: null, // copy for change detection / cancel
+    // hours: contrato de quepa-webhook (places.hours JSONB) — null = DESCONOCIDO,
+    // [] = cerrado ese día, cierre < apertura = cruza medianoche, 00:00–24:00 = 24h.
+    // gridDirty/noteDirty deciden qué columnas van al payload: solo la grilla
+    // tocada marca hours_source='manual' (no re-atribuir horarios de Google por
+    // editar la nota).
+    hours: {
+      grid: { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] },
+      note: '',
+      source: null,
+      verifiedAt: null,
+      visible: false,
+      gridDirty: false,
+      noteDirty: false,
+    },
   };
+
+  // ---------- hours ----------
+  const DAYS = [['mon', 'LUN'], ['tue', 'MAR'], ['wed', 'MIÉ'], ['thu', 'JUE'], ['fri', 'VIE'], ['sat', 'SÁB'], ['sun', 'DOM']];
+  const TIME_RE = /^([01]\d|2[0-3]|24):[0-5]\d$/;
+  const timeMin = (t) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3));
+
+  function loadHours(data) {
+    const h = state.hours;
+    const raw = data && data.hours && typeof data.hours === 'object' ? data.hours : null;
+    DAYS.forEach(([key]) => {
+      const day = raw && Array.isArray(raw[key]) ? raw[key] : [];
+      h.grid[key] = day.filter(iv => Array.isArray(iv) && iv.length === 2).map(iv => [String(iv[0]), String(iv[1])]);
+    });
+    h.note = (data && data.hours_note) || '';
+    h.source = (data && data.hours_source) || null;
+    h.verifiedAt = (data && data.hours_verified_at) || null;
+    h.visible = DAYS.some(([key]) => h.grid[key].length > 0);
+    h.gridDirty = false;
+    h.noteDirty = false;
+    document.getElementById('f-hours_note').value = h.note;
+    renderHoursMeta();
+    renderHoursGrid();
+  }
+
+  function renderHoursMeta() {
+    const chip = document.getElementById('hoursSourceChip');
+    const ver = document.getElementById('hoursVerified');
+    chip.textContent = state.hours.source || '—';
+    chip.classList.toggle('manual', state.hours.source === 'manual');
+    ver.textContent = state.hours.verifiedAt ? 'Verificado ' + relTime(state.hours.verifiedAt) : '';
+    ver.hidden = !state.hours.verifiedAt;
+  }
+
+  function updateSlotFlag(wrap, iv) {
+    const flag = wrap.querySelector('.flag');
+    const [open, close] = iv;
+    const valid = TIME_RE.test(open) && TIME_RE.test(close) && open !== '24:00';
+    if (valid && open === '00:00' && close === '24:00') {
+      flag.hidden = false;
+      flag.textContent = '24 h';
+      flag.title = 'Abierto 24 horas';
+    } else if (valid && close !== '24:00' && timeMin(close) < timeMin(open)) {
+      flag.hidden = false;
+      flag.textContent = '⤵ medianoche';
+      flag.title = 'Cruza medianoche: cierra la madrugada del día siguiente';
+    } else {
+      flag.hidden = true;
+    }
+  }
+
+  function buildSlot(key, index) {
+    const iv = state.hours.grid[key][index];
+    const wrap = document.createElement('span');
+    wrap.className = 'hslot';
+    wrap.dataset.day = key;
+    wrap.dataset.i = index;
+    const open = document.createElement('input');
+    const close = document.createElement('input');
+    [open, close].forEach((inp, pos) => {
+      inp.className = 'ht';
+      inp.maxLength = 5;
+      inp.placeholder = pos ? '22:00' : '08:00';
+      inp.value = iv[pos];
+      inp.addEventListener('input', () => {
+        iv[pos] = inp.value.trim();
+        state.hours.gridDirty = true;
+        updateSlotFlag(wrap, iv);
+      });
+    });
+    const dash = document.createElement('span');
+    dash.className = 'dash';
+    dash.textContent = '–';
+    const flag = document.createElement('span');
+    flag.className = 'flag';
+    flag.hidden = true;
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'hx';
+    x.textContent = '×';
+    x.title = 'Quitar franja';
+    x.addEventListener('click', () => {
+      state.hours.grid[key].splice(index, 1);
+      state.hours.gridDirty = true;
+      renderHoursGrid();
+    });
+    wrap.append(open, dash, close, flag, x);
+    updateSlotFlag(wrap, iv);
+    return wrap;
+  }
+
+  function renderHoursGrid(focusDay) {
+    const grid = document.getElementById('hoursGrid');
+    const empty = document.getElementById('hoursEmpty');
+    grid.hidden = !state.hours.visible;
+    empty.hidden = state.hours.visible;
+    if (!state.hours.visible) return;
+    grid.innerHTML = '';
+    DAYS.forEach(([key, label]) => {
+      const row = document.createElement('div');
+      row.className = 'hday';
+      const name = document.createElement('span');
+      name.className = 'dname';
+      name.textContent = label;
+      const slots = document.createElement('div');
+      slots.className = 'slots';
+      const dayIvs = state.hours.grid[key];
+      if (!dayIvs.length) {
+        const closed = document.createElement('span');
+        closed.className = 'closed';
+        closed.textContent = 'Cerrado';
+        slots.appendChild(closed);
+      }
+      dayIvs.forEach((_, i) => slots.appendChild(buildSlot(key, i)));
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'hadd';
+      add.textContent = '+ franja';
+      add.addEventListener('click', () => {
+        state.hours.grid[key].push(['', '']);
+        state.hours.gridDirty = true;
+        renderHoursGrid(key);
+      });
+      slots.appendChild(add);
+      row.append(name, slots);
+      grid.appendChild(row);
+    });
+    if (focusDay) {
+      const last = state.hours.grid[focusDay].length - 1;
+      const slot = grid.querySelector(`[data-day="${focusDay}"][data-i="${last}"] input`);
+      if (slot) slot.focus();
+    }
+  }
+
+  function validateHours() {
+    for (const [key, label] of DAYS) {
+      const ivs = state.hours.grid[key];
+      for (let i = 0; i < ivs.length; i++) {
+        const [open, close] = ivs[i];
+        if (!TIME_RE.test(open) || open === '24:00') return `${label} · franja ${i + 1}: apertura inválida (formato HH:MM)`;
+        if (!TIME_RE.test(close)) return `${label} · franja ${i + 1}: cierre inválido (formato HH:MM)`;
+        if (open === close) return `${label} · franja ${i + 1}: apertura y cierre iguales`;
+      }
+      // solape dentro del día; cruce de medianoche extiende el fin más allá de 24:00
+      const spans = ivs.map(([open, close]) => {
+        const start = timeMin(open);
+        let end = timeMin(close);
+        if (end <= start) end += 1440;
+        return [start, end];
+      });
+      for (let a = 0; a < spans.length; a++) {
+        for (let b = a + 1; b < spans.length; b++) {
+          if (spans[a][0] < spans[b][1] && spans[b][0] < spans[a][1]) {
+            return `${label}: las franjas ${a + 1} y ${b + 1} se solapan`;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // canónico: 7 claves mon..sun en orden fijo, franjas ordenadas por apertura;
+  // grilla vacía en todos los días = null (horario DESCONOCIDO, nunca "cerrado 7/7")
+  function serializeHours() {
+    if (!DAYS.some(([key]) => state.hours.grid[key].length)) return null;
+    const out = {};
+    DAYS.forEach(([key]) => {
+      out[key] = state.hours.grid[key]
+        .map(([open, close]) => [open, close])
+        .sort((a, b) => timeMin(a[0]) - timeMin(b[0]));
+    });
+    return out;
+  }
 
   // ---------- tag input ----------
   function renderTags(container) {
@@ -786,6 +1031,7 @@ input, select, textarea { font-family: inherit; }
       state.active = true;
       renderActiveToggle();
       renderMap();
+      loadHours(null);
       finishLoad();
       return;
     }
@@ -847,6 +1093,7 @@ input, select, textarea { font-family: inherit; }
     renderPrice();
     renderActiveToggle();
     renderMap();
+    loadHours(data);
     finishLoad();
   }
 
@@ -908,6 +1155,22 @@ input, select, textarea { font-family: inherit; }
       toast('Falta(n): ' + errs.join(', '), 'err');
       return;
     }
+    // horarios: columnas en el payload solo según lo tocado (guardado no destructivo)
+    const h = state.hours;
+    if (h.gridDirty) {
+      const herr = validateHours();
+      if (herr) {
+        toast('Horario · ' + herr, 'err');
+        return;
+      }
+      const serialized = serializeHours();
+      payload.hours = serialized;
+      payload.hours_note = document.getElementById('f-hours_note').value.trim() || null;
+      payload.hours_source = serialized ? 'manual' : null;
+      payload.hours_verified_at = serialized ? new Date().toISOString() : null;
+    } else if (h.noteDirty) {
+      payload.hours_note = document.getElementById('f-hours_note').value.trim() || null;
+    }
     saveBtn.disabled = true;
     label.textContent = 'Guardando…';
     try {
@@ -920,6 +1183,16 @@ input, select, textarea { font-family: inherit; }
         const { error } = await sb.from('places').update(payload).eq('id', state.id);
         if (error) throw error;
         toast('Cambios guardados ✓', 'ok');
+        // refresh hours meta solo tras éxito (un fallo no debe cambiar la cabecera)
+        if (h.gridDirty) {
+          h.source = payload.hours ? 'manual' : null;
+          h.verifiedAt = payload.hours_verified_at || null;
+          h.visible = !!payload.hours;
+          renderHoursMeta();
+          if (!payload.hours) renderHoursGrid();
+        }
+        h.gridDirty = false;
+        h.noteDirty = false;
         // refresh meta lines
         document.getElementById('metaUpdated').textContent = relTime(new Date().toISOString());
         document.getElementById('placeName').textContent = payload.name;
@@ -975,6 +1248,16 @@ input, select, textarea { font-family: inherit; }
     // whatsapp pill
     document.getElementById('f-whatsapp').addEventListener('input', (e) => {
       document.getElementById('whatsappPill').hidden = !e.target.value.trim();
+    });
+
+    // hours: registrar despliega la grilla vacía (sin marcar dirty — agregar
+    // una franja es lo que constituye una edición); la nota tiene flag propio
+    document.getElementById('hoursRegisterBtn').addEventListener('click', () => {
+      state.hours.visible = true;
+      renderHoursGrid();
+    });
+    document.getElementById('f-hours_note').addEventListener('input', () => {
+      state.hours.noteDirty = true;
     });
 
     wireTagInputs();

@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Quepa Console — Descubrir</title>
+<meta name="theme-color" content="#0A0A0A" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230A0A0A'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --green: #25D366;
+  --yg: #D4F542;
+  --night: #0a0a0a;
+  --cream: #ffffff;
+  --paper: #f3f1ec;
+  --ink: #0a0a0a;
+  --ink-80: rgba(10,10,10,.80);
+  --ink-60: rgba(10,10,10,.60);
+  --ink-30: rgba(10,10,10,.30);
+  --ink-12: rgba(10,10,10,.12);
+  --ink-06: rgba(10,10,10,.06);
+  --red: #d94a4a;
+  --amber: #f5b942;
+  --f-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body { background: var(--paper); font-family: var(--f-sans); color: var(--ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+h1, h2, h3, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: none; cursor: pointer; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; }
+input, select, textarea { font-family: inherit; }
+[hidden] { display: none !important; }
+
+.console { width: 100vw; height: 100vh; display: grid; grid-template-columns: 232px 1fr; background: var(--paper); overflow: hidden; }
+.sidebar { background: var(--night); color: #fff; padding: 20px 16px; display: flex; flex-direction: column; gap: 18px; border-right: 1px solid var(--ink-12); overflow-y: auto; }
+.sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px; }
+.sidebar .brand .word { font-weight: 700; font-size: 19px; letter-spacing: -0.04em; }
+.sidebar .brand .tag { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--yg); background: rgba(212,245,66,.12); border: 1px solid rgba(212,245,66,.3); padding: 3px 7px; border-radius: 999px; font-weight: 600; }
+.sidebar .search { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 9px 12px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.55); font-size: 13px; }
+.sidebar .search .kbd { margin-left: auto; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.1em; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); padding: 2px 6px; border-radius: 4px; color: rgba(255,255,255,.7); }
+.sidebar .nav-group { display: flex; flex-direction: column; gap: 1px; }
+.sidebar .nav-label { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.4); margin: 8px 8px 6px; }
+.sidebar .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: rgba(255,255,255,.75); font-size: 13.5px; font-weight: 500; }
+.sidebar .nav-item:hover { background: rgba(255,255,255,.04); color: #fff; }
+.sidebar .nav-item.active { background: var(--yg); color: var(--night); font-weight: 700; }
+.sidebar .nav-item.active .ico { color: var(--night); opacity: 1; }
+.sidebar .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; opacity: .8; }
+.sidebar .nav-item .count { margin-left: auto; font-family: var(--f-mono); font-size: 10px; color: rgba(255,255,255,.5); background: rgba(255,255,255,.04); padding: 1px 7px; border-radius: 999px; font-weight: 600; }
+.sidebar .nav-item.active .count { background: var(--night); color: var(--yg); }
+.sidebar .nav-item .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); margin-left: auto; }
+.sidebar .user { margin-top: auto; border-top: 1px solid rgba(255,255,255,.1); padding-top: 14px; display: flex; align-items: center; gap: 10px; }
+.sidebar .user .av { width: 32px; height: 32px; border-radius: 50%; background: var(--yg); color: var(--night); display: grid; place-items: center; font-weight: 800; font-size: 12px; letter-spacing: -0.02em; }
+.sidebar .user .meta { font-size: 12px; line-height: 1.3; overflow: hidden; }
+.sidebar .user .meta b { color: #fff; font-weight: 600; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar .user .meta span { color: rgba(255,255,255,.5); display: block; font-family: var(--f-mono); letter-spacing: 0.1em; font-size: 9px; text-transform: uppercase; }
+.sidebar .user .logout { margin-left: auto; color: rgba(255,255,255,.4); }
+.sidebar .user .logout:hover { color: var(--yg); }
+
+.main { display: flex; flex-direction: column; height: 100%; overflow: hidden; min-width: 0; }
+.topbar { height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--ink-12); background: var(--paper); padding: 0 24px; display: flex; align-items: center; gap: 18px; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+.topbar .crumbs { display: flex; align-items: center; gap: 10px; }
+.topbar .crumbs b { color: var(--ink); font-weight: 600; }
+.topbar .crumbs .sep { opacity: .5; }
+.topbar .right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.topbar .right .env { display: flex; align-items: center; gap: 6px; }
+.topbar .right .env .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); }
+
+.page-head { padding: 22px 28px 14px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; border-bottom: 1px solid var(--ink-12); }
+.page-head .eyebrow { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-60); margin-bottom: 6px; }
+.page-head h1 { font-size: 40px; font-weight: 700; letter-spacing: -0.035em; line-height: 1; display: flex; align-items: baseline; gap: 12px; }
+.page-head h1 .count { font-family: var(--f-mono); font-size: 14px; letter-spacing: 0.1em; color: var(--ink-30); font-weight: 500; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 600; border: 1px solid var(--ink-12); background: var(--cream); color: var(--ink); letter-spacing: -0.005em; white-space: nowrap; }
+.btn:hover { background: #fafaf6; }
+.btn.primary { background: var(--night); color: var(--yg); border-color: var(--night); }
+.btn.warn { background: var(--yg); border-color: var(--yg); color: var(--night); }
+.btn svg { width: 15px; height: 15px; }
+
+.discover { flex: 1; min-height: 0; display: grid; grid-template-columns: 360px 1fr 360px; background: var(--cream); }
+.panel { min-height: 0; overflow: auto; background: var(--paper); border-right: 1px solid var(--ink-12); padding: 18px; }
+.panel.right { border-right: 0; border-left: 1px solid var(--ink-12); }
+.section { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.section .hd { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.section .hd h2 { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+.section .hd .meta { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.field label { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+.field input, .field select, .field textarea {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--ink-12);
+  border-radius: 9px;
+  padding: 10px 11px;
+  font-size: 13.5px;
+  outline: none;
+  color: var(--ink);
+}
+.field textarea { min-height: 80px; resize: vertical; line-height: 1.45; }
+.field input:focus, .field select:focus, .field textarea:focus { background: var(--cream); border-color: var(--ink); }
+.query-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.quick { padding: 9px 10px; border-radius: 9px; background: var(--paper); border: 1px solid var(--ink-12); text-align: left; font-size: 12.5px; font-weight: 700; color: var(--ink-80); }
+.quick:hover { background: #fafaf6; border-color: var(--ink-30); }
+
+.maps { min-width: 0; min-height: 0; display: grid; grid-template-rows: auto 1fr; }
+.maps-bar { min-height: 64px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--ink-12); }
+.maps-bar .query { min-width: 0; }
+.maps-bar .query .label { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-60); margin-bottom: 4px; }
+.maps-bar .query h2 { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.frame-wrap { min-height: 0; position: relative; background: #d9d6cd; }
+.frame-wrap iframe { width: 100%; height: 100%; border: 0; display: block; background: #d9d6cd; }
+.frame-state { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--ink-60); background: #d9d6cd; }
+.frame-state .spinner { width: 28px; height: 28px; border: 2px solid var(--ink-12); border-right-color: var(--ink); border-radius: 50%; animation: spin 720ms linear infinite; margin: 0 auto 12px; }
+.frame-state .title { font-size: 16px; font-weight: 800; color: var(--ink); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.candidate-list { display: flex; flex-direction: column; gap: 8px; }
+.candidate { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 10px; border-radius: 10px; border: 1px solid var(--ink-12); background: var(--paper); }
+.candidate .name { font-weight: 800; font-size: 13.5px; letter-spacing: -0.01em; }
+.candidate .sub { margin-top: 3px; font-size: 12px; color: var(--ink-60); }
+.candidate .x { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: var(--ink-30); }
+.candidate .x:hover { color: var(--red); background: rgba(217,74,74,.08); }
+.empty { padding: 18px 0; text-align: center; color: var(--ink-30); font-size: 13px; }
+.toast { position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%); background: var(--night); color: var(--yg); padding: 12px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; opacity: 0; pointer-events: none; transition: opacity 180ms ease, transform 180ms ease; z-index: 20; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+.toast.err { background: var(--red); color: #fff; }
+
+@media (max-width: 1200px) {
+  .discover { grid-template-columns: 330px 1fr; }
+  .panel.right { display: none; }
+}
+@media (max-width: 860px) {
+  body { overflow: auto; }
+  .console { min-height: 100vh; height: auto; grid-template-columns: 64px 1fr; }
+  .sidebar { padding: 16px 8px; }
+  .sidebar .brand .word, .sidebar .brand .tag, .sidebar .search span, .sidebar .nav-label, .sidebar .nav-item span, .sidebar .nav-item .count, .sidebar .user .meta { display: none; }
+  .sidebar .nav-item { justify-content: center; padding: 10px; }
+  .sidebar .user { justify-content: center; }
+  .main { min-height: 100vh; }
+  .page-head { padding: 18px; flex-direction: column; align-items: flex-start; }
+  .page-head h1 { font-size: 32px; }
+  .discover { grid-template-columns: 1fr; grid-template-rows: auto minmax(520px, 70vh); }
+  .panel { border-right: 0; border-bottom: 1px solid var(--ink-12); }
+}
+</style>
+</head>
+<body>
+<div class="console">
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="#D4F542">
+          <rect x="44" y="4" width="12" height="92" rx="6"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/>
+        </g>
+      </svg>
+      <span class="word">Quepa</span>
+      <span class="tag">Console</span>
+    </div>
+
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <span>Buscar</span>
+      <span class="kbd">⌘K</span>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Operación</div>
+      <a class="nav-item" href="welcome.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item" href="lugares.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13z"/><circle cx="12" cy="9" r="3"/></svg>
+        <span>Lugares</span>
+        <span class="count" id="navCount">—</span>
+      </a>
+      <a class="nav-item" href="mapa.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><path d="M9 3v15"/><path d="M15 6v15"/></svg>
+        <span>Mapa</span>
+      </a>
+      <a class="nav-item active" href="descubrir.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+        <span>Descubrir</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+        <span>Comercios</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Curaduría</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <span>Agente WhatsApp</span>
+        <span class="pulse"></span>
+      </a>
+    </div>
+
+    <div class="user">
+      <div class="av" id="userAvatar">—</div>
+      <div class="meta">
+        <b id="userName">—</b>
+        <span id="userRole">Staff</span>
+      </div>
+      <button class="logout" id="logoutBtn" title="Cerrar sesión">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <section class="main">
+    <div class="topbar">
+      <div class="crumbs">
+        <span>Quepa Console</span>
+        <span class="sep">/</span>
+        <b>Descubrir</b>
+      </div>
+      <div class="right">
+        <span class="env"><span class="dot"></span> Prod · BOG-1</span>
+      </div>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <div class="eyebrow">· Módulo · Google Maps discovery</div>
+        <h1>Descubrir <span class="count" id="candidateCount">0 candidatos</span></h1>
+      </div>
+      <button class="btn warn" id="copyJsonBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copiar JSON
+      </button>
+    </div>
+
+    <div class="discover">
+      <aside class="panel">
+        <div class="section">
+          <div class="hd">
+            <h2>Búsqueda</h2>
+            <span class="meta">Maps web</span>
+          </div>
+          <div class="field">
+            <label for="qInput">Query</label>
+            <input id="qInput" value="atractivos turísticos Huila Colombia" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="cityInput">Ciudad</label>
+            <input id="cityInput" value="Huila" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="categorySelect">Categoría sugerida</label>
+            <select id="categorySelect">
+              <option value="activity">Actividad</option>
+              <option value="viewpoint">Mirador</option>
+              <option value="restaurant">Restaurante</option>
+              <option value="cafe">Café</option>
+              <option value="hotel">Hotel</option>
+              <option value="bar">Bar</option>
+              <option value="other">Otro</option>
+            </select>
+          </div>
+          <div class="query-actions">
+            <button class="btn primary" id="searchBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              Buscar
+            </button>
+            <a class="btn" id="openMapsBtn" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+              Abrir
+            </a>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="hd">
+            <h2>Plantillas</h2>
+            <span class="meta">Huila</span>
+          </div>
+          <div class="quick-grid" id="quickGrid">
+            <button class="quick" data-query="restaurantes recomendados Huila Colombia" data-category="restaurant">Restaurantes</button>
+            <button class="quick" data-query="cafés especiales Huila Colombia" data-category="cafe">Cafés</button>
+            <button class="quick" data-query="hoteles boutique Huila Colombia" data-category="hotel">Hoteles</button>
+            <button class="quick" data-query="miradores Huila Colombia" data-category="viewpoint">Miradores</button>
+            <button class="quick" data-query="atractivos turísticos Huila Colombia" data-category="activity">Atractivos</button>
+            <button class="quick" data-query="bares gastrobar Neiva Huila" data-category="bar">Bares</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="hd">
+            <h2>Candidato</h2>
+            <span class="meta">Manual</span>
+          </div>
+          <div class="field">
+            <label for="nameInput">Nombre</label>
+            <input id="nameInput" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="mapsUrlInput">URL de Google Maps</label>
+            <input id="mapsUrlInput" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="notesInput">Notas</label>
+            <textarea id="notesInput"></textarea>
+          </div>
+          <button class="btn primary" id="addCandidateBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            Agregar candidato
+          </button>
+        </div>
+      </aside>
+
+      <section class="maps">
+        <div class="maps-bar">
+          <div class="query">
+            <div class="label">Búsqueda activa</div>
+            <h2 id="activeQuery">—</h2>
+          </div>
+          <button class="btn" id="copyUrlBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.1 0l2.8-2.8a5 5 0 0 0-7.1-7.1L11 4.9"/><path d="M14 11a5 5 0 0 0-7.1 0l-2.8 2.8a5 5 0 0 0 7.1 7.1L13 19.1"/></svg>
+            Copiar URL
+          </button>
+        </div>
+        <div class="frame-wrap">
+          <iframe id="mapsFrame" title="Google Maps discovery" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <div class="frame-state" id="frameState"><div><div class="spinner"></div><div class="title">Cargando Maps</div></div></div>
+        </div>
+      </section>
+
+      <aside class="panel right">
+        <div class="section">
+          <div class="hd">
+            <h2>Candidatos</h2>
+            <span class="meta" id="candidateMeta">0</span>
+          </div>
+          <div class="candidate-list" id="candidateList">
+            <div class="empty">Sin candidatos</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(() => {
+  const SUPABASE_URL = 'https://ttengnyhesunaqqbhmkc.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_piW0GXJJtYRitrVpvoM8Lg_3fvcu4Y4';
+  const LOGIN_URL = 'index.html';
+  const STORAGE_KEY = 'quepa.mapsDiscoveryCandidates.v1';
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+  });
+
+  const CATEGORY_LABEL = {
+    hotel: 'Hotel',
+    restaurant: 'Restaurante',
+    activity: 'Actividad',
+    viewpoint: 'Mirador',
+    bar: 'Bar',
+    cafe: 'Café',
+    other: 'Otro',
+  };
+
+  const state = {
+    mapsUrl: '',
+    candidates: [],
+  };
+
+  function initials(name) {
+    const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    return (parts[0]?.[0] || 'Q') + (parts[1]?.[0] || '');
+  }
+
+  function nameFromEmail(email) {
+    const local = (email || '').split('@')[0] || 'staff';
+    return local.split(/[._-]+/).filter(Boolean).map(s => s[0].toUpperCase() + s.slice(1)).join(' ');
+  }
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function toast(message, kind = 'ok') {
+    const t = document.getElementById('toast');
+    t.textContent = message;
+    t.classList.toggle('err', kind === 'err');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  async function ensureSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.replace(LOGIN_URL); return null; }
+    const user = session.user;
+    const displayName = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || nameFromEmail(user.email);
+    document.getElementById('userName').textContent = displayName;
+    document.getElementById('userAvatar').textContent = initials(displayName).toUpperCase();
+    return session;
+  }
+
+  async function loadCount() {
+    const { count } = await sb.from('places').select('id', { count: 'exact', head: true });
+    document.getElementById('navCount').textContent = (count ?? 0).toLocaleString('es-CO');
+  }
+
+  function buildQuery() {
+    const q = document.getElementById('qInput').value.trim();
+    const city = document.getElementById('cityInput').value.trim();
+    return [q, city].filter(Boolean).join(' ');
+  }
+
+  function mapsEmbedUrl(query) {
+    return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+  }
+
+  function mapsOpenUrl(query) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  }
+
+  function searchMaps() {
+    const query = buildQuery();
+    if (!query) {
+      toast('Falta query', 'err');
+      return;
+    }
+
+    const frame = document.getElementById('mapsFrame');
+    const frameState = document.getElementById('frameState');
+    state.mapsUrl = mapsOpenUrl(query);
+    document.getElementById('activeQuery').textContent = query;
+    document.getElementById('openMapsBtn').href = state.mapsUrl;
+    frameState.hidden = false;
+    frame.src = mapsEmbedUrl(query);
+    frame.onload = () => { frameState.hidden = true; };
+  }
+
+  function loadCandidates() {
+    try {
+      state.candidates = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch {
+      state.candidates = [];
+    }
+  }
+
+  function saveCandidates() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.candidates));
+  }
+
+  function renderCandidates() {
+    const list = document.getElementById('candidateList');
+    const count = state.candidates.length;
+    document.getElementById('candidateCount').textContent = `${count.toLocaleString('es-CO')} candidato${count === 1 ? '' : 's'}`;
+    document.getElementById('candidateMeta').textContent = count.toLocaleString('es-CO');
+    if (!count) {
+      list.innerHTML = '<div class="empty">Sin candidatos</div>';
+      return;
+    }
+    list.innerHTML = state.candidates.map((c, i) => `
+      <div class="candidate">
+        <div>
+          <div class="name">${escapeHtml(c.name)}</div>
+          <div class="sub">${escapeHtml([CATEGORY_LABEL[c.category] || c.category, c.city, c.region].filter(Boolean).join(' · '))}</div>
+        </div>
+        <button class="x" type="button" data-remove="${i}" aria-label="Eliminar">×</button>
+      </div>
+    `).join('');
+  }
+
+  function addCandidate() {
+    const name = document.getElementById('nameInput').value.trim();
+    const city = document.getElementById('cityInput').value.trim() || 'Huila';
+    const category = document.getElementById('categorySelect').value;
+    const google_maps_url = document.getElementById('mapsUrlInput').value.trim() || state.mapsUrl;
+    const notes = document.getElementById('notesInput').value.trim();
+
+    if (!name) {
+      toast('Falta nombre', 'err');
+      return;
+    }
+
+    state.candidates.unshift({
+      name,
+      city,
+      region: city === 'Huila' ? 'Huila' : 'Huila',
+      category,
+      google_maps_url,
+      notes,
+      discovered_at: new Date().toISOString(),
+      query: buildQuery(),
+    });
+    saveCandidates();
+    renderCandidates();
+    document.getElementById('nameInput').value = '';
+    document.getElementById('mapsUrlInput').value = '';
+    document.getElementById('notesInput').value = '';
+    toast('Candidato agregado');
+  }
+
+  async function copy(text, message) {
+    await navigator.clipboard.writeText(text);
+    toast(message);
+  }
+
+  function wire() {
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.replace(LOGIN_URL);
+    });
+
+    document.getElementById('searchBtn').addEventListener('click', searchMaps);
+    document.getElementById('qInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') searchMaps();
+    });
+    document.getElementById('cityInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') searchMaps();
+    });
+
+    document.getElementById('quickGrid').addEventListener('click', (e) => {
+      const button = e.target.closest('.quick');
+      if (!button) return;
+      document.getElementById('qInput').value = button.dataset.query || '';
+      document.getElementById('categorySelect').value = button.dataset.category || 'activity';
+      searchMaps();
+    });
+
+    document.getElementById('addCandidateBtn').addEventListener('click', addCandidate);
+    document.getElementById('candidateList').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-remove]');
+      if (!btn) return;
+      state.candidates.splice(Number(btn.dataset.remove), 1);
+      saveCandidates();
+      renderCandidates();
+    });
+
+    document.getElementById('copyUrlBtn').addEventListener('click', () => {
+      if (!state.mapsUrl) return toast('No hay URL activa', 'err');
+      copy(state.mapsUrl, 'URL copiada');
+    });
+
+    document.getElementById('copyJsonBtn').addEventListener('click', () => {
+      copy(JSON.stringify(state.candidates, null, 2), 'JSON copiado');
+    });
+  }
+
+  (async function boot() {
+    const session = await ensureSession();
+    if (!session) return;
+    wire();
+    loadCandidates();
+    renderCandidates();
+    await loadCount().catch(() => {});
+    searchMaps();
+  })();
+})();
+</script>
+</body>
+</html>
