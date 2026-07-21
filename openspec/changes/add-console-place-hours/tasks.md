@@ -32,8 +32,8 @@ Todo el trabajo vive en `console/lugar.html` (autocontenido: HTML + CSS + JS van
 
 ## 5. Verificación manual
 
-- [ ] 5.1 Servir local (`python3 -m http.server 8000` desde `quepa-landing`, abrir `/console/lugar.html?id=<uuid>` con sesión staff) y probar contra un lugar con `hours` de Google: grilla correcta, chip `GOOGLE`, guardar sin tocar horarios no incluye columnas de horarios en el payload (verificar en la pestaña Network)
-- [ ] 5.2 Probar la edición: corregir una franja → guardar → recargar y confirmar en la base `hours_source='manual'` y `hours_verified_at` nuevos; caso nota-solo → únicamente `hours_note` cambió
-- [ ] 5.3 Probar los casos límite: franja `18:00–02:00` (indicador de medianoche, guarda bien), `00:00–24:00` (24 horas), formato inválido y solapamiento (bloquean con mensaje), vaciar toda la grilla (queda `hours=null` y "Sin horario registrado")
-- [ ] 5.4 Probar lugar nuevo con y sin horarios, y un lugar de los lotes sin horario (estado null estable)
-- [ ] 5.5 Probar responsive: la grilla en viewport ≤960px y el layout de una columna ≤1100px sin desbordes
+- [x] 5.1 Servir local (`python3 -m http.server 8000` desde `quepa-landing`, abrir `/console/lugar.html?id=<uuid>` con sesión staff) y probar contra un lugar con `hours` de Google: grilla correcta, chip `GOOGLE`, guardar sin tocar horarios no incluye columnas de horarios en el payload (verificar en la pestaña Network)
+- [x] 5.2 Probar la edición: corregir una franja → guardar → recargar y confirmar en la base `hours_source='manual'` y `hours_verified_at` nuevos; caso nota-solo → únicamente `hours_note` cambió
+- [x] 5.3 Probar los casos límite: franja `18:00–02:00` (indicador de medianoche, guarda bien), `00:00–24:00` (24 horas), formato inválido y solapamiento (bloquean con mensaje), vaciar toda la grilla (queda `hours=null` y "Sin horario registrado")
+- [x] 5.4 Probar lugar nuevo con y sin horarios, y un lugar de los lotes sin horario (estado null estable)
+- [x] 5.5 Probar responsive: la grilla en viewport ≤960px y el layout de una columna ≤1100px sin desbordes

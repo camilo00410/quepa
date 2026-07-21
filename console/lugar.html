@@ -180,6 +180,66 @@ input, select, textarea { font-family: inherit; }
 .price-picker .pp .sub { display: block; font-size: 9px; letter-spacing: 0.14em; color: var(--ink-30); margin-top: 2px; font-weight: 500; }
 .price-picker .pp.on .sub { color: rgba(212,245,66,.6); }
 
+/* social links */
+.social-links { display: flex; flex-direction: column; gap: 10px; }
+.social-link-row {
+  display: grid;
+  grid-template-columns: 150px 1.35fr 120px 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  background: var(--paper);
+  border: 1px solid var(--ink-12);
+  border-radius: 10px;
+  padding: 8px;
+}
+.social-link-row select,
+.social-link-row input {
+  background: var(--cream);
+  border: 1px solid var(--ink-12);
+  border-radius: 8px;
+  padding: 8px 9px;
+  font-size: 12.5px;
+  color: var(--ink);
+  min-width: 0;
+}
+.social-link-row .primary-check { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-60); white-space: nowrap; }
+.social-link-row .primary-check input { width: 14px; height: 14px; padding: 0; accent-color: var(--night); }
+.social-link-row .remove-social { color: var(--ink-30); font-size: 16px; padding: 4px 7px; border-radius: 7px; }
+.social-link-row .remove-social:hover { color: var(--red); background: rgba(217,74,74,.08); }
+.social-empty { background: var(--paper); border: 1px dashed var(--ink-12); border-radius: 10px; padding: 12px 14px; font-size: 12.5px; color: var(--ink-60); line-height: 1.45; }
+.social-error { margin-top: 8px; color: var(--red); font-size: 12px; line-height: 1.45; }
+@media (max-width: 1180px) { .social-link-row { grid-template-columns: 1fr 1fr; } }
+
+/* sedes */
+.sedes-list { display: flex; flex-direction: column; gap: 10px; }
+.sede-row { display: flex; flex-direction: column; gap: 8px; background: var(--paper); border: 1px solid var(--ink-12); border-radius: 10px; padding: 10px; }
+.sede-row.primary { border-color: var(--night); box-shadow: 0 0 0 1px var(--night); }
+.sede-row .r1 { display: grid; grid-template-columns: 1fr 1fr 1.8fr auto; gap: 8px; align-items: end; }
+.sede-row .r2 { display: grid; grid-template-columns: 1fr .8fr .8fr 1fr 1fr; gap: 8px; }
+.sede-row input { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 8px; padding: 8px 9px; font-size: 12.5px; color: var(--ink); min-width: 0; width: 100%; }
+.sede-row input:focus { border-color: var(--ink); }
+.sede-row .cell { display: flex; flex-direction: column; gap: 3px; }
+.sede-row .sub-label { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-30); }
+.sede-row .side-acts { display: flex; align-items: center; gap: 8px; padding-bottom: 4px; }
+.sede-primary-check { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--ink-60); white-space: nowrap; }
+.sede-primary-check input { width: 14px; height: 14px; padding: 0; accent-color: var(--night); }
+.sede-row .remove-sede { color: var(--ink-30); font-size: 16px; padding: 4px 7px; border-radius: 7px; }
+.sede-row .remove-sede:hover { color: var(--red); background: rgba(217,74,74,.08); }
+.sede-row .remove-sede[disabled] { opacity: .35; cursor: not-allowed; }
+.sede-row .remove-sede[disabled]:hover { color: var(--ink-30); background: none; }
+.sedes-empty { background: var(--paper); border: 1px dashed var(--ink-12); border-radius: 10px; padding: 12px 14px; font-size: 12.5px; color: var(--ink-60); line-height: 1.45; }
+.sedes-error { margin-top: 8px; color: var(--red); font-size: 12px; line-height: 1.45; }
+.sedes-inactive { margin-top: 10px; }
+.sedes-inactive .toggle-inactive { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-60); border: 1px dashed var(--ink-12); border-radius: 999px; padding: 6px 10px; }
+.sedes-inactive .toggle-inactive:hover { border-color: var(--ink); color: var(--ink); }
+.sede-inactive-row { display: flex; align-items: center; gap: 10px; background: var(--paper); border: 1px solid var(--ink-06); border-radius: 10px; padding: 8px 12px; margin-top: 8px; color: var(--ink-60); font-size: 12.5px; }
+.sede-inactive-row b { color: var(--ink-80); font-weight: 600; }
+.sede-inactive-row .reactivate { margin-left: auto; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-60); border: 1px solid var(--ink-12); border-radius: 999px; padding: 5px 10px; }
+.sede-inactive-row .reactivate:hover { border-color: var(--ink); color: var(--ink); }
+.section-locked-note { background: var(--ink-06); border: 1px dashed var(--ink-12); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; color: var(--ink-60); margin-bottom: 14px; line-height: 1.5; }
+.section-locked-note b { color: var(--ink); }
+@media (max-width: 960px) { .sede-row .r1, .sede-row .r2 { grid-template-columns: 1fr 1fr; } }
+
 /* hours */
 .hours-meta { display: flex; align-items: center; gap: 10px; }
 .hours-meta .src-chip { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--ink-06); color: var(--ink-60); border: 1px solid var(--ink-12); }
@@ -528,6 +588,8 @@ input, select, textarea { font-family: inherit; }
               </div>
             </div>
 
+            <div class="section-locked-note" id="ubicacionLockNote" hidden>Este lugar tiene <b id="lockNoteCount">—</b> sedes: la ubicación se edita por sede en <b>· 06 · SEDES</b>. Estos campos reflejan la sede principal.</div>
+
             <div class="field-d">
               <div class="label"><span>Dirección</span></div>
               <input id="f-address" />
@@ -543,8 +605,8 @@ input, select, textarea { font-family: inherit; }
                 <input id="f-region" />
               </div>
               <div class="field-d">
-                <div class="label"><span>Barrio</span><span style="color:var(--ink-30);">No persiste</span></div>
-                <input id="f-barrio" disabled placeholder="—" />
+                <div class="label"><span>Zona / Barrio</span><span style="color:var(--ink-30);">Sede principal</span></div>
+                <input id="f-barrio" placeholder="Cuba, Circunvalar…" />
               </div>
             </div>
 
@@ -569,6 +631,8 @@ input, select, textarea { font-family: inherit; }
               </div>
             </div>
 
+            <div class="section-locked-note" id="contactoLockNote" hidden>Este lugar tiene varias sedes: teléfono y WhatsApp se editan por sede en <b>· 06 · SEDES</b>. Estos campos reflejan la sede principal.</div>
+
             <div class="grid-2">
               <div class="field-d">
                 <div class="label"><span>Teléfono</span></div>
@@ -589,6 +653,17 @@ input, select, textarea { font-family: inherit; }
                 <div class="label"><span>Booking URL</span></div>
                 <input id="f-booking_url" type="url" placeholder="https://…" />
               </div>
+            </div>
+
+            <div class="field-d" style="margin-top: 16px;">
+              <div class="label">
+                <span>Redes sociales</span>
+                <button type="button" class="act" id="addSocialBtn">+ Agregar red</button>
+              </div>
+              <div class="social-links" id="socialLinks"></div>
+              <div class="social-empty" id="socialEmpty">Sin redes registradas. Agrega Instagram, Facebook, TikTok, YouTube, Google Maps, Canal de WhatsApp, website u otra fuente oficial.</div>
+              <div class="social-error" id="socialError" hidden></div>
+              <div class="help">Estas redes se guardan en <code>place_social_links</code>. Quepa solo las comparte si están cargadas aquí; no inventa handles.</div>
             </div>
           </div>
 
@@ -617,6 +692,22 @@ input, select, textarea { font-family: inherit; }
               <input id="f-hours_note" placeholder="Domingos y festivos cerrado…" />
               <div class="help">Excepciones que la grilla semanal no captura (festivos, temporadas). Quepa la comparte tal cual al recomendar.</div>
             </div>
+          </div>
+
+          <!-- SEDES -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 06 · SEDES</span>
+                <h3>Dónde está físicamente</h3>
+              </div>
+              <button type="button" class="act" id="addSedeBtn">+ Agregar sede</button>
+            </div>
+            <div class="sedes-list" id="sedesList"></div>
+            <div class="sedes-empty" id="sedesEmpty" hidden>Sin sedes registradas. Al guardar se creará la sede <b>Principal</b> con los datos de Ubicación y Contacto.</div>
+            <div class="sedes-inactive" id="sedesInactive" hidden></div>
+            <div class="sedes-error" id="sedesError" hidden></div>
+            <div class="help">Las sedes se guardan en <code>place_locations</code> — es lo que el agente usa para responder "¿cuál me queda cerca?". La sede <b>principal ⭐</b> sale en la recomendación general y se refleja en Ubicación y Contacto.</div>
           </div>
 
         </div>
@@ -696,6 +787,17 @@ input, select, textarea { font-family: inherit; }
     cafe: 'Café', restaurant: 'Restaurante', bar: 'Bar', hotel: 'Hotel',
     activity: 'Actividad', beach: 'Playa', viewpoint: 'Mirador', other: 'Otro',
   };
+  const SOCIAL_PLATFORM_LABEL = {
+    instagram: 'Instagram',
+    facebook: 'Facebook',
+    tiktok: 'TikTok',
+    youtube: 'YouTube',
+    google_maps: 'Google Maps',
+    whatsapp_channel: 'Canal WhatsApp',
+    website: 'Website',
+    other: 'Otra',
+  };
+  const SOCIAL_PLATFORMS = Object.keys(SOCIAL_PLATFORM_LABEL);
   function initials(s) { if (!s) return '—'; return s.trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join(''); }
   function nameFromEmail(email) { const local = (email || '').split('@')[0] || 'staff'; return local.split(/[._-]+/).filter(Boolean).map(s => s[0].toUpperCase() + s.slice(1)).join(' '); }
   function shortId(id) { if (!id) return 'PLC_—'; return 'PLC_' + id.replace(/-/g, '').slice(-4).toUpperCase(); }
@@ -739,6 +841,17 @@ input, select, textarea { font-family: inherit; }
     tags: { highlights: [], vibe: [], ideal_for: [], amenities: [] },
     price_range: null,
     original: null, // copy for change detection / cancel
+    socialLinks: [],
+    removedSocialLinkIds: new Set(),
+    // sedes: contrato de quepa-webhook (place_locations) — places es la marca,
+    // la sede es a dónde va el usuario; las columnas planas de places son
+    // espejo de la sede is_primary. Regla D1: el espejo lo mantiene quien
+    // escribe (mono-sede: 03/04; multi-sede: la grid).
+    sedes: [],
+    deactivatedSedeIds: new Set(),
+    originalPrimarySedeId: null,
+    sedesLoadError: false,
+    showInactiveSedes: false,
     // hours: contrato de quepa-webhook (places.hours JSONB) — null = DESCONOCIDO,
     // [] = cerrado ese día, cierre < apertura = cruza medianoche, 00:00–24:00 = 24h.
     // gridDirty/noteDirty deciden qué columnas van al payload: solo la grilla
@@ -754,6 +867,504 @@ input, select, textarea { font-family: inherit; }
       noteDirty: false,
     },
   };
+
+  // ---------- social links ----------
+  function blankSocialLink() {
+    return { id: null, platform: 'instagram', url: '', handle: '', label: '', is_primary: false, active: true };
+  }
+
+  function setSocialError(msg) {
+    const el = document.getElementById('socialError');
+    el.textContent = msg || '';
+    el.hidden = !msg;
+  }
+
+  function normalizeSocialRow(row) {
+    return {
+      id: row.id || null,
+      platform: SOCIAL_PLATFORMS.includes(row.platform) ? row.platform : 'other',
+      url: row.url || '',
+      handle: row.handle || '',
+      label: row.label || '',
+      is_primary: row.is_primary === true,
+      active: row.active !== false,
+    };
+  }
+
+  function renderSocialLinks() {
+    const box = document.getElementById('socialLinks');
+    const empty = document.getElementById('socialEmpty');
+    box.innerHTML = '';
+    empty.hidden = state.socialLinks.length > 0;
+    state.socialLinks.forEach((link, index) => {
+      const row = document.createElement('div');
+      row.className = 'social-link-row';
+      row.dataset.index = index;
+
+      const platform = document.createElement('select');
+      SOCIAL_PLATFORMS.forEach((key) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = SOCIAL_PLATFORM_LABEL[key];
+        platform.appendChild(opt);
+      });
+      platform.value = link.platform;
+      platform.addEventListener('change', () => { link.platform = platform.value; setSocialError(''); });
+
+      const url = document.createElement('input');
+      url.type = 'url';
+      url.placeholder = 'https://…';
+      url.value = link.url || '';
+      url.addEventListener('input', () => { link.url = url.value.trim(); setSocialError(''); });
+
+      const handle = document.createElement('input');
+      handle.placeholder = '@usuario';
+      handle.value = link.handle || '';
+      handle.addEventListener('input', () => { link.handle = handle.value.trim(); });
+
+      const label = document.createElement('input');
+      label.placeholder = 'Etiqueta';
+      label.value = link.label || '';
+      label.addEventListener('input', () => { link.label = label.value.trim(); });
+
+      const primary = document.createElement('label');
+      primary.className = 'primary-check';
+      const primaryInput = document.createElement('input');
+      primaryInput.type = 'checkbox';
+      primaryInput.checked = link.is_primary === true;
+      primaryInput.addEventListener('change', () => { link.is_primary = primaryInput.checked; });
+      primary.append(primaryInput, document.createTextNode('Principal'));
+
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'remove-social';
+      remove.textContent = '×';
+      remove.title = 'Quitar red';
+      remove.addEventListener('click', () => {
+        if (link.id) state.removedSocialLinkIds.add(link.id);
+        state.socialLinks.splice(index, 1);
+        renderSocialLinks();
+      });
+
+      row.append(platform, url, handle, label, primary, remove);
+      box.appendChild(row);
+    });
+  }
+
+  async function loadSocialLinks(placeIdForLinks) {
+    state.socialLinks = [];
+    state.removedSocialLinkIds.clear();
+    setSocialError('');
+    if (!placeIdForLinks) { renderSocialLinks(); return; }
+    const { data, error } = await sb
+      .from('place_social_links')
+      .select('id, platform, url, handle, label, is_primary, active')
+      .eq('place_id', placeIdForLinks)
+      .eq('active', true);
+    if (error) {
+      setSocialError('No se pudieron cargar redes: ' + error.message);
+      renderSocialLinks();
+      return;
+    }
+    state.socialLinks = (data || []).map(normalizeSocialRow);
+    renderSocialLinks();
+  }
+
+  function validateSocialLinks() {
+    for (const [i, link] of state.socialLinks.entries()) {
+      const n = i + 1;
+      if (!SOCIAL_PLATFORMS.includes(link.platform)) return `Red ${n}: plataforma no permitida`;
+      if (!link.url) return `Red ${n}: falta URL`;
+      try { new URL(link.url); } catch (_) { return `Red ${n}: URL inválida`; }
+    }
+    return null;
+  }
+
+  async function saveSocialLinks(placeIdForLinks) {
+    const now = new Date().toISOString();
+    for (const id of state.removedSocialLinkIds) {
+      const { error } = await sb.from('place_social_links').update({ active: false, updated_at: now }).eq('id', id);
+      if (error) throw error;
+    }
+    for (const link of state.socialLinks) {
+      const payload = {
+        place_id: placeIdForLinks,
+        place_location_id: null,
+        platform: link.platform,
+        url: link.url.trim(),
+        handle: link.handle ? link.handle.trim() : null,
+        label: link.label ? link.label.trim() : null,
+        is_primary: link.is_primary === true,
+        source: 'console',
+        verified_at: now,
+        active: true,
+        updated_at: now,
+      };
+      const op = link.id
+        ? sb.from('place_social_links').update(payload).eq('id', link.id)
+        : sb.from('place_social_links').upsert(payload, { onConflict: 'place_id,platform,url' }).select('id').single();
+      const { data, error } = await op;
+      if (error) throw error;
+      if (!link.id && data && data.id) link.id = data.id;
+    }
+    state.removedSocialLinkIds.clear();
+  }
+
+  // ---------- sedes (place_locations) ----------
+  // Mismo criterio de normalización de labels que el seed del webhook.
+  const normSedeLabel = (s) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const MIRROR_FIELD_IDS = ['f-address', 'f-lat', 'f-lng', 'f-barrio', 'f-phone', 'f-whatsapp'];
+
+  function blankSede() {
+    return { id: null, label: '', zone: '', address: '', city: '', lat: null, lng: null, phone: '', whatsapp: '', is_primary: false, active: true };
+  }
+
+  function normalizeSedeRow(row) {
+    return {
+      id: row.id || null,
+      label: row.label || '',
+      zone: row.zone || '',
+      address: row.address || '',
+      city: row.city || '',
+      lat: row.lat ?? null,
+      lng: row.lng ?? null,
+      phone: row.phone || '',
+      whatsapp: row.whatsapp || '',
+      is_primary: row.is_primary === true,
+      active: row.active !== false,
+    };
+  }
+
+  function activeSedes() { return state.sedes.filter(s => s.active); }
+  function primarySede() { return activeSedes().find(s => s.is_primary) || null; }
+  function isMultiSede() { return activeSedes().length >= 2; }
+
+  function setSedesError(msg) {
+    const el = document.getElementById('sedesError');
+    el.textContent = msg || '';
+    el.hidden = !msg;
+  }
+
+  async function loadSedes(placeIdForSedes) {
+    state.sedes = [];
+    state.deactivatedSedeIds.clear();
+    state.originalPrimarySedeId = null;
+    state.sedesLoadError = false;
+    setSedesError('');
+    if (!placeIdForSedes) { renderSedes(); return; }
+    const { data, error } = await sb
+      .from('place_locations')
+      .select('id, label, zone, address, city, lat, lng, phone, whatsapp, is_primary, active')
+      .eq('place_id', placeIdForSedes)
+      .order('is_primary', { ascending: false })
+      .order('label');
+    if (error) {
+      state.sedesLoadError = true;
+      setSedesError('No se pudieron cargar las sedes: ' + error.message);
+      renderSedes();
+      return;
+    }
+    state.sedes = (data || []).map(normalizeSedeRow);
+    const prim = primarySede();
+    state.originalPrimarySedeId = prim ? prim.id : null;
+    renderSedes();
+  }
+
+  function sedeCell(labelText, input) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const lab = document.createElement('span');
+    lab.className = 'sub-label';
+    lab.textContent = labelText;
+    cell.append(lab, input);
+    return cell;
+  }
+
+  function sedeInput(value, placeholder, onInput, type) {
+    const inp = document.createElement('input');
+    if (type) { inp.type = type; inp.step = 'any'; }
+    inp.placeholder = placeholder;
+    inp.value = value ?? '';
+    inp.addEventListener('input', () => { onInput(inp.value); setSedesError(''); });
+    return inp;
+  }
+
+  function renderSedes() {
+    const box = document.getElementById('sedesList');
+    const empty = document.getElementById('sedesEmpty');
+    const inactiveBox = document.getElementById('sedesInactive');
+    box.innerHTML = '';
+    const act = activeSedes();
+    empty.hidden = act.length > 0 || state.sedesLoadError;
+
+    act.forEach((sede) => {
+      const row = document.createElement('div');
+      row.className = 'sede-row' + (sede.is_primary ? ' primary' : '');
+
+      const r1 = document.createElement('div');
+      r1.className = 'r1';
+      r1.append(
+        sedeCell('Label', sedeInput(sede.label, 'Cuba, Unicentro…', v => {
+          sede.label = v;
+          if (sede.is_primary) syncReflejo();
+        })),
+        sedeCell('Zona', sedeInput(sede.zone, 'Barrio o sector', v => {
+          sede.zone = v;
+          if (sede.is_primary) syncReflejo();
+        })),
+        sedeCell('Dirección', sedeInput(sede.address, 'Cra 25 # 69B-01…', v => {
+          sede.address = v;
+          if (sede.is_primary) syncReflejo();
+        })),
+      );
+
+      const acts = document.createElement('div');
+      acts.className = 'side-acts';
+      const primary = document.createElement('label');
+      primary.className = 'sede-primary-check';
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'sedePrimary';
+      radio.checked = sede.is_primary === true;
+      radio.addEventListener('change', () => {
+        activeSedes().forEach(s => { s.is_primary = false; });
+        sede.is_primary = true;
+        renderSedes();
+        syncReflejo();
+      });
+      primary.append(radio, document.createTextNode('⭐ Principal'));
+
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'remove-sede';
+      remove.textContent = '×';
+      if (sede.is_primary) {
+        remove.disabled = true;
+        remove.title = 'La sede principal no se puede desactivar: corona otra primero';
+      } else {
+        remove.title = 'Desactivar sede (no se borra, se puede reactivar)';
+        remove.addEventListener('click', () => {
+          sede.active = false;
+          sede.is_primary = false;
+          if (sede.id) state.deactivatedSedeIds.add(sede.id);
+          renderSedes();
+          applyCardinalityMode();
+        });
+      }
+      acts.append(primary, remove);
+      r1.appendChild(acts);
+
+      const r2 = document.createElement('div');
+      r2.className = 'r2';
+      r2.append(
+        sedeCell('Ciudad', sedeInput(sede.city, '= ciudad del lugar', v => { sede.city = v; })),
+        sedeCell('Lat', sedeInput(sede.lat, '4.813…', v => {
+          sede.lat = v === '' ? null : Number(v);
+          if (sede.is_primary) syncReflejo();
+        }, 'number')),
+        sedeCell('Lng', sedeInput(sede.lng, '-75.69…', v => {
+          sede.lng = v === '' ? null : Number(v);
+          if (sede.is_primary) syncReflejo();
+        }, 'number')),
+        sedeCell('Teléfono', sedeInput(sede.phone, '+57 …', v => {
+          sede.phone = v;
+          if (sede.is_primary) syncReflejo();
+        })),
+        sedeCell('WhatsApp', sedeInput(sede.whatsapp, '+57 …', v => {
+          sede.whatsapp = v;
+          if (sede.is_primary) syncReflejo();
+        })),
+      );
+
+      row.append(r1, r2);
+      box.appendChild(row);
+    });
+
+    // inactivas: colapsadas, con reactivar
+    const inact = state.sedes.filter(s => !s.active);
+    inactiveBox.hidden = inact.length === 0;
+    inactiveBox.innerHTML = '';
+    if (inact.length) {
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'toggle-inactive';
+      toggle.textContent = `· ${inact.length} sede${inact.length > 1 ? 's' : ''} inactiva${inact.length > 1 ? 's' : ''} ${state.showInactiveSedes ? '▴' : '▾'}`;
+      toggle.addEventListener('click', () => {
+        state.showInactiveSedes = !state.showInactiveSedes;
+        renderSedes();
+      });
+      inactiveBox.appendChild(toggle);
+      if (state.showInactiveSedes) {
+        inact.forEach((sede) => {
+          const row = document.createElement('div');
+          row.className = 'sede-inactive-row';
+          const name = document.createElement('b');
+          name.textContent = sede.label || '(sin label)';
+          const addr = document.createElement('span');
+          addr.textContent = sede.address || sede.zone || '';
+          const re = document.createElement('button');
+          re.type = 'button';
+          re.className = 'reactivate';
+          re.textContent = 'Reactivar';
+          re.addEventListener('click', () => {
+            sede.active = true;
+            if (sede.id) state.deactivatedSedeIds.delete(sede.id);
+            renderSedes();
+            applyCardinalityMode();
+          });
+          row.append(name, addr, re);
+          inactiveBox.appendChild(row);
+        });
+      }
+    }
+  }
+
+  // D1: modo por cardinalidad. Multi-sede bloquea los campos espejo de 03/04
+  // (la grid es la verdad); mono-sede los deja editables como siempre.
+  function applyCardinalityMode() {
+    const multi = isMultiSede();
+    document.getElementById('ubicacionLockNote').hidden = !multi;
+    document.getElementById('contactoLockNote').hidden = !multi;
+    document.getElementById('lockNoteCount').textContent = String(activeSedes().length);
+    MIRROR_FIELD_IDS.forEach(id => { document.getElementById(id).disabled = multi; });
+    if (multi) syncReflejo();
+  }
+
+  // En multi-sede, 03/04 reflejan la sede principal. Mantener los inputs
+  // sincronizados hace que gather() arme el espejo correcto sin tocarlo.
+  function syncReflejo() {
+    if (!isMultiSede()) return;
+    const p = primarySede();
+    if (!p) return;
+    document.getElementById('f-address').value = p.address || '';
+    document.getElementById('f-lat').value = p.lat ?? '';
+    document.getElementById('f-lng').value = p.lng ?? '';
+    document.getElementById('f-barrio').value = p.zone || '';
+    document.getElementById('f-phone').value = p.phone || '';
+    document.getElementById('f-whatsapp').value = p.whatsapp || '';
+    document.getElementById('whatsappPill').hidden = !p.whatsapp;
+    renderMap();
+  }
+
+  function validateSedes() {
+    const act = activeSedes();
+    if (!act.length) return null; // sin sedes: el guardado crea la Principal (D4)
+    const seen = new Set();
+    for (const [i, s] of act.entries()) {
+      const n = i + 1;
+      if (!normSedeLabel(s.label)) return `Sede ${n}: falta el label`;
+      const key = normSedeLabel(s.label);
+      if (seen.has(key)) return `Sede "${s.label}": label duplicado`;
+      seen.add(key);
+      if (s.lat !== null && !Number.isFinite(s.lat)) return `Sede "${s.label}": latitud inválida`;
+      if (s.lng !== null && !Number.isFinite(s.lng)) return `Sede "${s.label}": longitud inválida`;
+    }
+    // el unique (place_id, label) de la base cubre también las inactivas
+    for (const s of state.sedes.filter(x => !x.active)) {
+      if (seen.has(normSedeLabel(s.label))) {
+        return `El label "${s.label}" ya existe en una sede inactiva — reactívala o usa otro nombre`;
+      }
+    }
+    if (act.filter(s => s.is_primary).length !== 1) return 'Debe haber exactamente una sede principal ⭐';
+    return null;
+  }
+
+  // Persiste las sedes. Orden (D3, mismo baile que el seed del webhook):
+  // democión de la primaria saliente → desactivaciones → upserts con la
+  // principal de última (el índice único parcial rechaza dos primarias).
+  async function saveSedes(placeIdForSedes, payload) {
+    const now = new Date().toISOString();
+    const act = activeSedes();
+
+    // Alta de lugar, o lugar huérfano creado entre la migración 0008 y este
+    // deploy: crear la sede Principal desde los campos de 03/04 (D4).
+    if (!act.length) {
+      const { data, error } = await sb.from('place_locations').insert({
+        place_id: placeIdForSedes,
+        label: 'Principal',
+        zone: document.getElementById('f-barrio').value.trim() || null,
+        address: payload.address,
+        lat: payload.lat,
+        lng: payload.lng,
+        phone: payload.phone,
+        whatsapp: payload.whatsapp,
+        is_primary: true,
+        active: true,
+        updated_at: now,
+      }).select('id').single();
+      if (error) throw new Error('Sede Principal: ' + error.message + ' — reintenta guardar');
+      state.sedes.push(normalizeSedeRow({
+        id: data.id, label: 'Principal',
+        zone: document.getElementById('f-barrio').value.trim(),
+        address: payload.address, lat: payload.lat, lng: payload.lng,
+        phone: payload.phone, whatsapp: payload.whatsapp,
+        is_primary: true, active: true,
+      }));
+      state.originalPrimarySedeId = data.id;
+      return;
+    }
+
+    // Mono-sede: 03/04 mandan — la única sede activa copia el formulario (D1).
+    if (!isMultiSede()) {
+      const s = act[0];
+      s.zone = document.getElementById('f-barrio').value.trim();
+      s.address = payload.address || '';
+      s.lat = payload.lat;
+      s.lng = payload.lng;
+      s.phone = payload.phone || '';
+      s.whatsapp = payload.whatsapp || '';
+      s.is_primary = true;
+    }
+
+    // 1 · democión previa si la principal cambió
+    const newPrimary = primarySede();
+    if (state.originalPrimarySedeId && newPrimary && newPrimary.id !== state.originalPrimarySedeId) {
+      const { error } = await sb.from('place_locations')
+        .update({ is_primary: false, updated_at: now })
+        .eq('id', state.originalPrimarySedeId);
+      if (error) throw new Error('Cambio de principal: ' + error.message);
+    }
+
+    // 2 · desactivaciones hechas en esta sesión de edición
+    for (const id of state.deactivatedSedeIds) {
+      const { error } = await sb.from('place_locations')
+        .update({ active: false, is_primary: false, updated_at: now })
+        .eq('id', id);
+      if (error) throw new Error('Desactivación de sede: ' + error.message);
+    }
+    state.deactivatedSedeIds.clear();
+
+    // 3 · upserts, la principal de última
+    const ordered = [...act].sort((a, b) => Number(a.is_primary) - Number(b.is_primary));
+    for (const s of ordered) {
+      const row = {
+        place_id: placeIdForSedes,
+        label: s.label.trim(),
+        zone: s.zone.trim() || null,
+        address: s.address.trim() || null,
+        city: s.city.trim() || null,
+        lat: s.lat,
+        lng: s.lng,
+        phone: s.phone.trim() || null,
+        whatsapp: s.whatsapp.trim() || null,
+        is_primary: s.is_primary === true,
+        active: true,
+        updated_at: now,
+      };
+      const op = s.id
+        ? sb.from('place_locations').update(row).eq('id', s.id)
+        : sb.from('place_locations').insert(row).select('id').single();
+      const { data, error } = await op;
+      if (error) {
+        const dup = error.code === '23505';
+        throw new Error(`Sede "${s.label}": ` + (dup ? 'ya existe una sede con ese label (quizá inactiva)' : error.message));
+      }
+      if (!s.id && data && data.id) s.id = data.id;
+    }
+
+    const prim = primarySede();
+    if (prim) state.originalPrimarySedeId = prim.id;
+  }
 
   // ---------- hours ----------
   const DAYS = [['mon', 'LUN'], ['tue', 'MAR'], ['wed', 'MIÉ'], ['thu', 'JUE'], ['fri', 'VIE'], ['sat', 'SÁB'], ['sun', 'DOM']];
@@ -1032,6 +1643,9 @@ input, select, textarea { font-family: inherit; }
       renderActiveToggle();
       renderMap();
       loadHours(null);
+      await loadSocialLinks(null);
+      await loadSedes(null);
+      applyCardinalityMode();
       finishLoad();
       return;
     }
@@ -1094,6 +1708,9 @@ input, select, textarea { font-family: inherit; }
     renderActiveToggle();
     renderMap();
     loadHours(data);
+    await loadSocialLinks(data.id);
+    await loadSedes(data.id);
+    applyCardinalityMode();
     finishLoad();
   }
 
@@ -1155,6 +1772,18 @@ input, select, textarea { font-family: inherit; }
       toast('Falta(n): ' + errs.join(', '), 'err');
       return;
     }
+    const socialErr = validateSocialLinks();
+    if (socialErr) {
+      setSocialError(socialErr);
+      toast(socialErr, 'err');
+      return;
+    }
+    const sedeErr = validateSedes();
+    if (sedeErr) {
+      setSedesError(sedeErr);
+      toast(sedeErr, 'err');
+      return;
+    }
     // horarios: columnas en el payload solo según lo tocado (guardado no destructivo)
     const h = state.hours;
     if (h.gridDirty) {
@@ -1177,11 +1806,22 @@ input, select, textarea { font-family: inherit; }
       if (state.isNew) {
         const { data, error } = await sb.from('places').insert(payload).select('id').single();
         if (error) throw error;
+        // si la sede o las redes fallan, el reintento debe actualizar este
+        // lugar, no crear otro
+        state.id = data.id;
+        state.isNew = false;
+        await saveSedes(data.id, payload);
+        await saveSocialLinks(data.id);
         toast('Lugar creado ✓', 'ok');
         setTimeout(() => { window.location.replace('lugar.html?id=' + encodeURIComponent(data.id)); }, 600);
       } else {
         const { error } = await sb.from('places').update(payload).eq('id', state.id);
         if (error) throw error;
+        await saveSedes(state.id, payload);
+        await saveSocialLinks(state.id);
+        renderSocialLinks();
+        renderSedes();
+        applyCardinalityMode();
         toast('Cambios guardados ✓', 'ok');
         // refresh hours meta solo tras éxito (un fallo no debe cambiar la cabecera)
         if (h.gridDirty) {
@@ -1262,6 +1902,24 @@ input, select, textarea { font-family: inherit; }
 
     wireTagInputs();
     wirePricePicker();
+
+    document.getElementById('addSocialBtn').addEventListener('click', () => {
+      state.socialLinks.push(blankSocialLink());
+      renderSocialLinks();
+      const last = document.querySelector('#socialLinks .social-link-row:last-child input[type="url"]');
+      if (last) last.focus();
+    });
+
+    document.getElementById('addSedeBtn').addEventListener('click', () => {
+      const sede = blankSede();
+      state.sedes.push(sede);
+      // la primera sede activa nace principal
+      if (activeSedes().length === 1) sede.is_primary = true;
+      renderSedes();
+      applyCardinalityMode();
+      const last = document.querySelector('#sedesList .sede-row:last-child input');
+      if (last) last.focus();
+    });
 
     document.getElementById('saveBtn').addEventListener('click', save);
     document.getElementById('deleteBtn').addEventListener('click', del);

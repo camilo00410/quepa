@@ -4,10 +4,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Two static landing pages for **Quepa** — an AI conversational agent on WhatsApp that recommends places. No build step, no package manager, no dependencies. Each HTML file is fully self-contained: SVGs inlined, CSS in `<style>`, JS in `<script>`, fonts from Google Fonts CDN.
+Two static landing pages for **Quepa** — an AI conversational agent on WhatsApp that recommends places — plus the internal staff panel. No build step, no package manager, no dependencies. Each HTML file is fully self-contained: SVGs inlined, CSS in `<style>`, JS in `<script>`, fonts from Google Fonts CDN.
 
 - `index.html` — B2C landing (intended domain: `quepa.co`)
 - `web-comercios/index.html` — B2B landing for merchants (intended domain: `comercios.quepa.co`)
+- `console/` — **Quepa Console**, panel interno de staff (login Supabase, catálogo de lugares). Ver sección abajo.
+
+## Quepa Console: sedes (`place_locations`)
+
+El detalle de lugar (`console/lugar.html`, sección `· 06 · SEDES`) gestiona las sedes del modelo marca→sedes definido en `quepa-webhook` (change `add-place-locations`, migración `0008`). Contrato que el Console debe respetar:
+
+- `places` = la marca (descripción, vibe, 1 embedding); `place_locations` = sedes físicas. Las columnas planas de `places` (`address`, `lat/lng`, `phone`, `whatsapp`) son **espejo de la sede `is_primary`**.
+- **Regla "el espejo lo mantiene quien escribe"**: lugar mono-sede → las secciones 03/04 son editables y el guardado sincroniza la sede `Principal`; lugar multi-sede (2+ activas) → 03/04 quedan en solo lectura (reflejo de la principal) y la grid de sedes es la única vía de escritura, que a su vez arrastra el espejo.
+- Crear un lugar crea también su sede `Principal` (si el insert de la sede falla, reintentar el guardado lo repara — el flujo deja `state.isNew=false` tras el insert del lugar).
+- Cambio de principal: **democión primero, coronación después** (el índice único parcial `place_locations_one_primary` rechaza dos primarias). Sedes se **desactivan** (`active=false` + `is_primary=false`), nunca se borran; la UI impide desactivar la principal.
+- Labels únicos por lugar (case/espacios-insensible, **incluidas las inactivas** — el `unique (place_id, label)` de la base las cubre). Ediciones por `id` de fila: renombrar un label es un update normal.
+- Riesgo conocido: un `pnpm seed --apply` en `quepa-webhook` puede pisar campos de sedes que existan en `data/*.json`; una sede agregada solo desde Console (label fuera del JSON) está protegida sin `--allow-clear`.
+
+`console/lugares.html` muestra un chip "+N sedes" (query batcheada a `place_locations` sobre la página visible).
 
 ## Running locally
 

@@ -277,6 +277,7 @@ input, select, textarea { font-family: inherit; }
 .name-cell .nm { font-weight: 600; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px; }
 .name-cell .sub { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-30); margin-top: 2px; display: flex; align-items: center; gap: 6px; }
 .name-cell .sub .src-pill { background: var(--ink-06); padding: 1px 5px; border-radius: 3px; color: var(--ink-60); font-weight: 600; letter-spacing: 0.08em; }
+.name-cell .sub .sedes-chip { background: var(--night); color: var(--yg); padding: 1px 6px; border-radius: 999px; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap; }
 .name-cell .sub .addr { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
 
 .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600; background: var(--ink-06); color: var(--ink-80); }
@@ -664,6 +665,8 @@ input, select, textarea { font-family: inherit; }
     total: 0,
     rows: [],
     counts: { all: 0, active: 0, inactive: 0 },
+    // sedes activas por place_id de la página visible (add-console-place-locations)
+    sedeCounts: {},
     selected: new Set(),
   };
 
@@ -734,6 +737,23 @@ input, select, textarea { font-family: inherit; }
     }
     state.rows = data || [];
     state.total = count || 0;
+
+    // Conteo de sedes activas de la página visible, en una sola query — sin
+    // tocar la forma de la consulta principal (D7). Un fallo aquí solo deja
+    // la tabla sin chips, nunca sin lugares.
+    state.sedeCounts = {};
+    const visibleIds = state.rows.map(r => r.id);
+    if (visibleIds.length) {
+      const { data: locs } = await sb
+        .from('place_locations')
+        .select('place_id')
+        .in('place_id', visibleIds)
+        .eq('active', true);
+      (locs || []).forEach(l => {
+        state.sedeCounts[l.place_id] = (state.sedeCounts[l.place_id] || 0) + 1;
+      });
+    }
+
     renderTable();
     renderPager();
     renderFoot();
@@ -749,6 +769,8 @@ input, select, textarea { font-family: inherit; }
     tbody.innerHTML = state.rows.map(p => {
       const cat = p.category || 'other';
       const selected = state.selected.has(p.id);
+      const sedeCount = state.sedeCounts[p.id] || 0;
+      const sedesChip = sedeCount > 1 ? `<span>·</span><span class="sedes-chip">+${sedeCount - 1} sedes</span>` : '';
       return `
         <tr data-id="${p.id}" class="${selected ? 'selected' : ''}">
           <td><button class="cb ${selected ? 'on' : ''}" type="button" data-select="${p.id}" aria-label="Seleccionar">${selected ? '✓' : ''}</button></td>
@@ -761,6 +783,7 @@ input, select, textarea { font-family: inherit; }
                   <span class="src-pill">${shortId(p.id)}</span>
                   <span>·</span>
                   <span class="addr">${escapeHtml(p.address || '—')}</span>
+                  ${sedesChip}
                 </div>
               </div>
             </div>
