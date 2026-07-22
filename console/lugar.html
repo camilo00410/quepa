@@ -216,8 +216,11 @@ input, select, textarea { font-family: inherit; }
 .sede-row.primary { border-color: var(--night); box-shadow: 0 0 0 1px var(--night); }
 .sede-row .r1 { display: grid; grid-template-columns: 1fr 1fr 1.8fr auto; gap: 8px; align-items: end; }
 .sede-row .r2 { display: grid; grid-template-columns: 1fr .8fr .8fr 1fr 1fr; gap: 8px; }
-.sede-row input { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 8px; padding: 8px 9px; font-size: 12.5px; color: var(--ink); min-width: 0; width: 100%; }
-.sede-row input:focus { border-color: var(--ink); }
+.sede-row input, .sede-row select { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 8px; padding: 8px 9px; font-size: 12.5px; color: var(--ink); min-width: 0; width: 100%; }
+.sede-row input:focus, .sede-row select:focus { border-color: var(--ink); }
+.sede-row select:disabled { color: var(--ink-30); }
+.zone-note { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.04em; color: var(--ink-30); margin-top: 6px; }
+.map .pin.approx { opacity: 0.55; }
 .sede-row .cell { display: flex; flex-direction: column; gap: 3px; }
 .sede-row .sub-label { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-30); }
 .sede-row .side-acts { display: flex; align-items: center; gap: 8px; padding-bottom: 4px; }
@@ -606,7 +609,8 @@ input, select, textarea { font-family: inherit; }
               </div>
               <div class="field-d">
                 <div class="label"><span>Zona / Barrio</span><span style="color:var(--ink-30);">Sede principal</span></div>
-                <input id="f-barrio" placeholder="Cuba, Circunvalar…" />
+                <select id="f-barrio"><option value="">— Sin zona —</option></select>
+                <div class="zone-note" id="barrioNote" hidden></div>
               </div>
             </div>
 
@@ -852,6 +856,9 @@ input, select, textarea { font-family: inherit; }
     originalPrimarySedeId: null,
     sedesLoadError: false,
     showInactiveSedes: false,
+    // zonas (change add-console-zone-selector): cache por ciudad del gazetteer
+    // city_zones — clave normalizada → array de zonas activas | 'error'.
+    zonesByCity: new Map(),
     // hours: contrato de quepa-webhook (places.hours JSONB) — null = DESCONOCIDO,
     // [] = cerrado ese día, cierre < apertura = cruza medianoche, 00:00–24:00 = 24h.
     // gridDirty/noteDirty deciden qué columnas van al payload: solo la grilla
@@ -1015,8 +1022,132 @@ input, select, textarea { font-family: inherit; }
   const normSedeLabel = (s) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ');
   const MIRROR_FIELD_IDS = ['f-address', 'f-lat', 'f-lng', 'f-barrio', 'f-phone', 'f-whatsapp'];
 
+  // ---------- zonas (city_zones, change add-console-zone-selector) ----------
+  // El gazetteer es dato curado del backend: el Console lo LEE para el
+  // selector y escribe place_locations.zone_id; jamás inserta zonas y jamás
+  // vuelve a escribir el campo legado `zone` (deprecado, solo fallback de
+  // lectura — contrato de add-city-zones en quepa-webhook).
+  const zoneCityKey = (city) => (city || '').trim().toLowerCase();
+
+  function placeCity() { return document.getElementById('f-city').value.trim(); }
+  function effectiveSedeCity(sede) { return (sede.city || '').trim() || placeCity(); }
+
+  async function ensureZonesForCity(city) {
+    const key = zoneCityKey(city);
+    if (!key || state.zonesByCity.has(key)) return;
+    try {
+      const { data, error } = await sb
+        .from('city_zones')
+        .select('id, name, city, lat, lng')
+        .eq('active', true)
+        .ilike('city', city.trim())
+        .order('name');
+      if (error) throw error;
+      state.zonesByCity.set(key, data || []);
+    } catch (_e) {
+      state.zonesByCity.set(key, 'error');
+    }
+  }
+
+  function zonesForCity(city) { return state.zonesByCity.get(zoneCityKey(city)); }
+
+  function zoneById(zoneId) {
+    if (!zoneId) return null;
+    for (const zones of state.zonesByCity.values()) {
+      if (!Array.isArray(zones)) continue;
+      const z = zones.find((x) => x.id === zoneId);
+      if (z) return z;
+    }
+    return null;
+  }
+
+  // Valor efectivo del selector espejo: '' y '__legacy' significan zone_id null.
+  function readBarrioZoneId() {
+    const v = document.getElementById('f-barrio').value;
+    return v && v !== '__legacy' ? v : null;
+  }
+
+  // Opciones del selector de zona: "Sin zona" + zonas de la ciudad + estados
+  // no canónicos visibles pero NO seleccionables (D2: la transición a canónico
+  // la hace el staff eligiendo del gazetteer; el legado nunca se migra solo).
+  function fillZoneSelect(sel, sede, city) {
+    const zones = zonesForCity(city);
+    sel.innerHTML = '';
+    sel.appendChild(new Option('— Sin zona —', ''));
+    if (Array.isArray(zones)) {
+      for (const z of zones) sel.appendChild(new Option(z.name, z.id));
+    }
+    if (sede.zone_id && !zoneById(sede.zone_id)) {
+      // FK hacia una zona que no está en el gazetteer cargado (p. ej. cambió
+      // la ciudad): se muestra sin perder el valor — caída explícita, no muda.
+      const opt = new Option('zona fuera del gazetteer de esta ciudad', sede.zone_id);
+      opt.disabled = true;
+      sel.appendChild(opt);
+    } else if (!sede.zone_id && sede.zone) {
+      const opt = new Option(`"${sede.zone}" · texto legado`, '__legacy');
+      opt.disabled = true;
+      sel.appendChild(opt);
+    }
+    sel.value = sede.zone_id ? sede.zone_id : (sede.zone ? '__legacy' : '');
+    return Array.isArray(zones) && zones.length > 0;
+  }
+
+  // Selector de zona de la grid de sedes (ciudad efectiva por sede — AMCO).
+  function zoneSelectFor(sede) {
+    const sel = document.createElement('select');
+    const city = effectiveSedeCity(sede);
+    const zones = zonesForCity(city);
+    const available = fillZoneSelect(sel, sede, city);
+    sel.disabled = !available;
+    if (sel.disabled) {
+      sel.title = city
+        ? `Sin zonas para ${city} en el gazetteer — se curan en el backend (quepa-webhook)`
+        : 'Define la ciudad de la sede o del lugar para elegir zona';
+    }
+    // Ciudad aún no consultada: cargar y re-render (una sola vez por ciudad).
+    if (zones === undefined && city) {
+      ensureZonesForCity(city).then(() => { renderSedes(); renderBarrioSelect(); });
+    }
+    sel.addEventListener('change', () => {
+      sede.zone_id = sel.value && sel.value !== '__legacy' ? sel.value : null;
+      setSedesError('');
+      if (isMultiSede()) {
+        if (sede.is_primary) syncReflejo();
+      } else {
+        // Mono-sede: 03/04 mandan al guardar (D1) — reflejar la edición de la
+        // grid en f-barrio o el guardado la pisaría con el valor viejo.
+        renderBarrioSelect();
+      }
+      renderMap();
+    });
+    return sel;
+  }
+
+  // Selector espejo de 03 (sede principal). Deshabilitado en multi-sede (la
+  // grid es la verdad), sin ciudad o sin zonas en el gazetteer (D5: degradar
+  // con nota honesta, nunca reabrir texto libre ni bloquear el guardado).
+  function renderBarrioSelect() {
+    const sel = document.getElementById('f-barrio');
+    const note = document.getElementById('barrioNote');
+    const city = placeCity();
+    const sede = primarySede() || activeSedes()[0] || { zone_id: null, zone: '' };
+    fillZoneSelect(sel, sede, city);
+    const zones = zonesForCity(city);
+    const failed = zones === 'error';
+    const empty = Array.isArray(zones) && zones.length === 0;
+    sel.disabled = isMultiSede() || failed || empty || !city;
+    if (!city) {
+      note.textContent = 'Define la ciudad para elegir zona.';
+    } else if (failed) {
+      note.textContent = 'No se pudieron cargar las zonas del gazetteer — recarga para reintentar.';
+    } else if (empty) {
+      note.textContent = `Sin zonas para ${city} en el gazetteer — se curan en el backend (quepa-webhook).`;
+    }
+    note.hidden = !(!city || failed || empty);
+  }
+
   function blankSede() {
-    return { id: null, label: '', zone: '', address: '', city: '', lat: null, lng: null, phone: '', whatsapp: '', is_primary: false, active: true };
+    return { id: null, label: '', zone: '', zone_id: null, address: '', city: '', lat: null, lng: null, phone: '', whatsapp: '', is_primary: false, active: true };
   }
 
   function normalizeSedeRow(row) {
@@ -1024,6 +1155,7 @@ input, select, textarea { font-family: inherit; }
       id: row.id || null,
       label: row.label || '',
       zone: row.zone || '',
+      zone_id: row.zone_id || null,
       address: row.address || '',
       city: row.city || '',
       lat: row.lat ?? null,
@@ -1054,7 +1186,7 @@ input, select, textarea { font-family: inherit; }
     if (!placeIdForSedes) { renderSedes(); return; }
     const { data, error } = await sb
       .from('place_locations')
-      .select('id, label, zone, address, city, lat, lng, phone, whatsapp, is_primary, active')
+      .select('id, label, zone, zone_id, address, city, lat, lng, phone, whatsapp, is_primary, active')
       .eq('place_id', placeIdForSedes)
       .order('is_primary', { ascending: false })
       .order('label');
@@ -1108,10 +1240,7 @@ input, select, textarea { font-family: inherit; }
           sede.label = v;
           if (sede.is_primary) syncReflejo();
         })),
-        sedeCell('Zona', sedeInput(sede.zone, 'Barrio o sector', v => {
-          sede.zone = v;
-          if (sede.is_primary) syncReflejo();
-        })),
+        sedeCell('Zona', zoneSelectFor(sede)),
         sedeCell('Dirección', sedeInput(sede.address, 'Cra 25 # 69B-01…', v => {
           sede.address = v;
           if (sede.is_primary) syncReflejo();
@@ -1156,8 +1285,13 @@ input, select, textarea { font-family: inherit; }
 
       const r2 = document.createElement('div');
       r2.className = 'r2';
+      const cityInput = sedeInput(sede.city, '= ciudad del lugar', v => { sede.city = v; });
+      // Ciudad propia nueva (AMCO): cargar sus zonas y refrescar el selector.
+      cityInput.addEventListener('change', () => {
+        ensureZonesForCity(effectiveSedeCity(sede)).then(renderSedes);
+      });
       r2.append(
-        sedeCell('Ciudad', sedeInput(sede.city, '= ciudad del lugar', v => { sede.city = v; })),
+        sedeCell('Ciudad', cityInput),
         sedeCell('Lat', sedeInput(sede.lat, '4.813…', v => {
           sede.lat = v === '' ? null : Number(v);
           if (sede.is_primary) syncReflejo();
@@ -1201,7 +1335,8 @@ input, select, textarea { font-family: inherit; }
           const name = document.createElement('b');
           name.textContent = sede.label || '(sin label)';
           const addr = document.createElement('span');
-          addr.textContent = sede.address || sede.zone || '';
+          const inactiveZone = zoneById(sede.zone_id);
+          addr.textContent = sede.address || (inactiveZone ? inactiveZone.name : sede.zone) || '';
           const re = document.createElement('button');
           re.type = 'button';
           re.className = 'reactivate';
@@ -1228,6 +1363,9 @@ input, select, textarea { font-family: inherit; }
     document.getElementById('lockNoteCount').textContent = String(activeSedes().length);
     MIRROR_FIELD_IDS.forEach(id => { document.getElementById(id).disabled = multi; });
     if (multi) syncReflejo();
+    // Siempre de último: decide el disabled/nota real de f-barrio (multi,
+    // gazetteer vacío o ciudad sin definir) por encima del toggle de espejo.
+    renderBarrioSelect();
   }
 
   // En multi-sede, 03/04 reflejan la sede principal. Mantener los inputs
@@ -1239,7 +1377,9 @@ input, select, textarea { font-family: inherit; }
     document.getElementById('f-address').value = p.address || '';
     document.getElementById('f-lat').value = p.lat ?? '';
     document.getElementById('f-lng').value = p.lng ?? '';
-    document.getElementById('f-barrio').value = p.zone || '';
+    // f-barrio es select: se reconstruye desde la sede principal (canónico
+    // por zone_id o texto legado — regla única de add-city-zones).
+    renderBarrioSelect();
     document.getElementById('f-phone').value = p.phone || '';
     document.getElementById('f-whatsapp').value = p.whatsapp || '';
     document.getElementById('whatsappPill').hidden = !p.whatsapp;
@@ -1282,7 +1422,7 @@ input, select, textarea { font-family: inherit; }
       const { data, error } = await sb.from('place_locations').insert({
         place_id: placeIdForSedes,
         label: 'Principal',
-        zone: document.getElementById('f-barrio').value.trim() || null,
+        zone_id: readBarrioZoneId(),
         address: payload.address,
         lat: payload.lat,
         lng: payload.lng,
@@ -1295,7 +1435,7 @@ input, select, textarea { font-family: inherit; }
       if (error) throw new Error('Sede Principal: ' + error.message + ' — reintenta guardar');
       state.sedes.push(normalizeSedeRow({
         id: data.id, label: 'Principal',
-        zone: document.getElementById('f-barrio').value.trim(),
+        zone_id: readBarrioZoneId(),
         address: payload.address, lat: payload.lat, lng: payload.lng,
         phone: payload.phone, whatsapp: payload.whatsapp,
         is_primary: true, active: true,
@@ -1305,9 +1445,10 @@ input, select, textarea { font-family: inherit; }
     }
 
     // Mono-sede: 03/04 mandan — la única sede activa copia el formulario (D1).
+    // La zona viaja como FK; el texto legado `zone` no se toca jamás.
     if (!isMultiSede()) {
       const s = act[0];
-      s.zone = document.getElementById('f-barrio').value.trim();
+      s.zone_id = readBarrioZoneId();
       s.address = payload.address || '';
       s.lat = payload.lat;
       s.lng = payload.lng;
@@ -1340,7 +1481,9 @@ input, select, textarea { font-family: inherit; }
       const row = {
         place_id: placeIdForSedes,
         label: s.label.trim(),
-        zone: s.zone.trim() || null,
+        // zone (texto legado) NUNCA va en el payload: queda intacto en la base
+        // como fallback de lectura (contrato add-city-zones).
+        zone_id: s.zone_id || null,
         address: s.address.trim() || null,
         city: s.city.trim() || null,
         lat: s.lat,
@@ -1616,14 +1759,27 @@ input, select, textarea { font-family: inherit; }
     const open = document.getElementById('mapOpen');
     if (Number.isFinite(lat) && Number.isFinite(lng)) {
       pin.hidden = false; coords.hidden = false; noData.hidden = true;
+      pin.classList.remove('approx');
       coords.textContent = `${lat.toFixed(5)} · ${lng.toFixed(5)}`;
       open.href = `https://www.google.com/maps?q=${lat},${lng}`;
       open.style.color = 'var(--ink)';
-    } else {
-      pin.hidden = true; coords.hidden = true; noData.hidden = false;
-      open.removeAttribute('href');
-      open.style.color = 'var(--ink-30)';
+      return;
     }
+    // Sin coordenadas propias: el centroide de la zona seleccionada es
+    // referencia APROXIMADA (D4) — se muestra, jamás se escribe en f-lat/f-lng.
+    const zone = zoneById(readBarrioZoneId());
+    if (zone && Number.isFinite(zone.lat) && Number.isFinite(zone.lng)) {
+      pin.hidden = false; coords.hidden = false; noData.hidden = true;
+      pin.classList.add('approx');
+      coords.textContent = `≈ zona ${zone.name} · ${zone.lat.toFixed(5)} · ${zone.lng.toFixed(5)}`;
+      open.href = `https://www.google.com/maps?q=${zone.lat},${zone.lng}`;
+      open.style.color = 'var(--ink)';
+      return;
+    }
+    pin.hidden = true; coords.hidden = true; noData.hidden = false;
+    pin.classList.remove('approx');
+    open.removeAttribute('href');
+    open.style.color = 'var(--ink-30)';
   }
 
   // ---------- load ----------
@@ -1710,11 +1866,15 @@ input, select, textarea { font-family: inherit; }
     loadHours(data);
     await loadSocialLinks(data.id);
     await loadSedes(data.id);
-    // zone no es columna de places: el barrio se hidrata desde la sede
-    // principal (sin esto, el guardado mono-sede pisa zone con el campo vacío)
-    const primForZone = primarySede();
-    document.getElementById('f-barrio').value = primForZone ? (primForZone.zone || '') : '';
+    // Zonas del gazetteer para la ciudad del lugar y las propias de sedes
+    // (AMCO). f-barrio se hidrata desde la sede principal en
+    // renderBarrioSelect() (vía applyCardinalityMode): canónico por zone_id o
+    // texto legado — sin esto, el guardado mono-sede pisaría la zona.
+    const zoneCities = new Set([data.city, ...state.sedes.map(s => s.city)].filter(Boolean));
+    await Promise.all([...zoneCities].map(c => ensureZonesForCity(c)));
+    renderSedes();
     applyCardinalityMode();
+    renderMap();
     finishLoad();
   }
 
@@ -1888,6 +2048,30 @@ input, select, textarea { font-family: inherit; }
     // coords → map
     document.getElementById('f-lat').addEventListener('input', renderMap);
     document.getElementById('f-lng').addEventListener('input', renderMap);
+    // El pin aproximado sigue a la zona seleccionada (D4, display-only).
+    document.getElementById('f-barrio').addEventListener('change', renderMap);
+    // Cambio de ciudad: repoblar selectores; selecciones que ya no aplican
+    // caen a "Sin zona" con aviso (D1) — solo sedes que heredan la ciudad.
+    document.getElementById('f-city').addEventListener('change', async () => {
+      const city = placeCity();
+      await ensureZonesForCity(city);
+      const zones = zonesForCity(city);
+      let dropped = 0;
+      if (Array.isArray(zones)) {
+        for (const sede of activeSedes()) {
+          if (!sede.city && sede.zone_id && !zones.some(z => z.id === sede.zone_id)) {
+            sede.zone_id = null;
+            dropped += 1;
+          }
+        }
+      }
+      if (dropped > 0) {
+        toast(`La ciudad cambió: ${dropped} sede(s) quedaron en "Sin zona" — revisa la grid`, 'err');
+      }
+      renderSedes();
+      renderBarrioSelect();
+      renderMap();
+    });
 
     // whatsapp pill
     document.getElementById('f-whatsapp').addEventListener('input', (e) => {
