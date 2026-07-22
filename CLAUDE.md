@@ -23,6 +23,17 @@ El detalle de lugar (`console/lugar.html`, sección `· 06 · SEDES`) gestiona l
 
 `console/lugares.html` muestra un chip "+N sedes" (query batcheada a `place_locations` sobre la página visible).
 
+## Quepa Console: redes sociales (`place_social_links`)
+
+El detalle de lugar (`console/lugar.html`, sección `· 04 · CONTACTO Y RESERVAS`) gestiona redes sociales del modelo normalizado definido en `quepa-webhook` (change `add-place-social-links`, migración `0009`). Contrato que el Console debe respetar:
+
+- Cargar y guardar redes en `place_social_links`, no como columnas nuevas en `places`.
+- Plataformas iniciales permitidas: `instagram`, `facebook`, `tiktok`, `youtube`, `google_maps`, `whatsapp_channel`, `website`, `other`.
+- Quedan fuera por ahora: X/Twitter, LinkedIn, TripAdvisor y Threads.
+- No existe `priority`/`order`; solo `is_primary` como marca booleana de cuenta principal/oficial.
+- Quitar una red desde Console desactiva la fila (`active=false`), no la borra físicamente.
+- Al crear un lugar nuevo, primero se inserta `places` y luego las redes con el `place_id` resultante.
+
 ## Running locally
 
 There is no dev server config. Use any static server from the repo root, e.g.:
