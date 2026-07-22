@@ -27,5 +27,5 @@
 
 ## 5. Verificación y docs
 
-- [ ] 5.1 Prueba manual desktop y mobile (convención del repo): mono-sede canónico, sede solo-legado (transición a FK verificando en Supabase texto intacto), multi-sede (grid + espejo), ciudad sin gazetteer (degradación), mapa con centroide
+- [x] 5.1 Prueba manual desktop y mobile: mono-sede canónico, sede solo-legado, multi-sede, degradación sin gazetteer y mapa con centroide — verificado 2026-07-22 en producción por el usuario
 - [x] 5.2 Actualizar `quepa-landing/CLAUDE.md` (sección Console): contrato de zona canónica — el Console escribe `zone_id`, nunca `zone` texto, nunca inserta en `city_zones`; centroide display-only
