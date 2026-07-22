@@ -32,6 +32,6 @@
 
 ## 6. Verificación y docs
 
-- [ ] 6.1 Prueba manual en browser desktop y mobile (convención del repo): mono-sede (flujo intacto), Frisby (grid 6 sedes, 03/04 bloqueadas, coronar otra principal y revertir), crear lugar de prueba (verificar fila `Principal` en Supabase) y desactivar sede secundaria
+- [x] 6.1 Prueba manual en browser desktop y mobile (convención del repo): mono-sede (flujo intacto), Frisby (grid 6 sedes, 03/04 bloqueadas, coronar otra principal y revertir), crear lugar de prueba (verificar fila `Principal` en Supabase) y desactivar sede secundaria — verificado 2026-07-22 en producción, incluido el ciclo zona→guardar→recargar del fix 3.3
 - [x] 6.2 Verificar en Supabase si existen lugares creados por Console sin sede (ventana post-0008) y crearles su `Principal` desde el propio Console (tarea 3.2) — verificado 2026-07-21 (solo lectura): 1853 places · 1853 sedes · 1853 primarias, cero huérfanos; el camino de reparación queda para altas futuras pre-deploy
 - [x] 6.3 Documentar la sección y el contrato espejo↔sede en `quepa-landing/CLAUDE.md` (sección del Console; crearla si no existe — hoy el archivo solo documenta las landings)
