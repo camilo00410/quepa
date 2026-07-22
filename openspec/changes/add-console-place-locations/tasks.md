@@ -15,6 +15,7 @@
 
 - [x] 3.1 En `save()` de lugar existente mono-sede: además del update de `places`, update por `id` de la sede principal con dirección/lat/lng/teléfono/WhatsApp/zona (D1)
 - [x] 3.2 Caso borde: lugar existente SIN sede (creado por Console entre la 0008 y este deploy) — el guardado crea la `Principal` en vez de actualizar; verificación manual con el query `places` sin fila en `place_locations` (Open Question del design)
+- [x] 3.3 Hidratar `f-barrio` desde la `zone` de la sede principal en `loadPlace()` — bug reportado 2026-07-22: el campo cargaba vacío tras recargar (la zona sí se guardaba) y el siguiente guardado mono-sede pisaba `zone` a null con el campo vacío
 
 ## 4. Multi-sede (la grid es la verdad)
 

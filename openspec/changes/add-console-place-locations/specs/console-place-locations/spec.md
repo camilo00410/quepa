@@ -27,7 +27,7 @@ Crear un lugar desde el Console SHALL insertar también su sede `Principal` (`is
 
 ### Requirement: Guardado mono-sede sincroniza espejo y sede
 
-En un lugar con una sola sede activa, guardar cambios de las secciones 03/04 SHALL escribir las columnas planas de `places` **y** la fila de la sede principal con los mismos valores (dirección, lat/lng, teléfono, WhatsApp) más la zona (`f-barrio`, habilitado). El flujo de edición del staff MUST NOT cambiar respecto al actual.
+En un lugar con una sola sede activa, guardar cambios de las secciones 03/04 SHALL escribir las columnas planas de `places` **y** la fila de la sede principal con los mismos valores (dirección, lat/lng, teléfono, WhatsApp) más la zona (`f-barrio`, habilitado). Al cargar el lugar, el campo de zona SHALL hidratarse desde la `zone` de la sede principal (la zona no es columna de `places`); guardar sin tocar el campo MUST NOT vaciar la `zone` persistida. El flujo de edición del staff MUST NOT cambiar respecto al actual.
 
 #### Scenario: Edición de dirección mono-sede
 
@@ -38,6 +38,11 @@ En un lugar con una sola sede activa, guardar cambios de las secciones 03/04 SHA
 
 - **WHEN** el staff escribe "Cuba" en el campo de barrio/zona y guarda
 - **THEN** la sede principal queda con `zone='Cuba'` (el campo deja de estar deshabilitado)
+
+#### Scenario: Zona precargada al abrir
+
+- **WHEN** el staff abre un lugar mono-sede cuya sede principal tiene `zone='Cuba'` y guarda sin tocar la zona
+- **THEN** el campo Zona/Barrio muestra "Cuba" al cargar y la sede conserva `zone='Cuba'` tras guardar
 
 ### Requirement: Multi-sede edita en la grid con espejo sincronizado
 

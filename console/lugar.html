@@ -1710,6 +1710,10 @@ input, select, textarea { font-family: inherit; }
     loadHours(data);
     await loadSocialLinks(data.id);
     await loadSedes(data.id);
+    // zone no es columna de places: el barrio se hidrata desde la sede
+    // principal (sin esto, el guardado mono-sede pisa zone con el campo vacío)
+    const primForZone = primarySede();
+    document.getElementById('f-barrio').value = primForZone ? (primForZone.zone || '') : '';
     applyCardinalityMode();
     finishLoad();
   }
