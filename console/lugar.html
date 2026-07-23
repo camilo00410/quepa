@@ -124,14 +124,11 @@ input, select, textarea { font-family: inherit; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-.grid-coord { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 .field-d { display: flex; flex-direction: column; gap: 6px; }
 .field-d .label { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .field-d .label .req { color: var(--red); }
 .field-d .label .count { color: var(--ink-30); }
-.field-d .label .ok-pill { display: inline-flex; align-items: center; gap: 4px; color: #128c46; text-transform: none; letter-spacing: 0; font-family: var(--f-sans); font-size: 11px; font-weight: 500; }
-.field-d .label .ok-pill .dotg { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
 .field-d input, .field-d textarea, .field-d select {
   background: var(--paper);
   border: 1px solid var(--ink-12);
@@ -215,12 +212,15 @@ input, select, textarea { font-family: inherit; }
 .sede-row { display: flex; flex-direction: column; gap: 8px; background: var(--paper); border: 1px solid var(--ink-12); border-radius: 10px; padding: 10px; }
 .sede-row.primary { border-color: var(--night); box-shadow: 0 0 0 1px var(--night); }
 .sede-row .r1 { display: grid; grid-template-columns: 1fr 1fr 1.8fr auto; gap: 8px; align-items: end; }
-.sede-row .r2 { display: grid; grid-template-columns: 1fr .8fr .8fr 1fr 1fr; gap: 8px; }
+.sede-row .r2 { display: grid; grid-template-columns: 1fr 1.4fr 1fr 1fr; gap: 8px; }
 .sede-row input, .sede-row select { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 8px; padding: 8px 9px; font-size: 12.5px; color: var(--ink); min-width: 0; width: 100%; }
 .sede-row input:focus, .sede-row select:focus { border-color: var(--ink); }
 .sede-row select:disabled { color: var(--ink-30); }
 .zone-note { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.04em; color: var(--ink-30); margin-top: 6px; }
-.map .pin.approx { opacity: 0.55; }
+.coords-mini { font-family: var(--f-mono); font-size: 10px; color: var(--ink-30); margin-top: 4px; }
+.coords-mini b { color: var(--ink); font-weight: 500; }
+.coords-mini .edit-coords { cursor: pointer; text-decoration: underline; color: var(--ink-30); background: none; border: none; font: inherit; padding: 0; }
+.sede-coords-edit { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
 .sede-row .cell { display: flex; flex-direction: column; gap: 3px; }
 .sede-row .sub-label { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-30); }
 .sede-row .side-acts { display: flex; align-items: center; gap: 8px; padding-bottom: 4px; }
@@ -239,8 +239,12 @@ input, select, textarea { font-family: inherit; }
 .sede-inactive-row b { color: var(--ink-80); font-weight: 600; }
 .sede-inactive-row .reactivate { margin-left: auto; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-60); border: 1px solid var(--ink-12); border-radius: 999px; padding: 5px 10px; }
 .sede-inactive-row .reactivate:hover { border-color: var(--ink); color: var(--ink); }
-.section-locked-note { background: var(--ink-06); border: 1px dashed var(--ink-12); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; color: var(--ink-60); margin-bottom: 14px; line-height: 1.5; }
-.section-locked-note b { color: var(--ink); }
+/* Link de Maps corto por sede + adopción de links de marca sin sede asignada */
+.sede-row .r3 { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.maps-orphans { margin-top: 10px; }
+.maps-orphan-row { display: flex; align-items: center; gap: 10px; background: var(--paper); border: 1px dashed var(--ink-12); border-radius: 10px; padding: 8px 12px; margin-top: 8px; color: var(--ink-60); font-size: 12.5px; flex-wrap: wrap; }
+.maps-orphan-row .url { font-family: var(--f-mono); font-size: 11px; color: var(--ink-80); word-break: break-all; }
+.maps-orphan-row select { margin-left: auto; background: var(--cream); border: 1px solid var(--ink-12); border-radius: 8px; padding: 6px 9px; font-size: 12px; color: var(--ink); }
 @media (max-width: 960px) { .sede-row .r1, .sede-row .r2 { grid-template-columns: 1fr 1fr; } }
 
 /* hours */
@@ -263,32 +267,6 @@ input, select, textarea { font-family: inherit; }
 .hslot .hx:hover { color: var(--red); }
 .hadd { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-60); border: 1px dashed var(--ink-12); border-radius: 999px; padding: 6px 10px; }
 .hadd:hover { border-color: var(--ink); color: var(--ink); }
-
-/* map */
-.map {
-  aspect-ratio: 4/3;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #e8e6dc 0%, #f0eee3 100%);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--ink-12);
-}
-.map::before {
-  content: ""; position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(10,10,10,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(10,10,10,.04) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-.map .road { position: absolute; height: 4px; background: rgba(10,10,10,.07); border-radius: 2px; }
-.map .road.r1 { left: 0; right: 0; top: 30%; transform: rotate(-3deg); }
-.map .road.r2 { left: 20%; right: -10%; top: 65%; transform: rotate(4deg); height: 6px; }
-.map .road.r3 { width: 4px; height: 100%; left: 35%; top: 0; transform: rotate(8deg); }
-.map .road.r4 { width: 4px; height: 70%; right: 22%; top: 10%; transform: rotate(-6deg); }
-.map .pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -100%); }
-.map .pin .ring { position: absolute; inset: -16px; border-radius: 50%; background: var(--yg); opacity: .4; animation: pulse 2s ease-out infinite; z-index: -1; }
-@keyframes pulse { 0% { transform: scale(.7); opacity: .6; } 100% { transform: scale(1.4); opacity: 0; } }
-.map .pin .core { width: 28px; height: 28px; background: var(--night); border: 3px solid var(--yg); border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,.2); display: grid; place-items: center; color: var(--yg); font-weight: 800; font-size: 11px; }
-.map .coords { position: absolute; bottom: 10px; left: 10px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em; background: var(--night); color: var(--yg); padding: 4px 8px; border-radius: 6px; font-weight: 600; }
-.map .nodata { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-30); text-transform: uppercase; }
 
 /* side panel cards */
 .cura-card { background: var(--night); color: #fff; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
@@ -478,7 +456,7 @@ input, select, textarea { font-family: inherit; }
 
       <div class="detail-tabs">
         <a class="tab active">Datos generales</a>
-        <a class="tab disabled" title="Próximamente">Ubicación</a>
+        <a class="tab disabled" title="Próximamente">Sedes</a>
         <a class="tab disabled" title="Próximamente">Contacto y reservas</a>
         <a class="tab disabled" title="Próximamente">Curaduría y Stars</a>
         <a class="tab disabled" title="Próximamente">Métricas</a>
@@ -517,6 +495,19 @@ input, select, textarea { font-family: inherit; }
                   <option value="viewpoint">Mirador</option>
                   <option value="other">Otro</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Ciudad/región son identidad de la marca (unique name+city en places),
+                 no ubicación física — la ubicación vive por sede en SEDES. -->
+            <div class="grid-2" style="margin-top: 14px;">
+              <div class="field-d">
+                <div class="label"><span>Ciudad <span class="req">*</span></span></div>
+                <input id="f-city" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Región <span class="req">*</span></span></div>
+                <input id="f-region" />
               </div>
             </div>
 
@@ -582,51 +573,24 @@ input, select, textarea { font-family: inherit; }
             </div>
           </div>
 
-          <!-- UBICACIÓN -->
+          <!-- SEDES (la superficie de ubicación del formulario: place_locations es la verdad) -->
           <div class="section">
             <div class="hd">
               <div class="title-wrap">
-                <span class="lbl">· 03 · UBICACIÓN</span>
-                <h3>Dónde encontrar el sitio</h3>
+                <span class="lbl">· 03 · SEDES</span>
+                <h3>Dónde está físicamente</h3>
               </div>
+              <button type="button" class="act" id="addSedeBtn">+ Agregar sede</button>
             </div>
-
-            <div class="section-locked-note" id="ubicacionLockNote" hidden>Este lugar tiene <b id="lockNoteCount">—</b> sedes: la ubicación se edita por sede en <b>· 06 · SEDES</b>. Estos campos reflejan la sede principal.</div>
-
-            <div class="field-d">
-              <div class="label"><span>Dirección</span></div>
-              <input id="f-address" />
-            </div>
-
-            <div class="grid-3" style="margin-top: 14px;">
-              <div class="field-d">
-                <div class="label"><span>Ciudad <span class="req">*</span></span></div>
-                <input id="f-city" />
-              </div>
-              <div class="field-d">
-                <div class="label"><span>Región <span class="req">*</span></span></div>
-                <input id="f-region" />
-              </div>
-              <div class="field-d">
-                <div class="label"><span>Zona / Barrio</span><span style="color:var(--ink-30);">Sede principal</span></div>
-                <select id="f-barrio"><option value="">— Sin zona —</option></select>
-                <div class="zone-note" id="barrioNote" hidden></div>
-              </div>
-            </div>
-
-            <div class="grid-coord" style="margin-top: 14px;">
-              <div class="field-d">
-                <div class="label"><span>Latitud</span><span style="color: var(--ink-30);">float8</span></div>
-                <input id="f-lat" type="number" step="0.00001" />
-              </div>
-              <div class="field-d">
-                <div class="label"><span>Longitud</span><span style="color: var(--ink-30);">float8</span></div>
-                <input id="f-lng" type="number" step="0.00001" />
-              </div>
-            </div>
+            <div class="sedes-list" id="sedesList"></div>
+            <div class="sedes-empty" id="sedesEmpty" hidden>Sin sedes activas.</div>
+            <div class="maps-orphans" id="mapsOrphans" hidden></div>
+            <div class="sedes-inactive" id="sedesInactive" hidden></div>
+            <div class="sedes-error" id="sedesError" hidden></div>
+            <div class="help">Las sedes se guardan en <code>place_locations</code> — es lo que el agente usa para responder "¿cuál me queda cerca?". La sede <b>principal ⭐</b> sale en la recomendación general. El <b>Link de Maps</b> corto de cada sede es el que Quepa comparte al cliente.</div>
           </div>
 
-          <!-- CONTACTO -->
+          <!-- CONTACTO (solo datos de marca: el teléfono/WhatsApp es por sede, en SEDES) -->
           <div class="section">
             <div class="hd">
               <div class="title-wrap">
@@ -635,20 +599,7 @@ input, select, textarea { font-family: inherit; }
               </div>
             </div>
 
-            <div class="section-locked-note" id="contactoLockNote" hidden>Este lugar tiene varias sedes: teléfono y WhatsApp se editan por sede en <b>· 06 · SEDES</b>. Estos campos reflejan la sede principal.</div>
-
             <div class="grid-2">
-              <div class="field-d">
-                <div class="label"><span>Teléfono</span></div>
-                <input id="f-phone" placeholder="+57 …" />
-              </div>
-              <div class="field-d">
-                <div class="label"><span>WhatsApp</span><span class="ok-pill" id="whatsappPill" hidden><span class="dotg"></span>Verificado</span></div>
-                <input id="f-whatsapp" placeholder="+57 …" />
-              </div>
-            </div>
-
-            <div class="grid-2" style="margin-top: 14px;">
               <div class="field-d">
                 <div class="label"><span>Website</span></div>
                 <input id="f-website" type="url" placeholder="https://…" />
@@ -665,7 +616,7 @@ input, select, textarea { font-family: inherit; }
                 <button type="button" class="act" id="addSocialBtn">+ Agregar red</button>
               </div>
               <div class="social-links" id="socialLinks"></div>
-              <div class="social-empty" id="socialEmpty">Sin redes registradas. Agrega Instagram, Facebook, TikTok, YouTube, Google Maps, Canal de WhatsApp, website u otra fuente oficial.</div>
+              <div class="social-empty" id="socialEmpty">Sin redes registradas. Agrega Instagram, Facebook, TikTok, YouTube, Canal de WhatsApp, website u otra fuente oficial. El link de Google Maps va por sede, en SEDES.</div>
               <div class="social-error" id="socialError" hidden></div>
               <div class="help">Estas redes se guardan en <code>place_social_links</code>. Quepa solo las comparte si están cargadas aquí; no inventa handles.</div>
             </div>
@@ -698,45 +649,10 @@ input, select, textarea { font-family: inherit; }
             </div>
           </div>
 
-          <!-- SEDES -->
-          <div class="section">
-            <div class="hd">
-              <div class="title-wrap">
-                <span class="lbl">· 06 · SEDES</span>
-                <h3>Dónde está físicamente</h3>
-              </div>
-              <button type="button" class="act" id="addSedeBtn">+ Agregar sede</button>
-            </div>
-            <div class="sedes-list" id="sedesList"></div>
-            <div class="sedes-empty" id="sedesEmpty" hidden>Sin sedes registradas. Al guardar se creará la sede <b>Principal</b> con los datos de Ubicación y Contacto.</div>
-            <div class="sedes-inactive" id="sedesInactive" hidden></div>
-            <div class="sedes-error" id="sedesError" hidden></div>
-            <div class="help">Las sedes se guardan en <code>place_locations</code> — es lo que el agente usa para responder "¿cuál me queda cerca?". La sede <b>principal ⭐</b> sale en la recomendación general y se refleja en Ubicación y Contacto.</div>
-          </div>
-
         </div>
 
         <!-- RIGHT: SIDE -->
         <div class="detail-side">
-
-          <div class="section" style="padding: 16px;">
-            <div class="hd" style="margin-bottom: 12px;">
-              <span class="lbl">· UBICACIÓN EN MAPA</span>
-              <a class="act" id="mapOpen" target="_blank">Abrir →</a>
-            </div>
-            <div class="map" id="mapPreview">
-              <div class="road r1"></div>
-              <div class="road r2"></div>
-              <div class="road r3"></div>
-              <div class="road r4"></div>
-              <div class="pin" id="mapPin" hidden>
-                <div class="ring"></div>
-                <div class="core">★</div>
-              </div>
-              <div class="coords" id="mapCoords" hidden>—</div>
-              <div class="nodata" id="mapNoData">· Sin coordenadas</div>
-            </div>
-          </div>
 
           <div class="metric-strip">
             <div class="m">
@@ -791,17 +707,20 @@ input, select, textarea { font-family: inherit; }
     cafe: 'Café', restaurant: 'Restaurante', bar: 'Bar', hotel: 'Hotel',
     activity: 'Actividad', beach: 'Playa', viewpoint: 'Mirador', other: 'Otro',
   };
+  // google_maps NO está en el dropdown de redes de marca: el link corto de
+  // Maps se captura por sede (change consolidate-location-into-sedes) y se
+  // persiste en place_social_links con place_location_id.
   const SOCIAL_PLATFORM_LABEL = {
     instagram: 'Instagram',
     facebook: 'Facebook',
     tiktok: 'TikTok',
     youtube: 'YouTube',
-    google_maps: 'Google Maps',
     whatsapp_channel: 'Canal WhatsApp',
     website: 'Website',
     other: 'Otra',
   };
   const SOCIAL_PLATFORMS = Object.keys(SOCIAL_PLATFORM_LABEL);
+  const MAPS_PLATFORM = 'google_maps';
   function initials(s) { if (!s) return '—'; return s.trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join(''); }
   function nameFromEmail(email) { const local = (email || '').split('@')[0] || 'staff'; return local.split(/[._-]+/).filter(Boolean).map(s => s[0].toUpperCase() + s.slice(1)).join(' '); }
   function shortId(id) { if (!id) return 'PLC_—'; return 'PLC_' + id.replace(/-/g, '').slice(-4).toUpperCase(); }
@@ -847,10 +766,19 @@ input, select, textarea { font-family: inherit; }
     original: null, // copy for change detection / cancel
     socialLinks: [],
     removedSocialLinkIds: new Set(),
+    // Filas google_maps crudas del último load — attachMapsLinks las reparte
+    // entre sedes (por place_location_id) y huérfanas.
+    mapsRows: [],
+    // Links google_maps de marca sin sede asignada (place_location_id null):
+    // en mono-sede se adoptan a la Principal al guardar (visible antes); en
+    // multi-sede el staff los asigna desde el bloque "sin sede asignada".
+    // Sin asignar quedan dormidos — nunca se borran ni se migran en silencio.
+    orphanMapsLinks: [],
     // sedes: contrato de quepa-webhook (place_locations) — places es la marca,
-    // la sede es a dónde va el usuario; las columnas planas de places son
-    // espejo de la sede is_primary. Regla D1: el espejo lo mantiene quien
-    // escribe (mono-sede: 03/04; multi-sede: la grid).
+    // la sede es a dónde va el usuario; las columnas planas de places
+    // (address/lat/lng/phone/whatsapp) son espejo de la sede is_primary y se
+    // derivan de la grid al guardar. La grid es la ÚNICA superficie de edición
+    // de ubicación/contacto por sede (change consolidate-location-into-sedes).
     sedes: [],
     deactivatedSedeIds: new Set(),
     originalPrimarySedeId: null,
@@ -960,12 +888,13 @@ input, select, textarea { font-family: inherit; }
 
   async function loadSocialLinks(placeIdForLinks) {
     state.socialLinks = [];
+    state.orphanMapsLinks = [];
     state.removedSocialLinkIds.clear();
     setSocialError('');
     if (!placeIdForLinks) { renderSocialLinks(); return; }
     const { data, error } = await sb
       .from('place_social_links')
-      .select('id, platform, url, handle, label, is_primary, active')
+      .select('id, platform, url, handle, label, is_primary, active, place_location_id')
       .eq('place_id', placeIdForLinks)
       .eq('active', true);
     if (error) {
@@ -973,8 +902,40 @@ input, select, textarea { font-family: inherit; }
       renderSocialLinks();
       return;
     }
-    state.socialLinks = (data || []).map(normalizeSocialRow);
+    // Las filas google_maps no viven en la lista de redes de marca: van al
+    // campo "Link de Maps" de su sede (attachMapsLinks) o al bloque de
+    // "sin sede asignada" si place_location_id es null.
+    const rows = data || [];
+    state.socialLinks = rows.filter(r => r.platform !== MAPS_PLATFORM).map(normalizeSocialRow);
+    state.mapsRows = rows.filter(r => r.platform === MAPS_PLATFORM);
     renderSocialLinks();
+  }
+
+  // Asocia las filas google_maps cargadas a sus sedes en memoria. Corre
+  // después de loadSedes + loadSocialLinks (necesita ambos estados).
+  function attachMapsLinks() {
+    const rows = state.mapsRows || [];
+    state.orphanMapsLinks = [];
+    for (const row of rows) {
+      const sede = row.place_location_id
+        ? state.sedes.find(s => s.id === row.place_location_id)
+        : null;
+      if (sede) {
+        sede.mapsLinkId = row.id;
+        sede.mapsUrl = row.url || '';
+        continue;
+      }
+      state.orphanMapsLinks.push({ id: row.id, url: row.url || '' });
+    }
+    // Mono-sede: el link de marca se adopta a la Principal — visible antes de
+    // guardar (nota en el campo), automático porque no hay ambigüedad.
+    const act = activeSedes();
+    if (act.length === 1 && state.orphanMapsLinks.length && !act[0].mapsLinkId) {
+      const orphan = state.orphanMapsLinks.shift();
+      act[0].mapsLinkId = orphan.id;
+      act[0].mapsUrl = orphan.url;
+      act[0].mapsAdopting = true;
+    }
   }
 
   function validateSocialLinks() {
@@ -1017,10 +978,91 @@ input, select, textarea { font-family: inherit; }
     state.removedSocialLinkIds.clear();
   }
 
+  // Persiste el Link de Maps corto de cada sede en place_social_links con
+  // place_location_id (is_primary siempre false: la primacía la da la sede).
+  // Corre DESPUÉS de saveSedes — las sedes nuevas ya tienen id. Vaciar el
+  // campo desactiva la fila (active=false), nunca la borra; los huérfanos
+  // sin asignar no se tocan.
+  async function saveMapsLinks(placeIdForLinks) {
+    const now = new Date().toISOString();
+    for (const sede of activeSedes()) {
+      const url = (sede.mapsUrl || '').trim();
+      if (!url) {
+        if (sede.mapsLinkId) {
+          const { error } = await sb.from('place_social_links')
+            .update({ active: false, updated_at: now })
+            .eq('id', sede.mapsLinkId);
+          if (error) throw new Error(`Link de Maps de "${sede.label}": ` + error.message);
+          sede.mapsLinkId = null;
+        }
+        continue;
+      }
+      const payload = {
+        place_id: placeIdForLinks,
+        place_location_id: sede.id,
+        platform: MAPS_PLATFORM,
+        url,
+        is_primary: false,
+        source: 'console',
+        verified_at: now,
+        active: true,
+        updated_at: now,
+      };
+      const op = sede.mapsLinkId
+        ? sb.from('place_social_links').update(payload).eq('id', sede.mapsLinkId)
+        : sb.from('place_social_links').upsert(payload, { onConflict: 'place_id,platform,url' }).select('id').single();
+      const { data, error } = await op;
+      if (error) throw new Error(`Link de Maps de "${sede.label}": ` + error.message);
+      if (!sede.mapsLinkId && data && data.id) sede.mapsLinkId = data.id;
+      sede.mapsAdopting = false;
+    }
+  }
+
   // ---------- sedes (place_locations) ----------
   // Mismo criterio de normalización de labels que el seed del webhook.
   const normSedeLabel = (s) => (s || '').trim().toLowerCase().replace(/\s+/g, ' ');
-  const MIRROR_FIELD_IDS = ['f-address', 'f-lat', 'f-lng', 'f-barrio', 'f-phone', 'f-whatsapp'];
+
+  // ---------- coordenadas desde URL de Maps (add-console-maps-link-coords) ----------
+  // Extracción LOCAL por regex — cero llamadas externas. Orden de confianza:
+  // !3d/!4d (el pin de la ficha) gana sobre @ (centro del viewport, puede
+  // diferir si el staff movió el mapa). La URL es un conducto: no se persiste.
+  const MAPS_COORD_PATTERNS = [
+    /!3d(-?\d{1,2}\.\d{3,})!4d(-?\d{1,3}\.\d{3,})/,
+    /@(-?\d{1,2}\.\d{3,}),(-?\d{1,3}\.\d{3,})/,
+    /[?&]q=(-?\d{1,2}\.\d{3,}),(-?\d{1,3}\.\d{3,})/,
+    /[?&]ll=(-?\d{1,2}\.\d{3,}),(-?\d{1,3}\.\d{3,})/,
+  ];
+
+  function extractCoordsFromMapsUrl(url) {
+    const s = (url || '').trim();
+    if (!s) return null;
+    for (const rx of MAPS_COORD_PATTERNS) {
+      const m = s.match(rx);
+      if (!m) continue;
+      const lat = Number(m[1]);
+      const lng = Number(m[2]);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+    }
+    return null;
+  }
+
+  function isShortMapsLink(url) {
+    return /maps\.app\.goo\.gl|goo\.gl\/maps/.test(url || '');
+  }
+
+  // Rango aproximado de Colombia: fuera de esto se acepta con AVISO, nunca se
+  // bloquea (D4 — hay lugares limítrofes y el staff manda).
+  function coordsOutOfColombia(c) {
+    return c.lat < -5 || c.lat > 14 || c.lng < -82 || c.lng > -66;
+  }
+
+  const fmtCoord = (v) => (v === null || v === '' || !Number.isFinite(Number(v)) ? null : Number(v).toFixed(5));
+
+  function coordsLabel(lat, lng) {
+    const la = fmtCoord(lat);
+    const ln = fmtCoord(lng);
+    return la !== null && ln !== null ? `${la}, ${ln}` : 'sin coordenadas';
+  }
 
   // ---------- zonas (city_zones, change add-console-zone-selector) ----------
   // El gazetteer es dato curado del backend: el Console lo LEE para el
@@ -1059,12 +1101,6 @@ input, select, textarea { font-family: inherit; }
       if (z) return z;
     }
     return null;
-  }
-
-  // Valor efectivo del selector espejo: '' y '__legacy' significan zone_id null.
-  function readBarrioZoneId() {
-    const v = document.getElementById('f-barrio').value;
-    return v && v !== '__legacy' ? v : null;
   }
 
   // Opciones del selector de zona: "Sin zona" + zonas de la ciudad + estados
@@ -1106,48 +1142,17 @@ input, select, textarea { font-family: inherit; }
     }
     // Ciudad aún no consultada: cargar y re-render (una sola vez por ciudad).
     if (zones === undefined && city) {
-      ensureZonesForCity(city).then(() => { renderSedes(); renderBarrioSelect(); });
+      ensureZonesForCity(city).then(renderSedes);
     }
     sel.addEventListener('change', () => {
       sede.zone_id = sel.value && sel.value !== '__legacy' ? sel.value : null;
       setSedesError('');
-      if (isMultiSede()) {
-        if (sede.is_primary) syncReflejo();
-      } else {
-        // Mono-sede: 03/04 mandan al guardar (D1) — reflejar la edición de la
-        // grid en f-barrio o el guardado la pisaría con el valor viejo.
-        renderBarrioSelect();
-      }
-      renderMap();
     });
     return sel;
   }
 
-  // Selector espejo de 03 (sede principal). Deshabilitado en multi-sede (la
-  // grid es la verdad), sin ciudad o sin zonas en el gazetteer (D5: degradar
-  // con nota honesta, nunca reabrir texto libre ni bloquear el guardado).
-  function renderBarrioSelect() {
-    const sel = document.getElementById('f-barrio');
-    const note = document.getElementById('barrioNote');
-    const city = placeCity();
-    const sede = primarySede() || activeSedes()[0] || { zone_id: null, zone: '' };
-    fillZoneSelect(sel, sede, city);
-    const zones = zonesForCity(city);
-    const failed = zones === 'error';
-    const empty = Array.isArray(zones) && zones.length === 0;
-    sel.disabled = isMultiSede() || failed || empty || !city;
-    if (!city) {
-      note.textContent = 'Define la ciudad para elegir zona.';
-    } else if (failed) {
-      note.textContent = 'No se pudieron cargar las zonas del gazetteer — recarga para reintentar.';
-    } else if (empty) {
-      note.textContent = `Sin zonas para ${city} en el gazetteer — se curan en el backend (quepa-webhook).`;
-    }
-    note.hidden = !(!city || failed || empty);
-  }
-
   function blankSede() {
-    return { id: null, label: '', zone: '', zone_id: null, address: '', city: '', lat: null, lng: null, phone: '', whatsapp: '', is_primary: false, active: true };
+    return { id: null, label: '', zone: '', zone_id: null, address: '', city: '', lat: null, lng: null, phone: '', whatsapp: '', is_primary: false, active: true, mapsUrl: '', mapsLinkId: null, mapsAdopting: false };
   }
 
   function normalizeSedeRow(row) {
@@ -1164,7 +1169,22 @@ input, select, textarea { font-family: inherit; }
       whatsapp: row.whatsapp || '',
       is_primary: row.is_primary === true,
       active: row.active !== false,
+      // Link de Maps corto por sede — se asocia en attachMapsLinks.
+      mapsUrl: '',
+      mapsLinkId: null,
+      mapsAdopting: false,
     };
+  }
+
+  // Alta y huérfanos (D4): un lugar nuevo — o uno existente sin sedes activas —
+  // arranca con la fila Principal pre-creada en la grid. Con error de carga no
+  // se pre-crea nada: guardar podría chocar con un label Principal ya existente.
+  function ensurePrincipalSede() {
+    if (state.sedesLoadError || activeSedes().length > 0) return;
+    const sede = blankSede();
+    sede.label = 'Principal';
+    sede.is_primary = true;
+    state.sedes.push(sede);
   }
 
   function activeSedes() { return state.sedes.filter(s => s.active); }
@@ -1212,6 +1232,164 @@ input, select, textarea { font-family: inherit; }
     return cell;
   }
 
+  // Celda de coordenadas de la grid (add-console-maps-link-coords): URL de
+  // Maps como vía primaria + resumen con edición manual colapsada (D3, D5).
+  // coordsOpen es estado de UI transitorio del objeto sede — nunca se guarda
+  // (saveSedes arma el row columna por columna).
+  function coordsCellFor(sede) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const lab = document.createElement('span');
+    lab.className = 'sub-label';
+    lab.textContent = 'Coordenadas';
+
+    // La captura actualiza la celda EN SITIO — nunca renderSedes() aquí: el
+    // re-render reconstruye el input y se traga lo pegado antes de que el
+    // staff vea nada (el campo es un conducto y se limpia solo, con nota).
+    const note = document.createElement('div');
+    note.className = 'zone-note';
+    note.hidden = true;
+
+    const mini = document.createElement('div');
+    mini.className = 'coords-mini';
+    const val = document.createElement('b');
+    val.textContent = coordsLabel(sede.lat, sede.lng);
+
+    let latEditInput = null;
+    let lngEditInput = null;
+
+    const urlInput = document.createElement('input');
+    urlInput.placeholder = 'Pega URL completa de Maps…';
+    // El texto pegado se queda visible (no se persiste; desaparece al recargar
+    // o re-renderizar) — limpiarlo al capturar hacía parecer que el paste falló.
+    const processUrl = (value) => {
+      value = (value || '').trim();
+      if (!value) { note.hidden = true; setSedesError(''); return; }
+      const coords = extractCoordsFromMapsUrl(value);
+      if (coords) {
+        sede.lat = coords.lat;
+        sede.lng = coords.lng;
+        val.textContent = coordsLabel(sede.lat, sede.lng);
+        if (latEditInput) latEditInput.value = sede.lat;
+        if (lngEditInput) lngEditInput.value = sede.lng;
+        note.textContent = coordsOutOfColombia(coords)
+          ? `Capturadas ${coordsLabel(coords.lat, coords.lng)} — ⚠ caen fuera de Colombia, verifica la URL`
+          : `Coordenadas capturadas ✓ ${coordsLabel(coords.lat, coords.lng)}`;
+        note.hidden = false;
+        setSedesError('');
+        return;
+      }
+      if (isShortMapsLink(value)) {
+        note.textContent = 'Ese link corto no trae coordenadas (va en el campo "Link de Maps") — ábrelo en el navegador y pega la URL completa.';
+        note.hidden = false;
+      } else if (value.length > 15) {
+        note.textContent = 'No encontré coordenadas en esa URL — pega la URL completa del navegador.';
+        note.hidden = false;
+      } else {
+        note.hidden = true;
+      }
+    };
+    urlInput.addEventListener('input', () => processUrl(urlInput.value));
+    // Cinturón y tirantes: si una extensión o el navegador no disparan 'input'
+    // al pegar, procesamos el texto del portapapeles directo (idempotente con
+    // el handler de input — misma extracción, mismos valores).
+    urlInput.addEventListener('paste', (e) => {
+      const text = e.clipboardData ? e.clipboardData.getData('text') : '';
+      if (text) setTimeout(() => processUrl(urlInput.value || text), 0);
+    });
+
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'edit-coords';
+    editBtn.textContent = sede.coordsOpen ? 'cerrar' : 'editar';
+    editBtn.addEventListener('click', () => {
+      sede.coordsOpen = !sede.coordsOpen;
+      renderSedes();
+    });
+    mini.append(val, document.createTextNode(' · '), editBtn);
+    cell.append(lab, urlInput, note, mini);
+
+    if (sede.coordsOpen) {
+      const edit = document.createElement('div');
+      edit.className = 'sede-coords-edit';
+      latEditInput = sedeInput(sede.lat, '4.813…', v => {
+        sede.lat = v === '' ? null : Number(v);
+        val.textContent = coordsLabel(sede.lat, sede.lng);
+      }, 'number');
+      lngEditInput = sedeInput(sede.lng, '-75.69…', v => {
+        sede.lng = v === '' ? null : Number(v);
+        val.textContent = coordsLabel(sede.lat, sede.lng);
+      }, 'number');
+      edit.append(latEditInput, lngEditInput);
+      cell.appendChild(edit);
+    }
+    return cell;
+  }
+
+  // Celda del Link de Maps corto (change consolidate-location-into-sedes):
+  // es lo que el bot comparte al cliente — nunca se le extraen coordenadas.
+  function mapsLinkCellFor(sede) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const lab = document.createElement('span');
+    lab.className = 'sub-label';
+    lab.textContent = 'Link de Maps · corto (lo ve el cliente)';
+    const inp = document.createElement('input');
+    inp.placeholder = 'https://maps.app.goo.gl/…';
+    inp.value = sede.mapsUrl || '';
+    inp.addEventListener('input', () => {
+      sede.mapsUrl = inp.value.trim();
+      sede.mapsAdopting = false;
+      setSedesError('');
+    });
+    cell.append(lab, inp);
+    if (sede.mapsAdopting && sede.mapsUrl) {
+      const note = document.createElement('div');
+      note.className = 'zone-note';
+      note.textContent = 'Link de marca existente — se asignará a esta sede al guardar.';
+      cell.appendChild(note);
+    }
+    return cell;
+  }
+
+  // Filas google_maps de marca sin sede (multi-sede): visibles, nunca se
+  // migran solas — el staff elige la sede y el guardado actualiza la fila.
+  function renderMapsOrphans() {
+    const box = document.getElementById('mapsOrphans');
+    box.innerHTML = '';
+    box.hidden = state.orphanMapsLinks.length === 0;
+    state.orphanMapsLinks.forEach((orphan, index) => {
+      const row = document.createElement('div');
+      row.className = 'maps-orphan-row';
+      const txt = document.createElement('span');
+      txt.textContent = 'Link de Maps sin sede asignada:';
+      const url = document.createElement('span');
+      url.className = 'url';
+      url.textContent = orphan.url;
+      const sel = document.createElement('select');
+      sel.appendChild(new Option('Asignar a sede…', ''));
+      activeSedes().forEach((sede, i) => {
+        sel.appendChild(new Option(sede.label || `Sede ${i + 1}`, String(i)));
+      });
+      sel.addEventListener('change', () => {
+        if (sel.value === '') return;
+        const sede = activeSedes()[Number(sel.value)];
+        if (!sede) return;
+        if (sede.mapsUrl) {
+          toast(`La sede "${sede.label}" ya tiene Link de Maps — libéralo primero`, 'err');
+          sel.value = '';
+          return;
+        }
+        sede.mapsUrl = orphan.url;
+        sede.mapsLinkId = orphan.id;
+        state.orphanMapsLinks.splice(index, 1);
+        renderSedes();
+      });
+      row.append(txt, url, sel);
+      box.appendChild(row);
+    });
+  }
+
   function sedeInput(value, placeholder, onInput, type) {
     const inp = document.createElement('input');
     if (type) { inp.type = type; inp.step = 'any'; }
@@ -1236,15 +1414,9 @@ input, select, textarea { font-family: inherit; }
       const r1 = document.createElement('div');
       r1.className = 'r1';
       r1.append(
-        sedeCell('Label', sedeInput(sede.label, 'Cuba, Unicentro…', v => {
-          sede.label = v;
-          if (sede.is_primary) syncReflejo();
-        })),
+        sedeCell('Label', sedeInput(sede.label, 'Cuba, Unicentro…', v => { sede.label = v; })),
         sedeCell('Zona', zoneSelectFor(sede)),
-        sedeCell('Dirección', sedeInput(sede.address, 'Cra 25 # 69B-01…', v => {
-          sede.address = v;
-          if (sede.is_primary) syncReflejo();
-        })),
+        sedeCell('Dirección', sedeInput(sede.address, 'Cra 25 # 69B-01…', v => { sede.address = v; })),
       );
 
       const acts = document.createElement('div');
@@ -1259,7 +1431,6 @@ input, select, textarea { font-family: inherit; }
         activeSedes().forEach(s => { s.is_primary = false; });
         sede.is_primary = true;
         renderSedes();
-        syncReflejo();
       });
       primary.append(radio, document.createTextNode('⭐ Principal'));
 
@@ -1277,7 +1448,6 @@ input, select, textarea { font-family: inherit; }
           sede.is_primary = false;
           if (sede.id) state.deactivatedSedeIds.add(sede.id);
           renderSedes();
-          applyCardinalityMode();
         });
       }
       acts.append(primary, remove);
@@ -1292,27 +1462,20 @@ input, select, textarea { font-family: inherit; }
       });
       r2.append(
         sedeCell('Ciudad', cityInput),
-        sedeCell('Lat', sedeInput(sede.lat, '4.813…', v => {
-          sede.lat = v === '' ? null : Number(v);
-          if (sede.is_primary) syncReflejo();
-        }, 'number')),
-        sedeCell('Lng', sedeInput(sede.lng, '-75.69…', v => {
-          sede.lng = v === '' ? null : Number(v);
-          if (sede.is_primary) syncReflejo();
-        }, 'number')),
-        sedeCell('Teléfono', sedeInput(sede.phone, '+57 …', v => {
-          sede.phone = v;
-          if (sede.is_primary) syncReflejo();
-        })),
-        sedeCell('WhatsApp', sedeInput(sede.whatsapp, '+57 …', v => {
-          sede.whatsapp = v;
-          if (sede.is_primary) syncReflejo();
-        })),
+        coordsCellFor(sede),
+        sedeCell('Teléfono', sedeInput(sede.phone, '+57 …', v => { sede.phone = v; })),
+        sedeCell('WhatsApp', sedeInput(sede.whatsapp, '+57 …', v => { sede.whatsapp = v; })),
       );
 
-      row.append(r1, r2);
+      const r3 = document.createElement('div');
+      r3.className = 'r3';
+      r3.appendChild(mapsLinkCellFor(sede));
+
+      row.append(r1, r2, r3);
       box.appendChild(row);
     });
+
+    renderMapsOrphans();
 
     // inactivas: colapsadas, con reactivar
     const inact = state.sedes.filter(s => !s.active);
@@ -1345,7 +1508,6 @@ input, select, textarea { font-family: inherit; }
             sede.active = true;
             if (sede.id) state.deactivatedSedeIds.delete(sede.id);
             renderSedes();
-            applyCardinalityMode();
           });
           row.append(name, addr, re);
           inactiveBox.appendChild(row);
@@ -1354,41 +1516,11 @@ input, select, textarea { font-family: inherit; }
     }
   }
 
-  // D1: modo por cardinalidad. Multi-sede bloquea los campos espejo de 03/04
-  // (la grid es la verdad); mono-sede los deja editables como siempre.
-  function applyCardinalityMode() {
-    const multi = isMultiSede();
-    document.getElementById('ubicacionLockNote').hidden = !multi;
-    document.getElementById('contactoLockNote').hidden = !multi;
-    document.getElementById('lockNoteCount').textContent = String(activeSedes().length);
-    MIRROR_FIELD_IDS.forEach(id => { document.getElementById(id).disabled = multi; });
-    if (multi) syncReflejo();
-    // Siempre de último: decide el disabled/nota real de f-barrio (multi,
-    // gazetteer vacío o ciudad sin definir) por encima del toggle de espejo.
-    renderBarrioSelect();
-  }
-
-  // En multi-sede, 03/04 reflejan la sede principal. Mantener los inputs
-  // sincronizados hace que gather() arme el espejo correcto sin tocarlo.
-  function syncReflejo() {
-    if (!isMultiSede()) return;
-    const p = primarySede();
-    if (!p) return;
-    document.getElementById('f-address').value = p.address || '';
-    document.getElementById('f-lat').value = p.lat ?? '';
-    document.getElementById('f-lng').value = p.lng ?? '';
-    // f-barrio es select: se reconstruye desde la sede principal (canónico
-    // por zone_id o texto legado — regla única de add-city-zones).
-    renderBarrioSelect();
-    document.getElementById('f-phone').value = p.phone || '';
-    document.getElementById('f-whatsapp').value = p.whatsapp || '';
-    document.getElementById('whatsappPill').hidden = !p.whatsapp;
-    renderMap();
-  }
-
   function validateSedes() {
     const act = activeSedes();
-    if (!act.length) return null; // sin sedes: el guardado crea la Principal (D4)
+    // La grid es la única superficie: sin al menos la Principal no hay espejo
+    // que derivar (la pre-creación debería impedir llegar aquí sin sedes).
+    if (!act.length) return 'Debe existir al menos la sede Principal ⭐';
     const seen = new Set();
     for (const [i, s] of act.entries()) {
       const n = i + 1;
@@ -1398,6 +1530,9 @@ input, select, textarea { font-family: inherit; }
       seen.add(key);
       if (s.lat !== null && !Number.isFinite(s.lat)) return `Sede "${s.label}": latitud inválida`;
       if (s.lng !== null && !Number.isFinite(s.lng)) return `Sede "${s.label}": longitud inválida`;
+      if (s.mapsUrl) {
+        try { new URL(s.mapsUrl); } catch (_) { return `Sede "${s.label}": Link de Maps inválido`; }
+      }
     }
     // el unique (place_id, label) de la base cubre también las inactivas
     for (const s of state.sedes.filter(x => !x.active)) {
@@ -1412,50 +1547,11 @@ input, select, textarea { font-family: inherit; }
   // Persiste las sedes. Orden (D3, mismo baile que el seed del webhook):
   // democión de la primaria saliente → desactivaciones → upserts con la
   // principal de última (el índice único parcial rechaza dos primarias).
-  async function saveSedes(placeIdForSedes, payload) {
+  // La grid es la única fuente: no hay síntesis desde 03/04 (la fila
+  // Principal se pre-crea en la grid al abrir — ensurePrincipalSede).
+  async function saveSedes(placeIdForSedes) {
     const now = new Date().toISOString();
     const act = activeSedes();
-
-    // Alta de lugar, o lugar huérfano creado entre la migración 0008 y este
-    // deploy: crear la sede Principal desde los campos de 03/04 (D4).
-    if (!act.length) {
-      const { data, error } = await sb.from('place_locations').insert({
-        place_id: placeIdForSedes,
-        label: 'Principal',
-        zone_id: readBarrioZoneId(),
-        address: payload.address,
-        lat: payload.lat,
-        lng: payload.lng,
-        phone: payload.phone,
-        whatsapp: payload.whatsapp,
-        is_primary: true,
-        active: true,
-        updated_at: now,
-      }).select('id').single();
-      if (error) throw new Error('Sede Principal: ' + error.message + ' — reintenta guardar');
-      state.sedes.push(normalizeSedeRow({
-        id: data.id, label: 'Principal',
-        zone_id: readBarrioZoneId(),
-        address: payload.address, lat: payload.lat, lng: payload.lng,
-        phone: payload.phone, whatsapp: payload.whatsapp,
-        is_primary: true, active: true,
-      }));
-      state.originalPrimarySedeId = data.id;
-      return;
-    }
-
-    // Mono-sede: 03/04 mandan — la única sede activa copia el formulario (D1).
-    // La zona viaja como FK; el texto legado `zone` no se toca jamás.
-    if (!isMultiSede()) {
-      const s = act[0];
-      s.zone_id = readBarrioZoneId();
-      s.address = payload.address || '';
-      s.lat = payload.lat;
-      s.lng = payload.lng;
-      s.phone = payload.phone || '';
-      s.whatsapp = payload.whatsapp || '';
-      s.is_primary = true;
-    }
 
     // 1 · democión previa si la principal cambió
     const newPrimary = primarySede();
@@ -1749,39 +1845,6 @@ input, select, textarea { font-family: inherit; }
     document.getElementById('activeLabel').textContent = state.active ? 'Activo en producción' : 'Inactivo';
   }
 
-  // ---------- map ----------
-  function renderMap() {
-    const lat = parseFloat(document.getElementById('f-lat').value);
-    const lng = parseFloat(document.getElementById('f-lng').value);
-    const pin = document.getElementById('mapPin');
-    const coords = document.getElementById('mapCoords');
-    const noData = document.getElementById('mapNoData');
-    const open = document.getElementById('mapOpen');
-    if (Number.isFinite(lat) && Number.isFinite(lng)) {
-      pin.hidden = false; coords.hidden = false; noData.hidden = true;
-      pin.classList.remove('approx');
-      coords.textContent = `${lat.toFixed(5)} · ${lng.toFixed(5)}`;
-      open.href = `https://www.google.com/maps?q=${lat},${lng}`;
-      open.style.color = 'var(--ink)';
-      return;
-    }
-    // Sin coordenadas propias: el centroide de la zona seleccionada es
-    // referencia APROXIMADA (D4) — se muestra, jamás se escribe en f-lat/f-lng.
-    const zone = zoneById(readBarrioZoneId());
-    if (zone && Number.isFinite(zone.lat) && Number.isFinite(zone.lng)) {
-      pin.hidden = false; coords.hidden = false; noData.hidden = true;
-      pin.classList.add('approx');
-      coords.textContent = `≈ zona ${zone.name} · ${zone.lat.toFixed(5)} · ${zone.lng.toFixed(5)}`;
-      open.href = `https://www.google.com/maps?q=${zone.lat},${zone.lng}`;
-      open.style.color = 'var(--ink)';
-      return;
-    }
-    pin.hidden = true; coords.hidden = true; noData.hidden = false;
-    pin.classList.remove('approx');
-    open.removeAttribute('href');
-    open.style.color = 'var(--ink-30)';
-  }
-
   // ---------- load ----------
   async function loadPlace() {
     if (state.isNew) {
@@ -1797,11 +1860,12 @@ input, select, textarea { font-family: inherit; }
       document.getElementById('ratingReadonly').innerHTML = '— <span class="small">no aplica</span>';
       state.active = true;
       renderActiveToggle();
-      renderMap();
       loadHours(null);
       await loadSocialLinks(null);
       await loadSedes(null);
-      applyCardinalityMode();
+      // El lugar nuevo arranca con su fila Principal lista para llenar (D4).
+      ensurePrincipalSede();
+      renderSedes();
       finishLoad();
       return;
     }
@@ -1840,20 +1904,15 @@ input, select, textarea { font-family: inherit; }
       document.getElementById('ratingReadonly').innerHTML = '— <span class="small">sin sincronizar</span>';
     }
 
-    // fill form
+    // fill form (los datos de ubicación/contacto por sede viven en la grid;
+    // las columnas planas de places son espejo derivado y no se editan aquí)
     document.getElementById('f-name').value = data.name || '';
     document.getElementById('f-category').value = data.category || '';
     document.getElementById('f-description').value = data.description || '';
-    document.getElementById('f-address').value = data.address || '';
     document.getElementById('f-city').value = data.city || '';
     document.getElementById('f-region').value = data.region || '';
-    document.getElementById('f-lat').value = data.lat ?? '';
-    document.getElementById('f-lng').value = data.lng ?? '';
-    document.getElementById('f-phone').value = data.phone || '';
-    document.getElementById('f-whatsapp').value = data.whatsapp || '';
     document.getElementById('f-website').value = data.website || '';
     document.getElementById('f-booking_url').value = data.booking_url || '';
-    document.getElementById('whatsappPill').hidden = !data.whatsapp;
     document.getElementById('deleteBtn').hidden = false;
 
     document.getElementById('nameCount').textContent = (data.name || '').length + '/80';
@@ -1862,19 +1921,17 @@ input, select, textarea { font-family: inherit; }
     document.querySelectorAll('[data-tag-field]').forEach(c => renderTags(c));
     renderPrice();
     renderActiveToggle();
-    renderMap();
     loadHours(data);
     await loadSocialLinks(data.id);
     await loadSedes(data.id);
-    // Zonas del gazetteer para la ciudad del lugar y las propias de sedes
-    // (AMCO). f-barrio se hidrata desde la sede principal en
-    // renderBarrioSelect() (vía applyCardinalityMode): canónico por zone_id o
-    // texto legado — sin esto, el guardado mono-sede pisaría la zona.
+    // Huérfano sin sedes activas: fila Principal pre-creada (D4). Después,
+    // asociar los links google_maps a sus sedes (necesita ambos loads).
+    ensurePrincipalSede();
+    attachMapsLinks();
+    // Zonas del gazetteer para la ciudad del lugar y las propias de sedes (AMCO).
     const zoneCities = new Set([data.city, ...state.sedes.map(s => s.city)].filter(Boolean));
     await Promise.all([...zoneCities].map(c => ensureZonesForCity(c)));
     renderSedes();
-    applyCardinalityMode();
-    renderMap();
     finishLoad();
   }
 
@@ -1890,23 +1947,25 @@ input, select, textarea { font-family: inherit; }
     const description = document.getElementById('f-description').value.trim();
     const city = document.getElementById('f-city').value.trim();
     const region = document.getElementById('f-region').value.trim();
-    const address = document.getElementById('f-address').value.trim();
-    const latStr = document.getElementById('f-lat').value;
-    const lngStr = document.getElementById('f-lng').value;
-    const lat = latStr === '' ? null : Number(latStr);
-    const lng = lngStr === '' ? null : Number(lngStr);
-    const phone = document.getElementById('f-phone').value.trim();
-    const whatsapp = document.getElementById('f-whatsapp').value.trim();
     const website = document.getElementById('f-website').value.trim();
     const booking_url = document.getElementById('f-booking_url').value.trim();
 
+    // Espejo de places (contrato add-place-locations): las columnas planas se
+    // derivan de la sede ⭐ en la grid — null-safe si la fila está vacía
+    // (validateSedes corre antes de escribir; mismo estado en memoria).
+    const prim = primarySede();
+    const numOrNull = (v) => (v === null || v === undefined || v === '' || !Number.isFinite(Number(v)) ? null : Number(v));
+    const strOrNull = (v) => ((v || '').trim() || null);
+
     return {
       name, category, description,
-      city, region, address: address || null,
-      lat, lng,
+      city, region,
+      address: prim ? strOrNull(prim.address) : null,
+      lat: prim ? numOrNull(prim.lat) : null,
+      lng: prim ? numOrNull(prim.lng) : null,
       price_range: state.price_range,
-      phone: phone || null,
-      whatsapp: whatsapp || null,
+      phone: prim ? strOrNull(prim.phone) : null,
+      whatsapp: prim ? strOrNull(prim.whatsapp) : null,
       website: website || null,
       booking_url: booking_url || null,
       highlights: state.tags.highlights,
@@ -1974,18 +2033,19 @@ input, select, textarea { font-family: inherit; }
         // lugar, no crear otro
         state.id = data.id;
         state.isNew = false;
-        await saveSedes(data.id, payload);
+        await saveSedes(data.id);
+        await saveMapsLinks(data.id);
         await saveSocialLinks(data.id);
         toast('Lugar creado ✓', 'ok');
         setTimeout(() => { window.location.replace('lugar.html?id=' + encodeURIComponent(data.id)); }, 600);
       } else {
         const { error } = await sb.from('places').update(payload).eq('id', state.id);
         if (error) throw error;
-        await saveSedes(state.id, payload);
+        await saveSedes(state.id);
+        await saveMapsLinks(state.id);
         await saveSocialLinks(state.id);
         renderSocialLinks();
         renderSedes();
-        applyCardinalityMode();
         toast('Cambios guardados ✓', 'ok');
         // refresh hours meta solo tras éxito (un fallo no debe cambiar la cabecera)
         if (h.gridDirty) {
@@ -2045,13 +2105,8 @@ input, select, textarea { font-family: inherit; }
       document.getElementById('descCount').textContent = e.target.value.length + '/500';
     });
 
-    // coords → map
-    document.getElementById('f-lat').addEventListener('input', renderMap);
-    document.getElementById('f-lng').addEventListener('input', renderMap);
-    // El pin aproximado sigue a la zona seleccionada (D4, display-only).
-    document.getElementById('f-barrio').addEventListener('change', renderMap);
     // Cambio de ciudad: repoblar selectores; selecciones que ya no aplican
-    // caen a "Sin zona" con aviso (D1) — solo sedes que heredan la ciudad.
+    // caen a "Sin zona" con aviso — solo sedes que heredan la ciudad.
     document.getElementById('f-city').addEventListener('change', async () => {
       const city = placeCity();
       await ensureZonesForCity(city);
@@ -2069,13 +2124,6 @@ input, select, textarea { font-family: inherit; }
         toast(`La ciudad cambió: ${dropped} sede(s) quedaron en "Sin zona" — revisa la grid`, 'err');
       }
       renderSedes();
-      renderBarrioSelect();
-      renderMap();
-    });
-
-    // whatsapp pill
-    document.getElementById('f-whatsapp').addEventListener('input', (e) => {
-      document.getElementById('whatsappPill').hidden = !e.target.value.trim();
     });
 
     // hours: registrar despliega la grilla vacía (sin marcar dirty — agregar
@@ -2104,7 +2152,6 @@ input, select, textarea { font-family: inherit; }
       // la primera sede activa nace principal
       if (activeSedes().length === 1) sede.is_primary = true;
       renderSedes();
-      applyCardinalityMode();
       const last = document.querySelector('#sedesList .sede-row:last-child input');
       if (last) last.focus();
     });
