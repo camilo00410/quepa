@@ -4,12 +4,12 @@
 
 ### Requirement: Captura de coordenadas pegando la URL de Google Maps
 
-`console/lugar.html` SHALL ofrecer un campo "URL de Google Maps" como vía primaria de captura de coordenadas — en la sección 03 (escribe `f-lat`/`f-lng`, sede principal en mono-sede) y por sede en la grid (escribe `sede.lat/lng`). Al pegar una URL, el Console SHALL extraer lat/lng localmente por regex en orden de confianza (`!3d…!4d…` primero, luego `@lat,lng`, `q=`, `ll=`) — MUST NOT hacer llamadas externas ni agregar dependencias. La extracción exitosa SHALL reflejarse de inmediato en el pin del mapa y en el resumen de coordenadas.
+`console/lugar.html` SHALL ofrecer un campo "URL de Google Maps" como vía primaria de captura de coordenadas **por sede en la grid de sedes** (escribe `sede.lat/lng`) — es el único punto de captura; no existe un campo a nivel de lugar. Al pegar una URL, el Console SHALL extraer lat/lng localmente por regex en orden de confianza (`!3d…!4d…` primero, luego `@lat,lng`, `q=`, `ll=`) — MUST NOT hacer llamadas externas ni agregar dependencias. La extracción exitosa SHALL reflejarse de inmediato en el resumen textual de coordenadas de la sede.
 
 #### Scenario: URL de ficha de lugar
 
-- **WHEN** el staff pega `https://www.google.com/maps/place/X/@4.7990,-75.8059,17z/data=…!3d4.799063!4d-75.805927…`
-- **THEN** la sede queda con lat 4.799063 y lng -75.805927 (los del `!3d/!4d`, no los del `@`) y el pin del mapa se mueve al punto exacto
+- **WHEN** el staff pega `https://www.google.com/maps/place/X/@4.7990,-75.8059,17z/data=…!3d4.799063!4d-75.805927…` en el campo de una sede
+- **THEN** la sede queda con lat 4.799063 y lng -75.805927 (los del `!3d/!4d`, no los del `@`) y el resumen de coordenadas muestra los valores nuevos
 
 #### Scenario: El campo URL es efímero
 
@@ -22,17 +22,17 @@ Los inputs numéricos de lat/lng SHALL quedar colapsados como detalle avanzado c
 
 #### Scenario: Válvula de escape manual
 
-- **WHEN** el staff abre el detalle avanzado, borra los valores y guarda
-- **THEN** la sede queda sin coordenadas (null) y el mapa cae al pin `≈` del centroide de zona si hay zona
+- **WHEN** el staff abre el detalle avanzado de una sede, borra los valores y guarda
+- **THEN** la sede queda sin coordenadas (null) y el resumen muestra "sin coordenadas"
 
 ### Requirement: Degradación honesta con URLs no extraíbles
 
-Una URL sin coordenadas extraíbles (link corto `maps.app.goo.gl`, URL de búsqueda, texto arbitrario) SHALL producir una nota clara pidiendo la URL completa del navegador y MUST NOT modificar las coordenadas existentes. Coordenadas extraídas fuera del rango aproximado de Colombia SHALL aceptarse con un aviso visible de verificación — el staff decide.
+Una URL sin coordenadas extraíbles (link corto `maps.app.goo.gl`, URL de búsqueda, texto arbitrario) SHALL producir una nota clara que pida la URL completa del navegador y señale que el link corto va en el campo "Link de Maps" de la sede (donde sí es el dato correcto), y MUST NOT modificar las coordenadas existentes. Coordenadas extraídas fuera del rango aproximado de Colombia SHALL aceptarse con un aviso visible de verificación — el staff decide.
 
 #### Scenario: Link corto del celular
 
-- **WHEN** el staff pega `https://maps.app.goo.gl/AbC123`
-- **THEN** aparece la nota "ese link corto no trae coordenadas — ábrelo en el navegador y pega la URL completa" y `lat`/`lng` quedan como estaban
+- **WHEN** el staff pega `https://maps.app.goo.gl/AbC123` en el campo de URL-para-coordenadas de una sede
+- **THEN** aparece la nota indicando que ese link corto no trae coordenadas (pegar la URL completa del navegador) y que el link corto pertenece al campo "Link de Maps" de la sede, y `lat`/`lng` quedan como estaban
 
 #### Scenario: Coordenadas sospechosas
 

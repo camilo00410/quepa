@@ -4,7 +4,7 @@
 
 ### Requirement: Selector de zona canónica por ciudad
 
-Los puntos de captura de zona en `console/lugar.html` (`f-barrio` en la sección 03 y la columna Zona de la grid de sedes) SHALL ser selectores poblados con las zonas activas de `city_zones` para la ciudad efectiva (la del lugar para `f-barrio`; `location.city ?? ciudad del lugar` por sede en la grid), con opción "Sin zona", cacheados por ciudad en la sesión de edición. Guardar SHALL escribir `place_locations.zone_id` — el Console MUST NOT escribir el campo `zone` texto ni insertar filas en `city_zones`.
+El punto de captura de zona en `console/lugar.html` SHALL ser la columna Zona de la grid de sedes — un selector por sede, único punto de captura (no existe selector de zona a nivel de lugar) — poblado con las zonas activas de `city_zones` para la ciudad efectiva de la sede (`location.city ?? ciudad del lugar`), con opción "Sin zona", cacheado por ciudad en la sesión de edición. Guardar SHALL escribir `place_locations.zone_id` — el Console MUST NOT escribir el campo `zone` texto ni insertar filas en `city_zones`.
 
 #### Scenario: Asignar zona canónica
 
@@ -24,15 +24,6 @@ Una sede con `zone_id` null y texto legado en `zone` SHALL mostrar ese texto en 
 
 - **WHEN** el staff abre una sede con `zone='cuba'` y `zone_id` null
 - **THEN** el selector muestra «"cuba" · texto legado» como estado actual, y al elegir "Cuba" del gazetteer y guardar la sede queda con `zone_id` asignado y `zone='cuba'` intacto
-
-### Requirement: Centroide como referencia visual, nunca persistido
-
-Cuando una sede sin `lat`/`lng` propios tiene zona seleccionada, el mapa del detalle SHALL centrarse en el centroide de la zona señalándolo como aproximado. El Console MUST NOT escribir el centroide en `lat`/`lng` de la sede ni del lugar — las coordenadas exactas siguen siendo dato curado aparte.
-
-#### Scenario: Sede sin coordenadas con zona
-
-- **WHEN** el staff asigna zona "Circunvalar" a una sede sin lat/lng y guarda
-- **THEN** el mapa se centra en el centroide de Circunvalar como referencia aproximada y `place_locations.lat`/`lng` permanecen null
 
 ### Requirement: Degradación honesta sin gazetteer
 

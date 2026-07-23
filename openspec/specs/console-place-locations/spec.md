@@ -4,7 +4,7 @@
 
 ### Requirement: Sección de sedes en el detalle de lugar
 
-`console/lugar.html` SHALL mostrar una sección `· 06 · SEDES` con las sedes del lugar desde `place_locations` — label, zona, dirección, ciudad, lat/lng, teléfono, WhatsApp — señalando la principal y colapsando las inactivas. La sección SHALL cargar con el mismo cliente supabase-js del resto del formulario y degradar a un estado vacío honesto si la consulta falla (error visible, nunca datos inventados).
+`console/lugar.html` SHALL mostrar una sección SEDES con las sedes del lugar desde `place_locations` — label, zona, dirección, ciudad, lat/lng, teléfono, WhatsApp — señalando la principal y colapsando las inactivas. La sección SHALL cargar con el mismo cliente supabase-js del resto del formulario y degradar a un estado vacío honesto si la consulta falla (error visible, nunca datos inventados).
 
 #### Scenario: Cadena con sedes visibles
 
@@ -14,54 +14,45 @@
 #### Scenario: Lugar mono-sede
 
 - **WHEN** el staff abre un lugar con solo su sede `Principal`
-- **THEN** la sección muestra esa única sede sin ruido y las secciones 03/04 permanecen editables como siempre
+- **THEN** la sección muestra esa única sede editable en la grid, sin que exista otra superficie de edición de ubicación en el formulario
 
-### Requirement: Alta de lugar crea la sede Principal
+### Requirement: La grid de sedes es la única superficie de edición
 
-Crear un lugar desde el Console SHALL insertar también su sede `Principal` (`is_primary=true`, `active=true`) con los valores de dirección, lat/lng, teléfono, WhatsApp y zona de las secciones 03/04, tras el insert de `places` y en el mismo flujo de guardado. Si el insert de la sede falla, el Console SHALL mostrar el error de forma visible e indicar reintentar el guardado — MUST NOT fallar en silencio.
+La grid de la sección SEDES SHALL ser la única vía de edición de ubicación y contacto por sede (dirección, zona, ciudad, lat/lng, teléfono, WhatsApp) en todo lugar, sin importar su cardinalidad — no existe modo bimodal ni secciones espejo editables. Las ediciones SHALL aplicarse por `id` de fila (renombrar un label es un update normal, nunca baja+alta). Al guardar, las columnas espejo de `places` (`address`, `lat`, `lng`, `phone`, `whatsapp`) SHALL derivarse en memoria de la sede marcada `is_primary` en la grid; el Console MUST NOT leerlas de otros inputs del formulario. Ciudad y región del lugar SHALL editarse en la sección de datos generales como identidad de la marca y MUST NOT duplicarse en superficies de ubicación.
 
-#### Scenario: Lugar nuevo con sede
+#### Scenario: Edición mono-sede en la grid
 
-- **WHEN** el staff crea un lugar con dirección y teléfono y guarda
-- **THEN** existe una fila en `place_locations` con `label='Principal'`, `is_primary=true` y esos mismos datos
+- **WHEN** el staff corrige la dirección de la única sede de un lugar en la grid y guarda
+- **THEN** `place_locations.address` de esa sede y `places.address` quedan con el valor nuevo
 
-### Requirement: Guardado mono-sede sincroniza espejo y sede
-
-En un lugar con una sola sede activa, guardar cambios de las secciones 03/04 SHALL escribir las columnas planas de `places` **y** la fila de la sede principal con los mismos valores (dirección, lat/lng, teléfono, WhatsApp) más la zona como `zone_id` (selector de zona canónica; el campo `zone` texto es legado y no recibe escrituras). Al cargar el lugar, el campo de zona SHALL hidratarse desde la sede principal resolviendo nombre canónico si hay `zone_id` y texto legado si no (la zona no es columna de `places`); guardar sin tocar el campo MUST NOT alterar ni el `zone_id` ni el texto legado persistidos. El flujo de edición del staff MUST NOT cambiar respecto al actual.
-
-#### Scenario: Edición de dirección mono-sede
-
-- **WHEN** el staff corrige la dirección de un lugar mono-sede y guarda
-- **THEN** `places.address` y `place_locations.address` de la sede principal quedan con el valor nuevo
-
-#### Scenario: Zona canónica en mono-sede
-
-- **WHEN** el staff selecciona "Cuba" en el selector de zona de la sección 03 y guarda
-- **THEN** la sede principal queda con `zone_id` de Cuba en `city_zones` y su campo `zone` texto no cambia
-
-#### Scenario: Zona precargada al abrir
-
-- **WHEN** el staff abre un lugar mono-sede cuya sede principal tiene zona (por `zone_id` o por texto legado) y guarda sin tocar la zona
-- **THEN** el selector muestra al cargar el nombre canónico (o el legado marcado como tal) y tras guardar la sede conserva su `zone_id` y su texto legado exactamente como estaban
-
-### Requirement: Multi-sede edita en la grid con espejo sincronizado
-
-En un lugar con 2+ sedes activas, las secciones 03/04 SHALL mostrarse en solo lectura reflejando la sede principal, con una nota que dirige a la sección SEDES; la grid SHALL ser la única vía de edición de datos de sede (updates por `id` de fila — renombrar un label es un update normal, nunca baja+alta). Al guardar, las columnas espejo de `places` SHALL tomarse de la sede marcada como principal.
-
-#### Scenario: Secciones bloqueadas en cadena
+#### Scenario: Edición multi-sede sin secciones bloqueadas
 
 - **WHEN** el staff abre un lugar con 3 sedes activas
-- **THEN** los campos de 03/04 están deshabilitados con la nota, y editar la dirección de una sede en la grid y guardar actualiza esa fila de `place_locations`
+- **THEN** no existe ninguna sección de ubicación/contacto bloqueada ni nota de reflejo — la grid es la única superficie, editable directamente
 
-#### Scenario: Editar la sede principal sincroniza el espejo
+#### Scenario: Espejo derivado de la principal al guardar
 
-- **WHEN** el staff cambia la dirección de la sede principal en la grid y guarda
-- **THEN** `places.address` queda con la dirección nueva
+- **WHEN** el staff cambia la dirección y el teléfono de la sede principal en la grid y guarda
+- **THEN** `places.address` y `places.phone` quedan con los valores nuevos de esa sede
 
 #### Scenario: Rename de label seguro
 
 - **WHEN** el staff renombra la sede "Centro" a "Plaza de Bolívar" y guarda
 - **THEN** la misma fila (`id` intacto) tiene el label nuevo y no aparece ninguna fila adicional
+
+### Requirement: Alta de lugar crea la sede Principal
+
+Crear un lugar desde el Console SHALL presentar en la grid una fila `Principal` pre-creada (`is_primary`, activa) lista para llenar, y el guardado SHALL insertarla en `place_locations` tras el insert de `places`, en el mismo flujo. Un lugar existente sin sedes activas (huérfano) SHALL recibir la misma fila pre-creada al abrirse. La validación SHALL exigir al menos una sede activa con exactamente una principal antes de guardar. Si el insert de la sede falla, el Console SHALL mostrar el error de forma visible e indicar reintentar el guardado — MUST NOT fallar en silencio.
+
+#### Scenario: Lugar nuevo con sede
+
+- **WHEN** el staff crea un lugar, llena dirección y teléfono en la fila `Principal` pre-creada de la grid y guarda
+- **THEN** existe una fila en `place_locations` con `label='Principal'`, `is_primary=true` y esos mismos datos, y `places.address`/`phone` los reflejan
+
+#### Scenario: Lugar huérfano se repara al abrir
+
+- **WHEN** el staff abre un lugar sin ninguna sede activa
+- **THEN** la grid muestra una fila `Principal` pre-creada para llenar y el guardado la persiste
 
 ### Requirement: Cambio de principal con democión previa
 
