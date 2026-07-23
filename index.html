@@ -104,6 +104,25 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
+.display, .h1, .h2 { text-wrap: balance; }
+section[id] { scroll-margin-top: 76px; }
+
+/* ---------- Foco visible (navegación por teclado) ---------- */
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--noche);
+  outline-offset: 3px;
+}
+.vs a:focus-visible, .vs button:focus-visible,
+.cta-final a:focus-visible, .cta-final button:focus-visible {
+  outline-color: var(--yg);
+}
+.topics-track:focus-visible { outline: 2px dashed rgba(10,10,10,.3); outline-offset: 6px; }
+.waitlist:focus-within {
+  box-shadow: 0 0 0 3px rgba(10,10,10,.28), 0 20px 40px -20px rgba(10,10,10,.45);
+}
+.cta-final .waitlist:focus-within {
+  box-shadow: 0 0 0 3px var(--yg), 0 20px 40px -20px rgba(10,10,10,.45);
+}
 
 /* ---------- Nav ---------- */
 .nav {
@@ -147,7 +166,9 @@ a { color: inherit; text-decoration: none; }
   width: 540px; height: 540px;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230a0a0a' opacity='0.07'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>") center/contain no-repeat;
   pointer-events: none;
+  animation: spin-slow 140s linear infinite;
 }
+@keyframes spin-slow { to { transform: rotate(360deg); } }
 .hero .eyebrow { display: inline-flex; align-items: center; gap: 8px; }
 .hero .eyebrow::before {
   content: ""; display: inline-block; width: 8px; height: 8px;
@@ -162,11 +183,6 @@ a { color: inherit; text-decoration: none; }
   font-style: normal;
   display: inline-block;
   position: relative;
-}
-.hero h1 em::after {
-  content: "!";
-  display: inline-block;
-  margin-left: 4px;
 }
 .hero-sub { margin-top: 24px; max-width: 30ch; }
 
@@ -226,6 +242,21 @@ a { color: inherit; text-decoration: none; }
 .typing span:nth-child(2){ animation-delay: .15s; }
 .typing span:nth-child(3){ animation-delay: .3s; }
 @keyframes blink { 0%,80%,100% { opacity: .25 } 40% { opacity: 1 } }
+
+/* La conversación del hero se reproduce escalonada al cargar */
+.chat-card > .bubble, .chat-card > .typing {
+  opacity: 0;
+  animation: msg-in .45s cubic-bezier(.2,.7,.3,1) forwards;
+}
+.chat-card > .bubble:nth-of-type(2) { animation-delay: .6s; }
+.chat-card > .bubble:nth-of-type(3) { animation-delay: 1.6s; }
+.chat-card > .bubble:nth-of-type(4) { animation-delay: 2.5s; }
+.chat-card > .bubble:nth-of-type(5) { animation-delay: 3.6s; }
+.chat-card > .typing { animation-delay: 4.5s; }
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
 
 @media (min-width: 900px) {
   .hero-grid { grid-template-columns: 1.05fr .95fr; align-items: end; gap: 64px; }
@@ -291,6 +322,29 @@ a { color: inherit; text-decoration: none; }
 .hero-meta { margin-top: 36px; }
 .hero-meta .meta { color: var(--noche); opacity: .55; }
 
+/* ---------- Ticker ---------- */
+.ticker {
+  background: var(--noche);
+  color: rgba(243,241,236,.85);
+  overflow: hidden;
+  padding: 13px 0;
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll 44s linear infinite;
+}
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.tick-group {
+  display: flex; align-items: center; gap: 44px;
+  padding-right: 44px;
+  font-family: var(--f-mono); font-weight: 500; font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.tick-group svg { width: 11px; height: 11px; fill: var(--yg); flex: none; }
+@keyframes ticker-scroll { to { transform: translateX(-50%); } }
+
 /* ---------- Sections ---------- */
 section { padding: clamp(72px, 10vw, 128px) 0; }
 .section-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 56px; max-width: 720px; }
@@ -349,6 +403,7 @@ section { padding: clamp(72px, 10vw, 128px) 0; }
   border: 1px solid var(--line-d);
   border-radius: var(--radius);
   padding: 22px;
+  transition: border-color .2s ease, background .2s ease;
 }
 .compare-row .label {
   font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
@@ -358,12 +413,17 @@ section { padding: clamp(72px, 10vw, 128px) 0; }
 .compare-row .alt::before { content: "✗  "; color: #ff8e8e; font-weight: 700; }
 .compare-row .quepa { color: var(--yg); font-weight: 700; }
 .compare-row .quepa::before { content: "✓  "; color: var(--yg); }
+.compare-row:hover:not(.compare-head) { border-color: rgba(212,245,66,.4); background: rgba(255,255,255,.07); }
+.compare-head { display: none; background: transparent; border-color: transparent; }
+.compare-head .q-h { color: var(--yg); }
 @media (min-width: 760px) {
   .compare-row {
     grid-template-columns: 200px 1fr 1fr;
     align-items: center;
     gap: 24px;
   }
+  .compare-row .quepa { border-left: 1px dashed var(--line-d); padding-left: 24px; }
+  .compare-head { display: grid; padding-top: 0; padding-bottom: 4px; }
 }
 
 /* ---------- Stars ---------- */
@@ -556,7 +616,16 @@ section { padding: clamp(72px, 10vw, 128px) 0; }
   font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
   padding: 5px 10px; border-radius: 999px;
 }
-.tag.live { background: var(--noche); color: var(--yg); }
+.tag.live {
+  background: var(--noche); color: var(--yg);
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.tag.live::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--yg);
+  animation: pulse-dot 2.2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%,100% { opacity: 1 } 50% { opacity: .3 } }
 .tag.soon { background: var(--paper); color: var(--muted); border: 1px solid var(--line); }
 
 /* CTA tile dentro del grid de ciudades */
@@ -657,6 +726,23 @@ footer {
 }
 @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(4px) } }
 
+/* ---------- Reveal on scroll (el JS marca .rv y .in) ---------- */
+.rv:not(.in) { opacity: 0; }
+.rv.in {
+  animation: rise .55s cubic-bezier(.2,.7,.3,1) backwards;
+  animation-delay: var(--rv-delay, 0ms);
+}
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
 ::selection { background: var(--noche); color: var(--yg); }
 </style>
 </head>
@@ -752,6 +838,26 @@ footer {
     </div>
   </div>
 </section>
+
+<!-- ============ TICKER ============ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <div class="tick-group">
+      <span>Sin app · sin login</span><svg><use href="#quepa-star"/></svg>
+      <span>Recomendaciones humanas, no algoritmos</span><svg><use href="#quepa-star"/></svg>
+      <span>Pilotos: Neiva y Pereira</span><svg><use href="#quepa-star"/></svg>
+      <span>24/7 en tu WhatsApp</span><svg><use href="#quepa-star"/></svg>
+      <span>El equipo visita los lugares</span><svg><use href="#quepa-star"/></svg>
+    </div>
+    <div class="tick-group">
+      <span>Sin app · sin login</span><svg><use href="#quepa-star"/></svg>
+      <span>Recomendaciones humanas, no algoritmos</span><svg><use href="#quepa-star"/></svg>
+      <span>Pilotos: Neiva y Pereira</span><svg><use href="#quepa-star"/></svg>
+      <span>24/7 en tu WhatsApp</span><svg><use href="#quepa-star"/></svg>
+      <span>El equipo visita los lugares</span><svg><use href="#quepa-star"/></svg>
+    </div>
+  </div>
+</div>
 
 <!-- ============ CÓMO FUNCIONA ============ -->
 <section id="como-funciona">
@@ -936,6 +1042,11 @@ footer {
     </header>
 
     <div class="compare">
+      <div class="compare-row compare-head" aria-hidden="true">
+        <span class="label"></span>
+        <span class="label">Lo de siempre</span>
+        <span class="label q-h">Con Quepa</span>
+      </div>
       <div class="compare-row">
         <span class="label">Tiempo a decisión</span>
         <span class="alt">45 min entre 5 apps</span>
@@ -1269,6 +1380,41 @@ bind("waitlist-foot", "foot");
   });
 
   buildDots();
+})();
+
+/* ============================================================
+ * REVEAL · entrada suave de tarjetas al hacer scroll
+ * Progresivo: sin JS o con reduced-motion no se oculta nada.
+ * ============================================================ */
+(function () {
+  if (!("IntersectionObserver" in window)) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const els = document.querySelectorAll(".step, .topic-card, .compare-row, .star-card, .city, .section-head");
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      en.target.classList.add("in");
+      io.unobserve(en.target);
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -40px" });
+  els.forEach((el) => {
+    const sibs = el.parentElement ? Array.from(el.parentElement.children) : [];
+    const i = Math.max(0, sibs.indexOf(el));
+    el.style.setProperty("--rv-delay", Math.min(i, 5) * 80 + "ms");
+    el.classList.add("rv");
+    io.observe(el);
+  });
+  // Red de seguridad: al terminar de cargar (con el salto a #anchor ya hecho),
+  // revela de una lo que quedó dentro del viewport sin esperar al observer.
+  function revealVisible() {
+    els.forEach((el) => {
+      if (el.classList.contains("in")) return;
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) el.classList.add("in");
+    });
+  }
+  revealVisible();
+  window.addEventListener("load", revealVisible);
 })();
 </script>
 
