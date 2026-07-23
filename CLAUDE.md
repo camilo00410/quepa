@@ -74,6 +74,7 @@ If you change the endpoint URL, also update the CORS whitelist on the webhook si
 
 - Keep files self-contained — do not introduce a build step, bundler, or external JS/CSS files unless explicitly asked.
 - Brand tokens (colors `#0A0A0A`, `#D4F542`, `#25D366`; fonts Hanken Grotesk + JetBrains Mono) are duplicated in both files' `<style>` blocks. When changing brand values, update both.
+- **Console typography diverges from the landings on purpose** (decisión 2026-07-23): las 6 páginas de `console/` usan **Manrope** (400–800) + JetBrains Mono; las landings B2C/B2B mantienen Hanken Grotesk. No "normalizar" el Console de vuelta a Hanken.
 - Comments and copy are in Spanish (es_CO). Match the existing voice when adding text.
 
 ## Known gaps (deliberate, per README)

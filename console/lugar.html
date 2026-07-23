@@ -10,7 +10,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
 <style>
 :root {
@@ -27,7 +27,7 @@
   --ink-06: rgba(10,10,10,.06);
   --amber: #f5b942;
   --red: #d94a4a;
-  --f-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 * { box-sizing: border-box; }
@@ -86,13 +86,12 @@ input, select, textarea { font-family: inherit; }
 .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
 /* ===== DETAIL HEAD ===== */
-.detail-page { flex: 1; overflow: hidden; display: grid; grid-template-rows: auto auto 1fr; min-height: 0; }
+.detail-page { flex: 1; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-height: 0; }
 .detail-head { padding: 22px 32px 14px; border-bottom: 1px solid var(--ink-12); background: var(--paper); }
 .detail-head .row1 { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
 .detail-head .id-line { font-family: var(--f-mono); font-size: 10px; color: var(--ink-60); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 8px; }
 .detail-head h1 { font-size: 38px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; display: flex; align-items: baseline; gap: 12px; }
 .detail-head h1 .placeholder-name { color: var(--ink-30); font-weight: 600; }
-.detail-head .star-row svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: -2px; opacity: .14; }
 .detail-head .meta-row { margin-top: 10px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .detail-head .meta-row .mtag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
 .detail-head .meta-row .mtag b { color: var(--ink); font-weight: 600; }
@@ -104,18 +103,11 @@ input, select, textarea { font-family: inherit; }
 .detail-head .meta-row .toggle.off .dot { width: 7px; height: 7px; background: var(--ink-30); border-radius: 50%; }
 .detail-head .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-.detail-tabs { padding: 0 32px; display: flex; align-items: center; gap: 0; background: var(--paper); border-bottom: 1px solid var(--ink-12); }
-.detail-tabs .tab { padding: 12px 14px; font-size: 13px; font-weight: 600; color: var(--ink-60); border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 8px; }
-.detail-tabs .tab.active { color: var(--ink); border-color: var(--ink); }
-.detail-tabs .tab.disabled { color: var(--ink-30); cursor: not-allowed; }
-.detail-tabs .tab .pill { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; background: var(--ink-06); padding: 1px 6px; border-radius: 999px; }
-
-.detail-body { display: grid; grid-template-columns: 1fr 460px; overflow: hidden; min-height: 0; }
-.detail-form { padding: 24px 32px; overflow: auto; }
-.detail-side { background: var(--paper); border-left: 1px solid var(--ink-12); padding: 24px; overflow: auto; }
+.detail-body { display: grid; grid-template-columns: 1fr; overflow: hidden; min-height: 0; }
+.detail-form { padding: 28px 32px 64px; overflow: auto; }
 
 /* ===== SECTIONS ===== */
-.section { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 14px; padding: 22px; margin-bottom: 16px; }
+.section { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 14px; padding: 24px; margin: 0 auto 18px; max-width: 960px; box-shadow: 0 1px 2px rgba(10,10,10,.03); }
 .section .hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
 .section .hd .lbl { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-60); }
 .section .hd h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
@@ -139,9 +131,11 @@ input, select, textarea { font-family: inherit; }
   outline: none;
   width: 100%;
 }
-.field-d input:focus, .field-d textarea:focus, .field-d select:focus { border-color: var(--ink); background: var(--cream); }
+.field-d input:focus, .field-d textarea:focus, .field-d select:focus { border-color: var(--ink); background: var(--cream); box-shadow: 0 0 0 3px var(--ink-06); }
 .field-d textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
-.field-d .help { font-size: 11.5px; color: var(--ink-60); line-height: 1.5; }
+.help { font-size: 11.5px; color: var(--ink-60); line-height: 1.5; }
+.section > .help { margin-top: 12px; color: var(--ink-30); }
+.section > .help b { font-weight: 600; }
 .field-d .readonly { background: var(--ink-06); color: var(--ink); padding: 10px 12px; border-radius: 9px; font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
 .field-d .readonly .small { font-size: 12px; color: var(--ink-30); font-weight: 500; }
 
@@ -214,7 +208,7 @@ input, select, textarea { font-family: inherit; }
 .sede-row .r1 { display: grid; grid-template-columns: 1fr 1fr 1.8fr auto; gap: 8px; align-items: end; }
 .sede-row .r2 { display: grid; grid-template-columns: 1fr 1.4fr 1fr 1fr; gap: 8px; }
 .sede-row input, .sede-row select { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 8px; padding: 8px 9px; font-size: 12.5px; color: var(--ink); min-width: 0; width: 100%; }
-.sede-row input:focus, .sede-row select:focus { border-color: var(--ink); }
+.sede-row input:focus, .sede-row select:focus { border-color: var(--ink); box-shadow: 0 0 0 3px var(--ink-06); }
 .sede-row select:disabled { color: var(--ink-30); }
 .zone-note { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.04em; color: var(--ink-30); margin-top: 6px; }
 .coords-mini { font-family: var(--f-mono); font-size: 10px; color: var(--ink-30); margin-top: 4px; }
@@ -268,23 +262,6 @@ input, select, textarea { font-family: inherit; }
 .hadd { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-60); border: 1px dashed var(--ink-12); border-radius: 999px; padding: 6px 10px; }
 .hadd:hover { border-color: var(--ink); color: var(--ink); }
 
-/* side panel cards */
-.cura-card { background: var(--night); color: #fff; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
-.cura-card .hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.5); }
-.cura-card .hd .pill { background: rgba(255,255,255,.06); color: rgba(255,255,255,.7); padding: 2px 8px; border-radius: 999px; font-weight: 700; }
-.cura-card h4 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: var(--yg); }
-.cura-card p { margin-top: 8px; font-size: 13px; line-height: 1.55; color: rgba(255,255,255,.7); }
-
-.activity { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
-.activity .hd { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-60); display: flex; justify-content: space-between; margin-bottom: 14px; }
-.activity .hd b { color: var(--ink); font-weight: 600; }
-.activity .empty { font-size: 12px; color: var(--ink-30); line-height: 1.55; text-align: center; padding: 14px 0; }
-
-.metric-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-.metric-strip .m { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 12px; padding: 14px; }
-.metric-strip .m .lbl { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); margin-bottom: 6px; }
-.metric-strip .m .val { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink-30); }
-
 /* state + toast */
 .full-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; color: var(--ink-60); }
 .full-state .spinner { width: 28px; height: 28px; border: 2px solid var(--ink-12); border-right-color: var(--ink); border-radius: 50%; animation: spin 720ms linear infinite; }
@@ -309,10 +286,6 @@ input, select, textarea { font-family: inherit; }
 .toast.err { background: var(--red); }
 .toast.ok { background: var(--night); color: var(--yg); }
 
-@media (max-width: 1100px) {
-  .detail-body { grid-template-columns: 1fr; }
-  .detail-side { border-left: 0; border-top: 1px solid var(--ink-12); }
-}
 @media (max-width: 960px) {
   .console { grid-template-columns: 64px 1fr; }
   .sidebar { padding: 16px 8px; }
@@ -320,7 +293,7 @@ input, select, textarea { font-family: inherit; }
   .sidebar .nav-item { justify-content: center; padding: 10px; }
   .sidebar .user { justify-content: center; }
   .detail-head h1 { font-size: 30px; }
-  .detail-head, .detail-tabs, .detail-form { padding-left: 18px; padding-right: 18px; }
+  .detail-head, .detail-form { padding-left: 18px; padding-right: 18px; }
   .grid-3 { grid-template-columns: 1fr; }
   .hday { flex-direction: column; gap: 4px; }
   .hday .dname { padding-top: 0; }
@@ -423,11 +396,6 @@ input, select, textarea { font-family: inherit; }
             <div class="id-line" id="idLine">· PLC_— · Cargando</div>
             <h1>
               <span id="placeName">…</span>
-              <span class="star-row">
-                <svg viewBox="0 0 100 100" fill="#0a0a0a"><g><rect x="44" y="4" width="12" height="92" rx="6"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/></g></svg>
-                <svg viewBox="0 0 100 100" fill="#0a0a0a"><g><rect x="44" y="4" width="12" height="92" rx="6"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/></g></svg>
-                <svg viewBox="0 0 100 100" fill="#0a0a0a"><g><rect x="44" y="4" width="12" height="92" rx="6"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/><rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/></g></svg>
-              </span>
             </h1>
             <div class="meta-row">
               <button type="button" class="toggle on" id="activeToggle"><span class="dot"></span><span id="activeLabel">Activo en producción</span></button>
@@ -452,15 +420,6 @@ input, select, textarea { font-family: inherit; }
             </button>
           </div>
         </div>
-      </div>
-
-      <div class="detail-tabs">
-        <a class="tab active">Datos generales</a>
-        <a class="tab disabled" title="Próximamente">Sedes</a>
-        <a class="tab disabled" title="Próximamente">Contacto y reservas</a>
-        <a class="tab disabled" title="Próximamente">Curaduría y Stars</a>
-        <a class="tab disabled" title="Próximamente">Métricas</a>
-        <a class="tab disabled" title="Próximamente">Historial</a>
       </div>
 
       <div class="detail-body">
@@ -647,39 +606,6 @@ input, select, textarea { font-family: inherit; }
               <input id="f-hours_note" placeholder="Domingos y festivos cerrado…" />
               <div class="help">Excepciones que la grilla semanal no captura (festivos, temporadas). Quepa la comparte tal cual al recomendar.</div>
             </div>
-          </div>
-
-        </div>
-
-        <!-- RIGHT: SIDE -->
-        <div class="detail-side">
-
-          <div class="metric-strip">
-            <div class="m">
-              <div class="lbl">· Recomendado</div>
-              <div class="val">— <span style="font-size:11px; color: var(--ink-30); font-weight: 500;">próximamente</span></div>
-            </div>
-            <div class="m">
-              <div class="lbl">· Clicks Booking</div>
-              <div class="val">—</div>
-            </div>
-          </div>
-
-          <div class="cura-card">
-            <div class="hd">
-              <span>· QUEPA STARS</span>
-              <span class="pill">SIN ASIGNAR</span>
-            </div>
-            <h4>Pendiente de curaduría.</h4>
-            <p>Las Quepa Stars no están aún en el schema. Cuando se agregue el campo, podrás asignar 0–3 estrellas directamente acá.</p>
-          </div>
-
-          <div class="activity">
-            <div class="hd">
-              <span>· ACTIVIDAD</span>
-              <b>—</b>
-            </div>
-            <div class="empty">Próximamente · feed de cambios y acciones del agente WA.</div>
           </div>
 
         </div>
