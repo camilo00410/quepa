@@ -16,6 +16,6 @@
 ## 3. Verificación y cierre
 
 - [x] 3.1 Confirmar que la migración `0012` del webhook está aplicada antes de publicar (dependencia dura)
-- [ ] 3.2 Prueba manual contra Supabase: guardar rango completo, solo-desde, rango invertido (bloqueado) e hidratación al recargar; verificar que el picker no se ve afectado
+- [x] 3.2 Prueba manual contra Supabase: guardar rango completo, solo-desde, rango invertido (bloqueado) e hidratación al recargar; verificar que el picker no se ve afectado
 - [x] 3.3 Verificar en browser desktop y mobile (convención del repo para cambios visuales)
 - [x] 3.4 Actualizar `quepa-landing/CLAUDE.md` (sección Console): contrato de captura de rangos, unidad implícita y orden de deploy respecto a `0012`
