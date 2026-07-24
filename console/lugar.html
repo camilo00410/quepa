@@ -170,6 +170,10 @@ input, select, textarea { font-family: inherit; }
 .price-picker .pp.on { background: var(--night); color: var(--yg); border-color: var(--night); }
 .price-picker .pp .sub { display: block; font-size: 9px; letter-spacing: 0.14em; color: var(--ink-30); margin-top: 2px; font-weight: 500; }
 .price-picker .pp.on .sub { color: rgba(212,245,66,.6); }
+/* rango de precios en COP (add-console-price-ranges) */
+.price-note { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.04em; color: var(--ink-30); margin-top: 6px; }
+.price-note.warn { color: var(--amber); }
+.price-error { margin-top: 8px; color: var(--red); font-size: 12px; line-height: 1.45; }
 
 /* social links */
 .social-links { display: flex; flex-direction: column; gap: 10px; }
@@ -523,6 +527,23 @@ input, select, textarea { font-family: inherit; }
                 <div class="readonly" id="ratingReadonly">— <span class="small">sin sincronizar</span></div>
               </div>
             </div>
+
+            <!-- Rango real en COP (add-console-price-ranges): el census lo
+                 captura y el bot lo entrega tal cual; el picker de arriba
+                 sigue siendo el bucket manual — son datos independientes. -->
+            <div class="grid-2" style="margin-top: 14px;">
+              <div class="field-d">
+                <div class="label"><span>Rango en pesos · desde</span></div>
+                <input id="f-price_min" inputmode="numeric" placeholder="35.000" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Rango en pesos · hasta</span></div>
+                <input id="f-price_max" inputmode="numeric" placeholder="75.000" />
+              </div>
+            </div>
+            <div class="price-note" id="priceUnitNote">· COP · EL RANGO SE INTERPRETA POR PERSONA</div>
+            <div class="price-note warn" id="priceMagnitudeNote" hidden></div>
+            <div class="price-error" id="priceRangeError" hidden></div>
 
             <div class="field-d" style="margin-top: 14px;">
               <div class="label"><span>Amenities</span></div>
@@ -1763,6 +1784,56 @@ input, select, textarea { font-family: inherit; }
     });
   }
 
+  // ---------- rango de precios en COP (add-console-price-ranges) ----------
+  // Inputs texto + parse (como coordenadas): se muestra "35.000", se guarda 35000.
+  function fmtMiles(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  function parseCOP(v) { const d = String(v || '').replace(/\D/g, ''); return d ? parseInt(d, 10) : null; }
+  function priceInputs() { return [document.getElementById('f-price_min'), document.getElementById('f-price_max')]; }
+  function refreshPriceUnitNote() {
+    const cat = document.getElementById('f-category').value;
+    document.getElementById('priceUnitNote').textContent =
+      cat === 'hotel' ? '· COP · EL RANGO SE INTERPRETA POR NOCHE (HOTEL)' : '· COP · EL RANGO SE INTERPRETA POR PERSONA';
+  }
+  // Aviso NO bloqueante (criterio coordenadas): valores 1-999 huelen a miles
+  // olvidados, pero el Console señala, nunca corrige ni multiplica.
+  function refreshPriceMagnitudeNote() {
+    const tiny = priceInputs().map(i => parseCOP(i.value)).filter(v => v !== null && v >= 1 && v <= 999);
+    const note = document.getElementById('priceMagnitudeNote');
+    if (tiny.length) {
+      note.textContent = '· ¿VA EN MILES? ' + tiny.map(v => `${v} se guarda como $${v}`).join(' · ') + ' — no se multiplica solo';
+      note.hidden = false;
+    } else {
+      note.hidden = true;
+    }
+  }
+  function setPriceError(msg) {
+    const n = document.getElementById('priceRangeError');
+    if (msg) { n.textContent = msg; n.hidden = false; } else { n.hidden = true; }
+  }
+  // Espejo del check places_price_range_coherent: mejor error claro acá que
+  // uno críptico de PostgREST.
+  function validatePriceRange() {
+    const [minEl, maxEl] = priceInputs();
+    const min = parseCOP(minEl.value);
+    const max = parseCOP(maxEl.value);
+    if (min !== null && max !== null && min > max) {
+      return 'Rango de precios: el "desde" no puede superar el "hasta".';
+    }
+    return null;
+  }
+  function wirePriceRange() {
+    priceInputs().forEach(el => {
+      el.addEventListener('blur', () => {
+        const v = parseCOP(el.value);
+        el.value = v === null ? '' : fmtMiles(v);
+        refreshPriceMagnitudeNote();
+        setPriceError(validatePriceRange());
+      });
+    });
+    document.getElementById('f-category').addEventListener('change', refreshPriceUnitNote);
+    refreshPriceUnitNote();
+  }
+
   // ---------- active toggle ----------
   function renderActiveToggle() {
     const t = document.getElementById('activeToggle');
@@ -1839,6 +1910,10 @@ input, select, textarea { font-family: inherit; }
     document.getElementById('f-region').value = data.region || '';
     document.getElementById('f-website').value = data.website || '';
     document.getElementById('f-booking_url').value = data.booking_url || '';
+    document.getElementById('f-price_min').value = data.price_min != null ? fmtMiles(data.price_min) : '';
+    document.getElementById('f-price_max').value = data.price_max != null ? fmtMiles(data.price_max) : '';
+    refreshPriceUnitNote();
+    refreshPriceMagnitudeNote();
     document.getElementById('deleteBtn').hidden = false;
 
     document.getElementById('nameCount').textContent = (data.name || '').length + '/80';
@@ -1890,6 +1965,8 @@ input, select, textarea { font-family: inherit; }
       lat: prim ? numOrNull(prim.lat) : null,
       lng: prim ? numOrNull(prim.lng) : null,
       price_range: state.price_range,
+      price_min: parseCOP(document.getElementById('f-price_min').value),
+      price_max: parseCOP(document.getElementById('f-price_max').value),
       phone: prim ? strOrNull(prim.phone) : null,
       whatsapp: prim ? strOrNull(prim.whatsapp) : null,
       website: website || null,
@@ -1921,6 +1998,13 @@ input, select, textarea { font-family: inherit; }
       toast('Falta(n): ' + errs.join(', '), 'err');
       return;
     }
+    const priceErr = validatePriceRange();
+    if (priceErr) {
+      setPriceError(priceErr);
+      toast(priceErr, 'err');
+      return;
+    }
+    setPriceError(null);
     const socialErr = validateSocialLinks();
     if (socialErr) {
       setSocialError(socialErr);
@@ -2064,6 +2148,7 @@ input, select, textarea { font-family: inherit; }
 
     wireTagInputs();
     wirePricePicker();
+    wirePriceRange();
 
     document.getElementById('addSocialBtn').addEventListener('click', () => {
       state.socialLinks.push(blankSocialLink());

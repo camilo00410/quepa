@@ -36,6 +36,15 @@ El detalle de lugar (`console/lugar.html`, sección `· 04 · CONTACTO Y RESERVA
 - Quitar una red desde Console desactiva la fila (`active=false`), no la borra físicamente.
 - Al crear un lugar nuevo, primero se inserta `places`, luego las sedes (`saveSedes`), luego los links de Maps por sede (`saveMapsLinks`) y por último las redes de marca — las sedes van antes porque los links necesitan sus ids.
 
+## Quepa Console: rango de precios (`places.price_min`/`price_max`)
+
+La sección `· 02 · ECONÓMICO Y SERVICIOS` de `console/lugar.html` captura el rango de precios real en COP (change `add-console-price-ranges`; backend `add-price-ranges` en quepa-webhook, migración `0012` — aplicada 2026-07-23). Contrato:
+
+- Campos "Rango en pesos · desde/hasta": texto con separador de miles en pantalla (`fmtMiles`), enteros limpios en la base (`parseCOP`). Un solo extremo diligenciado es válido.
+- `desde > hasta` **bloquea el guardado** con error inline (espejo del check `places_price_range_coherent` — mejor mensaje claro que error críptico de PostgREST). Valores 1–999 solo generan **aviso no bloqueante** ("¿va en miles?"); el Console señala, nunca multiplica ni corrige.
+- El picker $–$$$$ (`price_range`) es independiente y sigue **manual** (decisión 2026-07-23): no se deriva del rango ni al revés.
+- La unidad **no se captura, se comunica**: hotel = por noche; el resto = por persona (la nota bajo los campos cambia con la categoría). El bot construye el texto final (`price_display`) en el webhook.
+
 ## Running locally
 
 There is no dev server config. Use any static server from the repo root, e.g.:
