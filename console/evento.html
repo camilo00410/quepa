@@ -1,0 +1,1346 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Quepa Console — Evento</title>
+<meta name="theme-color" content="#0A0A0A" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230A0A0A'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --green: #25D366;
+  --yg: #D4F542;
+  --night: #0a0a0a;
+  --cream: #ffffff;
+  --paper: #f3f1ec;
+  --ink: #0a0a0a;
+  --ink-80: rgba(10,10,10,.80);
+  --ink-60: rgba(10,10,10,.60);
+  --ink-30: rgba(10,10,10,.30);
+  --ink-12: rgba(10,10,10,.12);
+  --ink-06: rgba(10,10,10,.06);
+  --amber: #f5b942;
+  --red: #d94a4a;
+  --f-sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body { background: var(--paper); font-family: var(--f-sans); color: var(--ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+h1, h2, h3, h4, p, ul, ol { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+a { color: inherit; text-decoration: none; cursor: pointer; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; }
+input, select, textarea { font-family: inherit; }
+.mono { font-family: var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+[hidden] { display: none !important; }
+
+.console { width: 100vw; height: 100vh; display: grid; grid-template-columns: 232px 1fr; background: var(--paper); color: var(--ink); position: relative; overflow: hidden; }
+.sidebar { background: var(--night); color: #fff; padding: 20px 16px; display: flex; flex-direction: column; gap: 18px; border-right: 1px solid var(--ink-12); overflow-y: auto; }
+.sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px; }
+.sidebar .brand .word { font-weight: 700; font-size: 19px; letter-spacing: -0.04em; }
+.sidebar .brand .tag { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--yg); background: rgba(212,245,66,.12); border: 1px solid rgba(212,245,66,.3); padding: 3px 7px; border-radius: 999px; font-weight: 600; }
+.sidebar .search { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 9px 12px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.55); font-size: 13px; }
+.sidebar .search .kbd { margin-left: auto; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.1em; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); padding: 2px 6px; border-radius: 4px; color: rgba(255,255,255,.7); }
+.sidebar .nav-group { display: flex; flex-direction: column; gap: 1px; }
+.sidebar .nav-label { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.4); margin: 8px 8px 6px; }
+.sidebar .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: rgba(255,255,255,.75); font-size: 13.5px; font-weight: 500; }
+.sidebar .nav-item:hover { background: rgba(255,255,255,.04); color: #fff; }
+.sidebar .nav-item.active { background: var(--yg); color: var(--night); font-weight: 700; }
+.sidebar .nav-item.active .ico { color: var(--night); opacity: 1; }
+.sidebar .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; opacity: .8; }
+.sidebar .nav-item .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); margin-left: auto; }
+.sidebar .user { margin-top: auto; border-top: 1px solid rgba(255,255,255,.1); padding-top: 14px; display: flex; align-items: center; gap: 10px; }
+.sidebar .user .av { width: 32px; height: 32px; border-radius: 50%; background: var(--yg); color: var(--night); display: grid; place-items: center; font-weight: 800; font-size: 12px; letter-spacing: -0.02em; }
+.sidebar .user .meta { font-size: 12px; line-height: 1.3; overflow: hidden; }
+.sidebar .user .meta b { color: #fff; font-weight: 600; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar .user .meta span { color: rgba(255,255,255,.5); display: block; font-family: var(--f-mono); letter-spacing: 0.1em; font-size: 9px; text-transform: uppercase; }
+.sidebar .user .logout { margin-left: auto; color: rgba(255,255,255,.4); }
+.sidebar .user .logout:hover { color: var(--yg); }
+
+.main { display: flex; flex-direction: column; height: 100%; overflow: hidden; min-width: 0; }
+.topbar { height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--ink-12); background: var(--paper); padding: 0 24px; display: flex; align-items: center; gap: 18px; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+.topbar .crumbs { display: flex; align-items: center; gap: 10px; }
+.topbar .crumbs b { color: var(--ink); font-weight: 600; }
+.topbar .crumbs .sep { opacity: .5; }
+.topbar .right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.topbar .right .env { display: flex; align-items: center; gap: 6px; }
+.topbar .right .env .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 600; border: 1px solid var(--ink-12); background: var(--cream); color: var(--ink); letter-spacing: -0.005em; transition: background 120ms ease, filter 120ms ease; }
+.btn:hover { background: #fafaf6; }
+.btn .ico { width: 14px; height: 14px; }
+.btn.primary { background: var(--night); color: var(--yg); border-color: var(--night); }
+.btn.primary:hover { filter: brightness(1.15); background: var(--night); }
+.btn.danger { color: var(--red); border-color: rgba(217,74,74,.3); }
+.btn.danger:hover { background: rgba(217,74,74,.07); }
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* ===== DETAIL HEAD ===== */
+.detail-page { flex: 1; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-height: 0; }
+.detail-head { padding: 22px 32px 14px; border-bottom: 1px solid var(--ink-12); background: var(--paper); }
+.detail-head .row1 { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+.detail-head .id-line { font-family: var(--f-mono); font-size: 10px; color: var(--ink-60); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 8px; }
+.detail-head h1 { font-size: 34px; font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; display: flex; align-items: baseline; gap: 12px; }
+.detail-head h1 .placeholder-name { color: var(--ink-30); font-weight: 600; }
+.detail-head .meta-row { margin-top: 10px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.detail-head .meta-row .mtag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); }
+.detail-head .meta-row .mtag b { color: var(--ink); font-weight: 600; }
+.detail-head .meta-row .sep { color: var(--ink-30); }
+.detail-head .meta-row .toggle { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 999px; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.detail-head .meta-row .toggle.on { background: rgba(37,211,102,.12); color: #128c46; }
+.detail-head .meta-row .toggle.on .dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; }
+.detail-head .meta-row .toggle.off { background: var(--ink-06); color: var(--ink-60); border-color: var(--ink-12); }
+.detail-head .meta-row .toggle.off .dot { width: 7px; height: 7px; background: var(--ink-30); border-radius: 50%; }
+.detail-head .meta-row .toggle.mixed { background: rgba(245,185,66,.16); color: #8a6712; }
+.detail-head .meta-row .toggle.mixed .dot { width: 7px; height: 7px; background: var(--amber); border-radius: 50%; }
+.detail-head .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== ALCANCE DE ESCRITURA (design D3) =====
+   Barra permanente: nunca se guarda sin que el alcance esté a la vista. */
+.scopebar {
+  margin-top: 14px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  background: var(--night); color: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.scopebar .lead { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+.scopebar .sw { display: inline-flex; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; overflow: hidden; }
+.scopebar .sw button { padding: 7px 14px; font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.7); }
+.scopebar .sw button:hover { background: rgba(255,255,255,.06); color: #fff; }
+.scopebar .sw button.on { background: var(--yg); color: var(--night); font-weight: 700; }
+.scopebar .sw button[disabled] { opacity: .4; cursor: not-allowed; }
+.scopebar .desc { font-size: 12.5px; color: rgba(255,255,255,.75); line-height: 1.45; flex: 1; min-width: 220px; }
+.scopebar .desc b { color: var(--yg); font-weight: 700; }
+
+.detail-body { display: grid; grid-template-columns: 1fr; overflow: hidden; min-height: 0; }
+.detail-form { padding: 28px 32px 80px; overflow: auto; }
+
+/* ===== SECTIONS ===== */
+.section { background: var(--cream); border: 1px solid var(--ink-12); border-radius: 14px; padding: 24px; margin: 0 auto 18px; max-width: 960px; box-shadow: 0 1px 2px rgba(10,10,10,.03); }
+.section .hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+.section .hd .lbl { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-60); }
+.section .hd h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+.section .hd .title-wrap { display: flex; flex-direction: column; gap: 4px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+.field-d { display: flex; flex-direction: column; gap: 6px; }
+.field-d .label { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-60); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.field-d .label .req { color: var(--red); }
+.field-d .label .count { color: var(--ink-30); }
+.field-d input, .field-d textarea, .field-d select {
+  background: var(--paper);
+  border: 1px solid var(--ink-12);
+  border-radius: 9px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  color: var(--ink);
+  outline: none;
+  width: 100%;
+}
+.field-d input:focus, .field-d textarea:focus, .field-d select:focus { border-color: var(--ink); background: var(--cream); box-shadow: 0 0 0 3px var(--ink-06); }
+.field-d input[disabled], .field-d select[disabled] { background: var(--ink-06); color: var(--ink-30); cursor: not-allowed; }
+.field-d textarea { resize: vertical; min-height: 84px; line-height: 1.5; }
+.help { font-size: 11.5px; color: var(--ink-60); line-height: 1.5; }
+.section > .help { margin-top: 12px; color: var(--ink-30); }
+.section > .help b { font-weight: 600; }
+
+.note { font-size: 11.5px; line-height: 1.5; margin-top: 6px; color: var(--ink-60); }
+.note.warn { color: #8a6712; background: rgba(245,185,66,.12); border-radius: 8px; padding: 8px 10px; }
+.note.info { color: var(--ink-60); background: var(--ink-06); border-radius: 8px; padding: 8px 10px; }
+.note.bad { color: var(--red); }
+.err-inline { margin-top: 8px; color: var(--red); font-size: 12px; line-height: 1.45; }
+
+/* tag input */
+.tag-input { background: var(--paper); border: 1px solid var(--ink-12); border-radius: 9px; padding: 8px 8px 6px; display: flex; flex-wrap: wrap; gap: 6px; min-height: 42px; align-items: center; }
+.tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px 4px 10px; background: var(--cream); border: 1px solid var(--ink-12); border-radius: 999px; font-size: 12px; font-weight: 500; }
+.tag .x { color: var(--ink-30); font-size: 10px; cursor: pointer; padding: 0 2px; }
+.tag .x:hover { color: var(--red); }
+.tag.solid { background: var(--night); color: var(--yg); border-color: var(--night); font-weight: 600; }
+.tag.solid .x { color: rgba(212,245,66,.5); }
+.tag.solid .x:hover { color: var(--yg); }
+.tag.new { background: var(--yg); border-color: var(--yg); color: var(--night); font-weight: 700; }
+.tag.new .x { color: var(--night); opacity: .5; }
+.tag-input .add-input { background: transparent; border: 0; padding: 4px 8px; color: var(--ink); font-size: 12px; outline: none; min-width: 140px; flex: 1; }
+.tag-input .add-input::placeholder { color: var(--ink-30); }
+
+/* catálogo completo a la vista: es la defensa primaria contra duplicados */
+.tag-catalog { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag-catalog .ct {
+  font-size: 12px; padding: 5px 11px; border-radius: 999px;
+  border: 1px dashed var(--ink-12); background: var(--cream); color: var(--ink-60);
+}
+.tag-catalog .ct:hover { border-style: solid; border-color: var(--ink); color: var(--ink); }
+.tag-catalog .ct.on { background: var(--night); color: var(--yg); border-color: var(--night); border-style: solid; font-weight: 600; }
+
+/* prioridad */
+.prio-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+.prio-picker .pp {
+  flex: 1; min-width: 130px;
+  border: 1px solid var(--ink-12); background: var(--paper);
+  border-radius: 10px; padding: 10px 12px;
+  text-align: left; line-height: 1.35;
+}
+.prio-picker .pp .t { font-size: 13px; font-weight: 600; }
+.prio-picker .pp .d { font-size: 11px; color: var(--ink-30); margin-top: 2px; }
+.prio-picker .pp:hover { border-color: var(--ink-30); }
+.prio-picker .pp.on { background: var(--night); border-color: var(--night); color: #fff; }
+.prio-picker .pp.on .d { color: rgba(255,255,255,.55); }
+
+/* flyer */
+.flyer-preview { margin-top: 10px; border: 1px solid var(--ink-12); border-radius: 10px; overflow: hidden; background: var(--paper); max-width: 260px; }
+.flyer-preview img { display: block; width: 100%; height: auto; }
+.flyer-preview.err { border-color: var(--red); padding: 10px 12px; font-size: 12px; color: var(--red); }
+
+.full-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; color: var(--ink-60); }
+.full-state .spinner { width: 28px; height: 28px; border: 2px solid var(--ink-12); border-right-color: var(--ink); border-radius: 50%; animation: spin 720ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.toast {
+  position: fixed; left: 50%; bottom: 30px; transform: translateX(-50%);
+  background: var(--night); color: #fff;
+  padding: 12px 18px; border-radius: 10px;
+  font-size: 13.5px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 14px 32px -10px rgba(0,0,0,.35);
+  z-index: 50; opacity: 0; pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+.toast.err { background: var(--red); }
+.toast.ok { background: var(--night); color: var(--yg); }
+
+/* lista de fechas de la serie */
+.serie-dates { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.serie-dates .sd { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.06em; padding: 4px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--ink-12); color: var(--ink-60); }
+.serie-dates .sd.here { background: var(--night); color: var(--yg); border-color: var(--night); font-weight: 600; }
+.serie-dates .sd.off { text-decoration: line-through; color: var(--ink-30); }
+
+@media (max-width: 960px) {
+  .console { grid-template-columns: 64px 1fr; }
+  .sidebar { padding: 16px 8px; }
+  .sidebar .brand .word, .sidebar .brand .tag, .sidebar .search span, .sidebar .nav-label, .sidebar .nav-item span, .sidebar .user .meta { display: none; }
+  .sidebar .nav-item { justify-content: center; padding: 10px; }
+  .sidebar .user { justify-content: center; }
+  .detail-head h1 { font-size: 26px; }
+  .detail-head, .detail-form { padding-left: 18px; padding-right: 18px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .detail-head .row1 { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="console">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="#D4F542">
+          <rect x="44" y="4" width="12" height="92" rx="6"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/>
+        </g>
+      </svg>
+      <span class="word">Quepa</span>
+      <span class="tag">Console</span>
+    </div>
+
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <span>Buscar</span>
+      <span class="kbd">⌘K</span>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Operación</div>
+      <a class="nav-item" href="welcome.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item" href="lugares.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13z"/><circle cx="12" cy="9" r="3"/></svg>
+        <span>Lugares</span>
+      </a>
+      <a class="nav-item active" href="eventos.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span>Eventos</span>
+      </a>
+      <a class="nav-item" href="mapa.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><path d="M9 3v15"/><path d="M15 6v15"/></svg>
+        <span>Mapa</span>
+      </a>
+      <a class="nav-item" href="descubrir.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+        <span>Descubrir</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+        <span>Comercios</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Curaduría</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <span>Agente WhatsApp</span>
+        <span class="pulse"></span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+        <span>Quepa Stars</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Insights</div>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/></svg>
+        <span>Métricas</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span>Reportes</span>
+      </a>
+    </div>
+
+    <div class="user">
+      <div class="av" id="userAvatar">—</div>
+      <div class="meta">
+        <b id="userName">—</b>
+        <span id="userRole">Staff</span>
+      </div>
+      <button class="logout" id="logoutBtn" title="Cerrar sesión">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <section class="main">
+    <div class="topbar">
+      <div class="crumbs">
+        <span>Quepa Console</span>
+        <span class="sep">/</span>
+        <a href="eventos.html">Eventos</a>
+        <span class="sep">/</span>
+        <b id="crumbName">…</b>
+      </div>
+      <div class="right">
+        <span class="env"><span class="dot"></span> Prod · BOG-1</span>
+      </div>
+    </div>
+
+    <div class="full-state" id="loadingState"><div class="spinner"></div><div class="mono" style="font-size:11px; color:var(--ink-60);">· Cargando evento…</div></div>
+
+    <div class="detail-page" id="detailPage" hidden>
+
+      <div class="detail-head">
+        <div class="row1">
+          <div style="min-width:0;">
+            <div class="id-line" id="idLine">· EVT_— ·</div>
+            <h1><span id="eventName">…</span></h1>
+            <div class="meta-row">
+              <button type="button" class="toggle on" id="activeToggle"><span class="dot"></span><span id="activeLabel">Activo</span></button>
+              <span class="mtag"><b id="metaWhen">—</b></span>
+              <span class="sep">·</span>
+              <span class="mtag"><b id="metaCity">—</b></span>
+              <span class="sep">·</span>
+              <span class="mtag">Última edición · <b id="metaUpdated">—</b></span>
+            </div>
+          </div>
+          <div class="actions">
+            <a class="btn" href="eventos.html">Cancelar</a>
+            <button class="btn primary" id="saveBtn">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+              <span id="saveLabel">Guardar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Alcance de escritura: permanente, nunca implícito (design D3) -->
+        <div class="scopebar" id="scopebar" hidden>
+          <span class="lead">Estás editando</span>
+          <div class="sw" id="scopeSwitch">
+            <button data-scope="fecha" type="button">Solo esta fecha</button>
+            <button data-scope="serie" type="button">Toda la serie</button>
+          </div>
+          <div class="desc" id="scopeDesc">—</div>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <div class="detail-form">
+
+          <!-- 01 · IDENTIDAD -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 01 · IDENTIDAD</span>
+                <h3>¿Qué evento es?</h3>
+              </div>
+            </div>
+
+            <div class="field-d">
+              <div class="label"><span>Nombre <span class="req">*</span></span><span class="count" id="nameCount">0/120</span></div>
+              <input id="f-name" maxlength="120" />
+              <div class="note" id="keyFieldNote" hidden></div>
+            </div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Descripción <span class="req">*</span></span><span class="count" id="descCount">0/600</span></div>
+              <textarea id="f-description" maxlength="600"></textarea>
+              <div class="help">Es la ÚNICA descripción: de acá salen tanto la frase corta de la tanda de 3 como la ficha ampliada que manda el bot. Tono cálido y concreto.</div>
+            </div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Tipo de evento <span class="req">*</span></span><span style="color: var(--ink-30);">Al menos una</span></div>
+              <div class="tag-input" id="tagInput">
+                <input class="add-input" type="text" id="tagAdd" list="tagOptions" placeholder="Escribe y presiona Enter…" autocomplete="off" />
+                <datalist id="tagOptions"></datalist>
+              </div>
+              <div class="tag-catalog" id="tagCatalog"></div>
+              <div class="help">El catálogo completo está arriba a la vista: <b>reutilizar siempre gana</b>. Si escribes una que no existe se crea, y "Música", "musica" y "MUSICA " son la misma etiqueta. Es el campo contra el que el bot cruza los gustos del usuario.</div>
+              <div class="err-inline" id="tagError" hidden></div>
+            </div>
+          </div>
+
+          <!-- 02 · CUÁNDO -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 02 · CUÁNDO</span>
+                <h3>Fecha y horas</h3>
+              </div>
+            </div>
+
+            <div class="grid-3">
+              <div class="field-d">
+                <div class="label"><span>Fecha <span class="req">*</span></span></div>
+                <input id="f-event_date" type="date" />
+                <div class="note" id="dateScopeNote" hidden></div>
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Hora de inicio <span class="req">*</span></span></div>
+                <input id="f-start_time" type="time" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Hora de fin</span><span style="color: var(--ink-30);">Opcional</span></div>
+                <input id="f-end_time" type="time" />
+              </div>
+            </div>
+
+            <div class="note info" id="timeNote">—</div>
+
+            <div class="serie-dates" id="serieDates" hidden></div>
+          </div>
+
+          <!-- 03 · DÓNDE -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 03 · DÓNDE</span>
+                <h3>Ciudad y lugar</h3>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field-d">
+                <div class="label"><span>Ciudad <span class="req">*</span></span></div>
+                <select id="f-city-select"></select>
+                <input id="f-city-other" placeholder="Escribe la ciudad…" hidden style="margin-top:8px;" />
+                <div class="note warn" id="cityWarn" hidden>
+                  Sin selector, la ciudad se escribe a mano — y el bot busca eventos por coincidencia <b>exacta</b> de ciudad, sin red de búsqueda semántica. Una tilde o una abreviatura de más deja este evento <b>invisible</b>, sin ningún error visible. Escríbela igual que en el resto del catálogo.
+                </div>
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Dirección <span class="req">*</span></span></div>
+                <input id="f-address" />
+              </div>
+            </div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Link de Google Maps</span></div>
+              <input id="f-maps_url" placeholder="https://maps.app.goo.gl/…" />
+            </div>
+
+            <div class="grid-2" style="margin-top: 14px;">
+              <div class="field-d">
+                <div class="label"><span>Latitud</span><span style="color: var(--ink-30);">Opcional</span></div>
+                <input id="f-lat" placeholder="4.8133" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Longitud</span><span style="color: var(--ink-30);">Opcional</span></div>
+                <input id="f-lng" placeholder="-75.6961" />
+              </div>
+            </div>
+            <div class="help">Las coordenadas se guardan pero <b>ninguna tool del bot las usa todavía</b>: entran ahora para no tener que volver a pasar por acá cuando exista el pin de evento.</div>
+          </div>
+
+          <!-- 04 · CONTENIDO Y CONTACTO -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 04 · CONTENIDO Y CONTACTO</span>
+                <h3>Flyer, organizador y contacto</h3>
+              </div>
+            </div>
+
+            <div class="field-d">
+              <div class="label"><span>Flyer · URL pública</span></div>
+              <input id="f-flyer_url" placeholder="https://…/flyer.jpg" />
+              <div class="help">Debe ser <b>HTTPS y pública</b>: la API de WhatsApp la descarga directo para mandarla como imagen. Por ahora se pega la URL — la subida de archivos al Console llega después.</div>
+              <div class="err-inline" id="flyerError" hidden></div>
+              <div class="flyer-preview" id="flyerPreview" hidden></div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 14px;">
+              <div class="field-d">
+                <div class="label"><span>Organizado por</span></div>
+                <input id="f-organizer" />
+              </div>
+              <div class="field-d">
+                <div class="label"><span>Link de compra de boletas</span></div>
+                <input id="f-ticket_url" placeholder="https://…" />
+              </div>
+            </div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Números de contacto</span><span style="color: var(--ink-30);">Varios</span></div>
+              <div class="tag-input" id="phoneInput">
+                <input class="add-input" type="text" id="phoneAdd" placeholder="3001234567 · Enter para agregar" autocomplete="off" />
+              </div>
+              <div class="help">El bot construye los links solo: celular colombiano sale como <b>wa.me</b>, fijo como <b>tel:</b>. Acá va el número crudo.</div>
+            </div>
+
+            <div class="field-d" style="margin-top: 14px;">
+              <div class="label"><span>Notas o datos claves</span></div>
+              <textarea id="f-notes" maxlength="600"></textarea>
+            </div>
+          </div>
+
+          <!-- 05 · CURADURÍA -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 05 · CURADURÍA</span>
+                <h3>Prioridad de selección</h3>
+              </div>
+            </div>
+
+            <div class="prio-picker" id="prioPicker">
+              <button class="pp" type="button" data-prio="0"><div class="t">Normal</div><div class="d">Entra si hay cupo</div></button>
+              <button class="pp" type="button" data-prio="1"><div class="t">Preferente</div><div class="d">Entra antes que los normales</div></button>
+              <button class="pp" type="button" data-prio="2"><div class="t">Imperdible</div><div class="d">Entra de primeras</div></button>
+            </div>
+            <div class="help">Cuando un día tiene más de tres eventos, esto decide <b>cuáles</b> entran a la tanda. <b>Nunca cambia el orden</b> — el orden siempre es por hora — y no cruza de un día a otro. El usuario nunca la ve y el bot jamás dice "este es el destacado": no es publicidad pagada, es criterio del equipo.</div>
+          </div>
+
+          <!-- BAJA -->
+          <div class="section">
+            <div class="hd">
+              <div class="title-wrap">
+                <span class="lbl">· 06 · BAJA</span>
+                <h3>Sacar de las recomendaciones</h3>
+              </div>
+            </div>
+            <div class="help" style="margin-top:0; color: var(--ink-60);">Desactivar saca el evento de lo que el bot ofrece en la consulta siguiente, y <b>conserva el registro</b> de lo que estaba programado. Acá no se borra nada.</div>
+            <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn danger" id="deactivateBtn" type="button">Desactivar</button>
+              <button class="btn" id="reactivateBtn" type="button" hidden>Reactivar</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(() => {
+  const SUPABASE_URL = 'https://ttengnyhesunaqqbhmkc.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_piW0GXJJtYRitrVpvoM8Lg_3fvcu4Y4';
+  const LOGIN_URL = 'index.html';
+  const LIST_URL = 'eventos.html';
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'quepa-console-auth' },
+  });
+
+  const MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  // ---------- helpers ----------
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function initials(s) {
+    if (!s) return '—';
+    return s.trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+  }
+  function nameFromEmail(email) {
+    const local = (email || '').split('@')[0] || 'staff';
+    return local.split(/[._-]+/).filter(Boolean).map(s => s[0].toUpperCase() + s.slice(1)).join(' ');
+  }
+  function toast(msg, kind) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + (kind || '');
+    setTimeout(() => { t.classList.remove('show'); }, 2800);
+  }
+  function relTime(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return 'hace un momento';
+    if (diff < 3600) return 'hace ' + Math.floor(diff / 60) + ' min';
+    if (diff < 86400) return 'hace ' + Math.floor(diff / 3600) + ' h';
+    if (diff < 86400 * 7) return 'hace ' + Math.floor(diff / 86400) + ' d';
+    return d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' });
+  }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    const [y, m, d] = String(iso).split('-').map(Number);
+    return `${d} ${MONTHS[m - 1] || '?'}`;
+  }
+  function fmtTime(t) {
+    if (!t) return '—';
+    const [h, m] = String(t).split(':').map(Number);
+    const suffix = h < 12 ? 'a.m.' : 'p.m.';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m ?? 0).padStart(2, '0')} ${suffix}`;
+  }
+  // 'HH:MM:SS' (postgres) → 'HH:MM' (input[type=time])
+  function toInputTime(t) { return t ? String(t).slice(0, 5) : ''; }
+  function timeMinutes(t) {
+    const [h, m] = String(t).split(':').map(Number);
+    return (h || 0) * 60 + (m || 0);
+  }
+
+  // Normalización de etiqueta — COPIA VERBATIM de normalizeTagSlug en
+  // quepa-webhook/src/db/events.ts. Si allá cambia, acá también: no hay
+  // constraint de base que atrape una divergencia (el unique es sobre el slug
+  // ya normalizado, así que un slug distinto simplemente inserta otra fila).
+  function normalizeTagSlug(value) {
+    return String(value)
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}]+/gu, ' ')
+      .trim();
+  }
+
+  // ---------- state ----------
+  const params = new URLSearchParams(window.location.search);
+  const state = {
+    id: params.get('id'),
+    isNew: params.get('id') === 'new',
+    scope: params.get('scope') === 'serie' ? 'serie' : 'fecha',
+    event: null,
+    serie: [],            // todas las filas de la serie (incluye la actual)
+    tags: [],             // [{id?, slug, label, isNew}]
+    originalTagIds: [],
+    catalog: [],
+    phones: [],
+    priority: 0,
+    active: true,
+    cities: [],
+    cityIsOther: false,
+  };
+
+  // ---------- session ----------
+  async function ensureSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.replace(LOGIN_URL); return null; }
+    const user = session.user;
+    const displayName = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || nameFromEmail(user.email);
+    document.getElementById('userName').textContent = displayName;
+    document.getElementById('userAvatar').textContent = initials(displayName);
+    return session;
+  }
+
+  // ---------- ciudades: unión places ∪ city_zones (design D4) ----------
+  // Ninguna de las dos tablas contiene a la otra: places tiene municipios sin
+  // gazetteer y city_zones tiene ciudades sin lugares curados. La unión es
+  // "las grafías que Quepa ya usa en alguna parte" y se automantiene sola.
+  async function loadCities() {
+    const [places, zones] = await Promise.all([
+      sb.from('places').select('city'),
+      sb.from('city_zones').select('city'),
+    ]);
+    const all = []
+      .concat((places.data || []).map(r => r.city))
+      .concat((zones.data || []).map(r => r.city))
+      .filter(Boolean)
+      .map(c => String(c).trim());
+    state.cities = Array.from(new Set(all)).sort((a, b) => a.localeCompare(b, 'es'));
+  }
+
+  function renderCityField(currentCity) {
+    const sel = document.getElementById('f-city-select');
+    const known = state.cities.slice();
+    // Una ciudad ya guardada que no esté en la unión NO se pierde ni se
+    // reescribe en silencio: se ofrece como opción propia.
+    if (currentCity && !known.includes(currentCity)) known.push(currentCity);
+    known.sort((a, b) => a.localeCompare(b, 'es'));
+    sel.innerHTML = '<option value="">Selecciona…</option>'
+      + known.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')
+      + '<option value="__other__">Otra ciudad…</option>';
+    if (currentCity) sel.value = currentCity;
+    syncCityOther();
+  }
+
+  function syncCityOther() {
+    const sel = document.getElementById('f-city-select');
+    const other = document.getElementById('f-city-other');
+    state.cityIsOther = sel.value === '__other__';
+    other.hidden = !state.cityIsOther;
+    document.getElementById('cityWarn').hidden = !state.cityIsOther;
+  }
+
+  function cityValue() {
+    return state.cityIsOther
+      ? document.getElementById('f-city-other').value.trim()
+      : document.getElementById('f-city-select').value.trim();
+  }
+
+  // ---------- catálogo de etiquetas ----------
+  async function loadTagCatalog() {
+    const { data } = await sb.from('event_tags').select('id, slug, label').order('label');
+    state.catalog = data || [];
+    const dl = document.getElementById('tagOptions');
+    dl.innerHTML = state.catalog.map(t => `<option value="${escapeHtml(t.label)}"></option>`).join('');
+  }
+
+  function renderTagCatalog() {
+    const box = document.getElementById('tagCatalog');
+    const chosen = new Set(state.tags.map(t => t.slug));
+    box.innerHTML = state.catalog
+      .map(t => `<button type="button" class="ct ${chosen.has(t.slug) ? 'on' : ''}" data-slug="${escapeHtml(t.slug)}">${escapeHtml(t.label)}</button>`)
+      .join('');
+  }
+
+  function renderTags() {
+    const container = document.getElementById('tagInput');
+    Array.from(container.querySelectorAll('.tag')).forEach(el => el.remove());
+    const input = container.querySelector('input');
+    state.tags.forEach(t => {
+      const span = document.createElement('span');
+      span.className = 'tag ' + (t.isNew ? 'new' : 'solid');
+      span.innerHTML = '<span class="tag-text"></span><span class="x">×</span>';
+      span.querySelector('.tag-text').textContent = t.label + (t.isNew ? ' · nueva' : '');
+      span.querySelector('.x').addEventListener('click', () => {
+        state.tags = state.tags.filter(x => x.slug !== t.slug);
+        renderTags();
+        renderTagCatalog();
+      });
+      container.insertBefore(span, input);
+    });
+    renderTagCatalog();
+  }
+
+  // Reutiliza SIEMPRE que el slug normalizado coincida con una del catálogo;
+  // solo crea cuando de verdad no existe.
+  function addTagFromText(text) {
+    const raw = String(text || '').trim();
+    if (!raw) return;
+    const slug = normalizeTagSlug(raw);
+    if (!slug) return;
+    if (state.tags.some(t => t.slug === slug)) return;
+    const existing = state.catalog.find(t => t.slug === slug);
+    if (existing) state.tags.push({ id: existing.id, slug: existing.slug, label: existing.label, isNew: false });
+    else state.tags.push({ slug, label: raw, isNew: true });
+    renderTags();
+  }
+
+  // ---------- teléfonos ----------
+  function renderPhones() {
+    const container = document.getElementById('phoneInput');
+    Array.from(container.querySelectorAll('.tag')).forEach(el => el.remove());
+    const input = container.querySelector('input');
+    state.phones.forEach(p => {
+      const span = document.createElement('span');
+      span.className = 'tag';
+      span.innerHTML = '<span class="tag-text"></span><span class="x">×</span>';
+      span.querySelector('.tag-text').textContent = p;
+      span.querySelector('.x').addEventListener('click', () => {
+        state.phones = state.phones.filter(x => x !== p);
+        renderPhones();
+      });
+      container.insertBefore(span, input);
+    });
+  }
+
+  // ---------- prioridad ----------
+  function renderPriority() {
+    document.querySelectorAll('#prioPicker .pp').forEach(b => {
+      b.classList.toggle('on', Number(b.dataset.prio) === state.priority);
+    });
+  }
+
+  // ---------- flyer ----------
+  function renderFlyerPreview() {
+    const url = document.getElementById('f-flyer_url').value.trim();
+    const box = document.getElementById('flyerPreview');
+    const err = document.getElementById('flyerError');
+    err.hidden = true;
+    if (!url) { box.hidden = true; box.innerHTML = ''; return; }
+    if (!/^https:\/\//i.test(url)) {
+      box.hidden = true; box.innerHTML = '';
+      err.hidden = false;
+      err.textContent = 'La URL del flyer debe empezar por https:// — WhatsApp la descarga directo y no acepta http ni rutas locales.';
+      return;
+    }
+    box.hidden = false;
+    box.className = 'flyer-preview';
+    box.innerHTML = `<img alt="Flyer" src="${escapeHtml(url)}" />`;
+    box.querySelector('img').addEventListener('error', () => {
+      box.className = 'flyer-preview err';
+      box.textContent = 'No se pudo cargar la imagen desde esa URL. Verifica que sea pública (WhatsApp la descarga sin sesión).';
+    });
+  }
+
+  // ---------- notas de horas (design D7) ----------
+  function renderTimeNote() {
+    const start = document.getElementById('f-start_time').value;
+    const end = document.getElementById('f-end_time').value;
+    const el = document.getElementById('timeNote');
+    if (!end) {
+      el.className = 'note info';
+      el.innerHTML = 'Sin hora de cierre registrada. <b>No es un error</b>: el bot lo dice en voz alta y sigue ofreciendo el evento hasta el final del día. Nunca le inventes una duración.';
+      return;
+    }
+    if (!start) { el.className = 'note info'; el.textContent = 'Falta la hora de inicio.'; return; }
+    if (timeMinutes(end) <= timeMinutes(start)) {
+      el.className = 'note warn';
+      el.innerHTML = `Termina <b>al día siguiente</b> (${escapeHtml(fmtTime(start))} → ${escapeHtml(fmtTime(end))}). Es el caso normal de una verbena y se guarda tal cual.`;
+      return;
+    }
+    el.className = 'note info';
+    el.textContent = `Dura ${fmtTime(start)} a ${fmtTime(end)}, el mismo día.`;
+  }
+
+  // ---------- alcance (design D3) ----------
+  function targetIds() {
+    if (state.isNew) return [];
+    return state.scope === 'serie' ? state.serie.map(e => e.id) : [state.id];
+  }
+  function targetCount() {
+    return state.isNew ? 1 : targetIds().length;
+  }
+
+  function renderScope() {
+    const bar = document.getElementById('scopebar');
+    if (state.isNew || state.serie.length <= 1) {
+      bar.hidden = true;
+    } else {
+      bar.hidden = false;
+      document.querySelectorAll('#scopeSwitch button').forEach(b => {
+        b.classList.toggle('on', b.dataset.scope === state.scope);
+      });
+      const n = state.serie.length;
+      const first = fmtDate(state.serie[0].event_date);
+      const last = fmtDate(state.serie[n - 1].event_date);
+      document.getElementById('scopeDesc').innerHTML = state.scope === 'serie'
+        ? `Lo que guardes se escribe en <b>las ${n} fechas</b> de esta serie (${escapeHtml(first)} → ${escapeHtml(last)}). La fecha individual no se puede cambiar en este modo.`
+        : `Lo que guardes se escribe <b>solo en la fecha ${escapeHtml(fmtDate(state.event.event_date))}</b>. Las otras ${n - 1} de la serie quedan intactas.`;
+    }
+    // La fecha es identidad de la fila: en alcance serie no se puede reescribir
+    // (pondría las N filas en el mismo día y colisionaría con el unique).
+    const dateInput = document.getElementById('f-event_date');
+    const dateNote = document.getElementById('dateScopeNote');
+    const serieScope = state.scope === 'serie' && state.serie.length > 1;
+    dateInput.disabled = serieScope;
+    dateNote.hidden = !serieScope;
+    if (serieScope) {
+      dateNote.className = 'note info';
+      dateNote.textContent = 'Cada fecha de la serie conserva la suya. Para mover un día, cambia a "Solo esta fecha".';
+    }
+    renderSerieDates();
+    renderKeyFieldNote();
+    renderSaveLabel();
+    renderBajaButtons();
+  }
+
+  function renderSerieDates() {
+    const box = document.getElementById('serieDates');
+    if (state.serie.length <= 1) { box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = state.serie.map(e => {
+      const cls = ['sd'];
+      if (e.id === state.id) cls.push('here');
+      if (!e.active) cls.push('off');
+      return `<span class="${cls.join(' ')}" title="${e.active ? 'Activo' : 'Inactivo'}">${escapeHtml(fmtDate(e.event_date))}</span>`;
+    }).join('');
+  }
+
+  // Con alcance fecha, tocar nombre/ciudad/hora saca esa fila de la serie:
+  // es el costo declarado de que la serie sea derivada (design D1).
+  function renderKeyFieldNote() {
+    const note = document.getElementById('keyFieldNote');
+    if (state.isNew || state.serie.length <= 1 || state.scope !== 'fecha') { note.hidden = true; return; }
+    const changed = document.getElementById('f-name').value.trim() !== (state.event.name || '')
+      || cityValue() !== (state.event.city || '')
+      || document.getElementById('f-start_time').value !== toInputTime(state.event.start_time);
+    note.hidden = !changed;
+    if (changed) {
+      note.className = 'note warn';
+      note.innerHTML = 'Cambiar nombre, ciudad u hora <b>saca esta fecha de la serie</b>: pasará a listarse aparte. Si querías cambiarlo para todas, usa "Toda la serie".';
+    }
+  }
+
+  function renderSaveLabel() {
+    const n = targetCount();
+    document.getElementById('saveLabel').textContent = state.isNew
+      ? 'Crear evento'
+      : (n === 1 ? 'Guardar · 1 fecha' : `Guardar · ${n} fechas`);
+  }
+
+  function renderBajaButtons() {
+    const n = targetCount();
+    const targets = state.isNew ? [] : (state.scope === 'serie' ? state.serie : [state.event]);
+    const anyActive = targets.some(e => e.active);
+    const anyInactive = targets.some(e => !e.active);
+    const deact = document.getElementById('deactivateBtn');
+    const react = document.getElementById('reactivateBtn');
+    deact.hidden = state.isNew || !anyActive;
+    react.hidden = state.isNew || !anyInactive;
+    deact.textContent = n === 1 ? 'Desactivar esta fecha' : `Desactivar las ${n} fechas`;
+    react.textContent = n === 1 ? 'Reactivar esta fecha' : `Reactivar las ${n} fechas`;
+  }
+
+  function renderActiveToggle() {
+    const t = document.getElementById('activeToggle');
+    const lbl = document.getElementById('activeLabel');
+    const targets = state.isNew ? [] : (state.scope === 'serie' ? state.serie : [state.event]);
+    const on = targets.filter(e => e.active).length;
+    if (state.isNew) { t.className = 'toggle on'; lbl.textContent = 'Activo'; return; }
+    if (on === targets.length) { t.className = 'toggle on'; lbl.textContent = targets.length > 1 ? `${on} activos` : 'Activo'; }
+    else if (on === 0) { t.className = 'toggle off'; lbl.textContent = 'Inactivo'; }
+    else { t.className = 'toggle mixed'; lbl.textContent = `${on} de ${targets.length} activos`; }
+  }
+
+  // ---------- carga ----------
+  async function loadEvent() {
+    if (state.isNew) {
+      state.event = null;
+      state.serie = [];
+      state.scope = 'fecha';
+      document.getElementById('idLine').textContent = '· EVT_NUEVO ·';
+      document.getElementById('eventName').innerHTML = '<span class="placeholder-name">Evento nuevo</span>';
+      document.getElementById('crumbName').textContent = 'Nuevo';
+      document.getElementById('metaWhen').textContent = '—';
+      document.getElementById('metaCity').textContent = '—';
+      document.getElementById('metaUpdated').textContent = '—';
+      renderCityField('');
+      renderTags(); renderPhones(); renderPriority(); renderTimeNote(); renderScope(); renderActiveToggle();
+      show();
+      return;
+    }
+
+    const { data, error } = await sb.from('events').select('*').eq('id', state.id).single();
+    if (error || !data) {
+      document.getElementById('loadingState').innerHTML =
+        `<div class="mono" style="font-size:12px;color:var(--red);">· No encontramos ese evento</div>
+         <a class="btn" href="${LIST_URL}">Volver a Eventos</a>`;
+      return;
+    }
+    state.event = data;
+    state.active = data.active;
+    state.priority = data.priority ?? 0;
+    state.phones = Array.isArray(data.contact_phones) ? data.contact_phones.slice() : [];
+
+    // La serie se RE-DERIVA de la base (no está persistida): misma clave
+    // (name, city, start_time) — con la hora, porque una misma actividad a dos
+    // horas distintas son dos series (design D2).
+    const { data: sib } = await sb
+      .from('events')
+      .select('id, event_date, active, name, city, start_time')
+      .eq('name', data.name)
+      .eq('city', data.city)
+      .eq('start_time', data.start_time)
+      .order('event_date');
+    state.serie = sib || [data];
+    if (state.serie.length <= 1) state.scope = 'fecha';
+
+    // etiquetas actuales
+    const { data: links } = await sb
+      .from('event_tag_links')
+      .select('tag_id, event_tags(id, slug, label)')
+      .eq('event_id', state.id);
+    state.tags = (links || []).filter(l => l.event_tags).map(l => ({
+      id: l.event_tags.id, slug: l.event_tags.slug, label: l.event_tags.label, isNew: false,
+    }));
+    state.originalTagIds = state.tags.map(t => t.id);
+
+    hydrate(data);
+    show();
+  }
+
+  function hydrate(d) {
+    document.getElementById('f-name').value = d.name || '';
+    document.getElementById('f-description').value = d.description || '';
+    document.getElementById('f-address').value = d.address || '';
+    document.getElementById('f-event_date').value = d.event_date || '';
+    document.getElementById('f-start_time').value = toInputTime(d.start_time);
+    document.getElementById('f-end_time').value = toInputTime(d.end_time);
+    document.getElementById('f-maps_url').value = d.maps_url || '';
+    document.getElementById('f-flyer_url').value = d.flyer_url || '';
+    document.getElementById('f-organizer').value = d.organizer || '';
+    document.getElementById('f-ticket_url').value = d.ticket_url || '';
+    document.getElementById('f-notes').value = d.notes || '';
+    document.getElementById('f-lat').value = d.lat ?? '';
+    document.getElementById('f-lng').value = d.lng ?? '';
+    document.getElementById('nameCount').textContent = (d.name || '').length + '/120';
+    document.getElementById('descCount').textContent = (d.description || '').length + '/600';
+
+    renderCityField(d.city || '');
+    document.getElementById('idLine').textContent = '· EVT_' + String(d.id).replace(/-/g, '').slice(-4).toUpperCase() + ' ·';
+    document.getElementById('eventName').textContent = d.name || '—';
+    document.getElementById('crumbName').textContent = d.name || '—';
+    document.getElementById('metaWhen').textContent = `${fmtDate(d.event_date)} · ${fmtTime(d.start_time)}`;
+    document.getElementById('metaCity').textContent = d.city || '—';
+    document.getElementById('metaUpdated').textContent = relTime(d.updated_at);
+
+    renderTags(); renderPhones(); renderPriority(); renderTimeNote(); renderFlyerPreview();
+    renderScope(); renderActiveToggle();
+  }
+
+  function show() {
+    document.getElementById('loadingState').hidden = true;
+    document.getElementById('detailPage').hidden = false;
+  }
+
+  // ---------- gather / validate ----------
+  function gather() {
+    const numOrNull = (v) => {
+      const s = String(v || '').trim();
+      if (!s) return null;
+      const n = Number(s.replace(',', '.'));
+      return Number.isFinite(n) ? n : null;
+    };
+    const strOrNull = (id) => {
+      const v = document.getElementById(id).value.trim();
+      return v === '' ? null : v;
+    };
+    const payload = {
+      name: document.getElementById('f-name').value.trim(),
+      description: document.getElementById('f-description').value.trim(),
+      address: document.getElementById('f-address').value.trim(),
+      city: cityValue(),
+      start_time: document.getElementById('f-start_time').value || null,
+      // null = hora de cierre DESCONOCIDA, jamás "ya terminó" (migración 0015)
+      end_time: document.getElementById('f-end_time').value || null,
+      maps_url: strOrNull('f-maps_url'),
+      flyer_url: strOrNull('f-flyer_url'),
+      organizer: strOrNull('f-organizer'),
+      ticket_url: strOrNull('f-ticket_url'),
+      notes: strOrNull('f-notes'),
+      lat: numOrNull(document.getElementById('f-lat').value),
+      lng: numOrNull(document.getElementById('f-lng').value),
+      contact_phones: state.phones,
+      priority: state.priority,
+      updated_at: new Date().toISOString(),
+    };
+    // La fecha solo viaja cuando se escribe UNA fila: con alcance serie
+    // pondría las N filas en el mismo día y chocaría con el unique.
+    if (!(state.scope === 'serie' && state.serie.length > 1)) {
+      payload.event_date = document.getElementById('f-event_date').value || null;
+    }
+    return payload;
+  }
+
+  function validate(payload) {
+    const errs = [];
+    if (!payload.name) errs.push('nombre');
+    if (!payload.description) errs.push('descripción');
+    if (!payload.address) errs.push('dirección');
+    if (!payload.city) errs.push('ciudad');
+    if (payload.event_date === null || payload.event_date === undefined) {
+      if (!(state.scope === 'serie' && state.serie.length > 1)) errs.push('fecha');
+    }
+    if (!payload.start_time) errs.push('hora de inicio');
+    return errs;
+  }
+
+  function validateTags() {
+    const el = document.getElementById('tagError');
+    if (!state.tags.length) {
+      el.hidden = false;
+      el.textContent = 'Un evento sin etiqueta no lo puede filtrar el bot cuando el usuario declara un gusto. Elige al menos una del catálogo.';
+      return false;
+    }
+    el.hidden = true;
+    return true;
+  }
+
+  function validateFlyer() {
+    const url = document.getElementById('f-flyer_url').value.trim();
+    const el = document.getElementById('flyerError');
+    if (url && !/^https:\/\//i.test(url)) {
+      el.hidden = false;
+      el.textContent = 'La URL del flyer debe empezar por https:// — WhatsApp la descarga directo.';
+      return false;
+    }
+    el.hidden = true;
+    return true;
+  }
+
+  // ---------- etiquetas: crear faltantes y sincronizar vínculos ----------
+  async function resolveTagIds() {
+    const ids = [];
+    for (const t of state.tags) {
+      if (t.id) { ids.push(t.id); continue; }
+      // upsert por slug: si otra persona la creó entre medias, se reutiliza.
+      const { data, error } = await sb
+        .from('event_tags')
+        .upsert({ slug: t.slug, label: t.label }, { onConflict: 'slug', ignoreDuplicates: false })
+        .select('id, slug, label')
+        .single();
+      if (error) throw error;
+      t.id = data.id; t.isNew = false; t.label = data.label;
+      if (!state.catalog.some(c => c.id === data.id)) state.catalog.push(data);
+      ids.push(data.id);
+    }
+    return ids;
+  }
+
+  async function syncTagLinks(eventIds, tagIds) {
+    if (!eventIds.length) return;
+    const { data: existing, error } = await sb
+      .from('event_tag_links')
+      .select('event_id, tag_id')
+      .in('event_id', eventIds);
+    if (error) throw error;
+
+    const have = new Set((existing || []).map(l => l.event_id + '|' + l.tag_id));
+    const toInsert = [];
+    eventIds.forEach(eid => {
+      tagIds.forEach(tid => {
+        if (!have.has(eid + '|' + tid)) toInsert.push({ event_id: eid, tag_id: tid });
+      });
+    });
+    const wanted = new Set(tagIds);
+    const toDelete = (existing || []).filter(l => !wanted.has(l.tag_id));
+
+    if (toInsert.length) {
+      const { error: e1 } = await sb.from('event_tag_links').insert(toInsert);
+      if (e1) throw e1;
+    }
+    for (const l of toDelete) {
+      const { error: e2 } = await sb
+        .from('event_tag_links').delete().eq('event_id', l.event_id).eq('tag_id', l.tag_id);
+      if (e2) throw e2;
+    }
+  }
+
+  // ---------- guardar ----------
+  async function save() {
+    const btn = document.getElementById('saveBtn');
+    const payload = gather();
+    const errs = validate(payload);
+    if (errs.length) { toast('Falta(n): ' + errs.join(', '), 'err'); return; }
+    if (!validateTags()) { toast('Elige al menos una etiqueta', 'err'); return; }
+    if (!validateFlyer()) { toast('Revisa la URL del flyer', 'err'); return; }
+
+    const ids = targetIds();
+    btn.disabled = true;
+    document.getElementById('saveLabel').textContent = 'Guardando…';
+    try {
+      const tagIds = await resolveTagIds();
+
+      if (state.isNew) {
+        const { data, error } = await sb.from('events').insert(payload).select('id').single();
+        if (error) throw error;
+        state.id = data.id;
+        state.isNew = false;
+        await syncTagLinks([data.id], tagIds);
+        toast('Evento creado', 'ok');
+        setTimeout(() => { window.location.replace('evento.html?id=' + encodeURIComponent(data.id)); }, 600);
+        return;
+      }
+
+      // ¿Se tocó un campo de la CLAVE de serie? Si sí y solo se escribió una
+      // fecha, esa fila queda fuera de su serie y el agrupamiento en memoria
+      // deja de ser cierto — hay que re-derivarlo desde la base, no parchearlo.
+      const keyChanged = payload.name !== state.event.name
+        || payload.city !== state.event.city
+        || payload.start_time !== toInputTime(state.event.start_time);
+
+      const { error } = await sb.from('events').update(payload).in('id', ids);
+      if (error) throw error;
+      await syncTagLinks(ids, tagIds);
+
+      if (keyChanged && state.serie.length > 1) {
+        toast(ids.length === 1 ? 'Guardado · esta fecha salió de la serie' : `Guardado · ${ids.length} fechas`, 'ok');
+        setTimeout(() => { window.location.replace('evento.html?id=' + encodeURIComponent(state.id)); }, 700);
+        return;
+      }
+
+      // refrescar el espejo en memoria para que la barra de alcance y la lista
+      // de fechas sigan diciendo la verdad sin recargar
+      state.serie = state.serie.map(e => ids.includes(e.id)
+        ? Object.assign({}, e, { name: payload.name, city: payload.city, start_time: payload.start_time })
+        : e);
+      state.event = Object.assign({}, state.event, payload);
+      state.originalTagIds = tagIds;
+      document.getElementById('eventName').textContent = payload.name;
+      document.getElementById('crumbName').textContent = payload.name;
+      document.getElementById('metaCity').textContent = payload.city;
+      document.getElementById('metaUpdated').textContent = relTime(new Date().toISOString());
+      renderTags();
+      renderScope();
+      toast(ids.length === 1 ? 'Guardado · 1 fecha' : `Guardado · ${ids.length} fechas`, 'ok');
+    } catch (e) {
+      const msg = (e && e.code === '23505')
+        ? 'Ya existe un evento con ese nombre, ciudad, fecha y hora de inicio. Si es otra función del mismo evento, cámbiale la hora.'
+        : (e.message || 'Error al guardar');
+      toast(msg, 'err');
+    } finally {
+      btn.disabled = false;
+      renderSaveLabel();
+    }
+  }
+
+  // ---------- baja / reactivación (design D8: desactivar, nunca borrar) ----------
+  async function setActive(value) {
+    const ids = targetIds();
+    if (!ids.length) return;
+    const verb = value ? 'reactivar' : 'desactivar';
+    const what = ids.length === 1 ? 'esta fecha' : `las ${ids.length} fechas de la serie`;
+    if (!confirm(`¿Seguro que quieres ${verb} ${what}?`)) return;
+
+    const { error } = await sb.from('events')
+      .update({ active: value, updated_at: new Date().toISOString() })
+      .in('id', ids);
+    if (error) { toast(error.message, 'err'); return; }
+
+    state.serie = state.serie.map(e => ids.includes(e.id) ? Object.assign({}, e, { active: value }) : e);
+    if (state.event) state.event.active = ids.includes(state.event.id) ? value : state.event.active;
+    state.active = state.event ? state.event.active : value;
+    renderScope();
+    renderActiveToggle();
+    toast(value ? 'Reactivado' : 'Desactivado · ya no se ofrece', 'ok');
+  }
+
+  // ---------- wiring ----------
+  function wire() {
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.replace(LOGIN_URL);
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', save);
+    document.getElementById('deactivateBtn').addEventListener('click', () => setActive(false));
+    document.getElementById('reactivateBtn').addEventListener('click', () => setActive(true));
+
+    document.getElementById('scopeSwitch').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-scope]');
+      if (!b) return;
+      state.scope = b.dataset.scope;
+      renderScope();
+      renderActiveToggle();
+    });
+
+    document.getElementById('f-name').addEventListener('input', (e) => {
+      document.getElementById('nameCount').textContent = e.target.value.length + '/120';
+      if (state.isNew) document.getElementById('eventName').textContent = e.target.value || '…';
+      renderKeyFieldNote();
+    });
+    document.getElementById('f-description').addEventListener('input', (e) => {
+      document.getElementById('descCount').textContent = e.target.value.length + '/600';
+    });
+
+    document.getElementById('f-city-select').addEventListener('change', () => {
+      syncCityOther();
+      renderKeyFieldNote();
+    });
+    document.getElementById('f-city-other').addEventListener('input', renderKeyFieldNote);
+
+    document.getElementById('f-start_time').addEventListener('input', () => { renderTimeNote(); renderKeyFieldNote(); });
+    document.getElementById('f-end_time').addEventListener('input', renderTimeNote);
+
+    document.getElementById('f-flyer_url').addEventListener('blur', renderFlyerPreview);
+    document.getElementById('f-flyer_url').addEventListener('change', renderFlyerPreview);
+
+    // etiquetas
+    const tagAdd = document.getElementById('tagAdd');
+    tagAdd.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        addTagFromText(tagAdd.value);
+        tagAdd.value = '';
+      } else if (e.key === 'Backspace' && !tagAdd.value && state.tags.length) {
+        state.tags.pop();
+        renderTags();
+      }
+    });
+    tagAdd.addEventListener('blur', () => { addTagFromText(tagAdd.value); tagAdd.value = ''; });
+    document.getElementById('tagCatalog').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-slug]');
+      if (!b) return;
+      const slug = b.dataset.slug;
+      if (state.tags.some(t => t.slug === slug)) state.tags = state.tags.filter(t => t.slug !== slug);
+      else {
+        const t = state.catalog.find(c => c.slug === slug);
+        if (t) state.tags.push({ id: t.id, slug: t.slug, label: t.label, isNew: false });
+      }
+      renderTags();
+    });
+
+    // teléfonos
+    const phoneAdd = document.getElementById('phoneAdd');
+    const commitPhone = () => {
+      const v = phoneAdd.value.trim();
+      if (!v) return;
+      if (!state.phones.includes(v)) state.phones.push(v);
+      phoneAdd.value = '';
+      renderPhones();
+    };
+    phoneAdd.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); commitPhone(); }
+      else if (e.key === 'Backspace' && !phoneAdd.value && state.phones.length) { state.phones.pop(); renderPhones(); }
+    });
+    phoneAdd.addEventListener('blur', commitPhone);
+
+    // prioridad
+    document.getElementById('prioPicker').addEventListener('click', (e) => {
+      const b = e.target.closest('.pp');
+      if (!b) return;
+      state.priority = Number(b.dataset.prio);
+      renderPriority();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); save(); }
+    });
+  }
+
+  // ---------- boot ----------
+  (async function boot() {
+    const session = await ensureSession();
+    if (!session) return;
+    wire();
+    await Promise.all([loadCities(), loadTagCatalog()]);
+    await loadEvent();
+  })();
+})();
+</script>
+</body>
+</html>

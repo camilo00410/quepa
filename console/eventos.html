@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Quepa Console — Eventos</title>
+<meta name="theme-color" content="#0A0A0A" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230A0A0A'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --green: #25D366;
+  --yg: #D4F542;
+  --night: #0a0a0a;
+  --cream: #ffffff;
+  --paper: #f3f1ec;
+  --ink: #0a0a0a;
+  --ink-80: rgba(10,10,10,.80);
+  --ink-60: rgba(10,10,10,.60);
+  --ink-30: rgba(10,10,10,.30);
+  --ink-12: rgba(10,10,10,.12);
+  --ink-06: rgba(10,10,10,.06);
+  --amber: #f5b942;
+  --red: #d94a4a;
+  --f-sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body { background: var(--paper); font-family: var(--f-sans); color: var(--ink); -webkit-font-smoothing: antialiased; overflow: hidden; }
+h1, h2, h3, h4, p, ul, ol { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+a { color: inherit; text-decoration: none; cursor: pointer; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; padding: 0; color: inherit; }
+input, select, textarea { font-family: inherit; }
+.mono { font-family: var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; }
+[hidden] { display: none !important; }
+
+/* ===========================================
+   CONSOLE SHELL
+   =========================================== */
+.console {
+  width: 100vw; height: 100vh;
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  background: var(--paper);
+  color: var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+.sidebar {
+  background: var(--night);
+  color: #fff;
+  padding: 20px 16px;
+  display: flex; flex-direction: column;
+  gap: 18px;
+  border-right: 1px solid var(--ink-12);
+  overflow-y: auto;
+}
+.sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px; }
+.sidebar .brand .word { font-weight: 700; font-size: 19px; letter-spacing: -0.04em; }
+.sidebar .brand .tag { font-family: var(--f-mono); font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--yg); background: rgba(212,245,66,.12); border: 1px solid rgba(212,245,66,.3); padding: 3px 7px; border-radius: 999px; font-weight: 600; }
+.sidebar .search {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  padding: 9px 12px;
+  display: flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,.55);
+  font-size: 13px;
+}
+.sidebar .search .kbd {
+  margin-left: auto;
+  font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.1em;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 2px 6px; border-radius: 4px;
+  color: rgba(255,255,255,.7);
+}
+.sidebar .nav-group { display: flex; flex-direction: column; gap: 1px; }
+.sidebar .nav-label { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.4); margin: 8px 8px 6px; }
+.sidebar .nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: rgba(255,255,255,.75);
+  font-size: 13.5px; font-weight: 500;
+}
+.sidebar .nav-item:hover { background: rgba(255,255,255,.04); color: #fff; }
+.sidebar .nav-item.active { background: var(--yg); color: var(--night); font-weight: 700; }
+.sidebar .nav-item.active .ico { color: var(--night); opacity: 1; }
+.sidebar .nav-item .ico { width: 16px; height: 16px; flex-shrink: 0; opacity: .8; }
+.sidebar .nav-item .count {
+  margin-left: auto;
+  font-family: var(--f-mono); font-size: 10px;
+  color: rgba(255,255,255,.5);
+  background: rgba(255,255,255,.04);
+  padding: 1px 7px; border-radius: 999px;
+  font-weight: 600;
+}
+.sidebar .nav-item.active .count { background: var(--night); color: var(--yg); }
+.sidebar .nav-item .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); margin-left: auto; }
+.sidebar .user {
+  margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.sidebar .user .av { width: 32px; height: 32px; border-radius: 50%; background: var(--yg); color: var(--night); display: grid; place-items: center; font-weight: 800; font-size: 12px; letter-spacing: -0.02em; }
+.sidebar .user .meta { font-size: 12px; line-height: 1.3; overflow: hidden; }
+.sidebar .user .meta b { color: #fff; font-weight: 600; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar .user .meta span { color: rgba(255,255,255,.5); display: block; font-family: var(--f-mono); letter-spacing: 0.1em; font-size: 9px; text-transform: uppercase; }
+.sidebar .user .logout { margin-left: auto; color: rgba(255,255,255,.4); }
+.sidebar .user .logout:hover { color: var(--yg); }
+
+/* ===========================================
+   MAIN AREA
+   =========================================== */
+.main { display: flex; flex-direction: column; height: 100%; overflow: hidden; min-width: 0; }
+.topbar {
+  height: 52px; flex-shrink: 0;
+  border-bottom: 1px solid var(--ink-12);
+  background: var(--paper);
+  padding: 0 24px;
+  display: flex; align-items: center; gap: 18px;
+  font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-60);
+}
+.topbar .crumbs { display: flex; align-items: center; gap: 10px; }
+.topbar .crumbs b { color: var(--ink); font-weight: 600; }
+.topbar .crumbs .sep { opacity: .5; }
+.topbar .right { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.topbar .right .env { display: flex; align-items: center; gap: 6px; }
+.topbar .right .env .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); }
+
+.page-head { padding: 26px 32px 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.page-head .ltitle .eyebrow { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-60); margin-bottom: 6px; }
+.page-head h1 { font-size: 44px; font-weight: 700; letter-spacing: -0.035em; line-height: 1; display: flex; align-items: baseline; gap: 14px; }
+.page-head h1 .count { font-family: var(--f-mono); font-size: 14px; letter-spacing: 0.1em; color: var(--ink-30); font-weight: 500; }
+.page-head .sub { margin-top: 8px; font-size: 14px; color: var(--ink-60); max-width: 62ch; line-height: 1.5; }
+.page-head .actions { display: flex; align-items: center; gap: 8px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13.5px; font-weight: 600;
+  border: 1px solid var(--ink-12);
+  background: var(--cream);
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  transition: background 120ms ease, filter 120ms ease;
+}
+.btn:hover { background: #fafaf6; }
+.btn .ico { width: 14px; height: 14px; }
+.btn.primary { background: var(--night); color: var(--yg); border-color: var(--night); }
+.btn.primary:hover { filter: brightness(1.15); background: var(--night); }
+.btn .kbd { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; background: rgba(212,245,66,.2); color: var(--yg); padding: 2px 5px; border-radius: 4px; }
+
+.viewbar {
+  padding: 18px 32px 0;
+  display: flex; align-items: center; gap: 4px;
+  border-bottom: 1px solid var(--ink-12);
+}
+.viewbar .tab {
+  padding: 10px 14px;
+  font-size: 13px; font-weight: 600; color: var(--ink-60);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  display: flex; align-items: center; gap: 8px;
+}
+.viewbar .tab:hover { color: var(--ink); }
+.viewbar .tab .pill { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.1em; background: var(--ink-06); padding: 1px 6px; border-radius: 999px; color: var(--ink-60); font-weight: 600; }
+.viewbar .tab.active { color: var(--ink); border-color: var(--ink); }
+.viewbar .tab.active .pill { background: var(--yg); color: var(--night); }
+.viewbar .grouping {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-30);
+  padding-bottom: 10px;
+}
+.viewbar .grouping .sw { display: inline-flex; border: 1px solid var(--ink-12); border-radius: 999px; overflow: hidden; background: var(--cream); }
+.viewbar .grouping .sw button { padding: 5px 10px; font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-60); font-weight: 600; }
+.viewbar .grouping .sw button.on { background: var(--night); color: var(--yg); }
+
+.filters { padding: 14px 32px; display: flex; align-items: center; gap: 8px; background: var(--paper); border-bottom: 1px solid var(--ink-12); flex-wrap: wrap; }
+.filters .search-input {
+  flex: 0 0 300px;
+  background: var(--cream);
+  border: 1px solid var(--ink-12);
+  border-radius: 10px;
+  padding: 9px 12px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.filters .search-input input { border: 0; outline: none; flex: 1; background: transparent; font-size: 13px; min-width: 0; }
+.filters .search-input input::placeholder { color: var(--ink-30); }
+.filters .search-input .kbd { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; background: var(--paper); border: 1px solid var(--ink-12); padding: 1px 5px; border-radius: 4px; color: var(--ink-60); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--ink-12);
+  border-radius: 999px;
+  background: var(--cream);
+  font-size: 12.5px; font-weight: 500;
+  color: var(--ink);
+  position: relative;
+}
+.chip .lbl { color: var(--ink-60); }
+.chip .val { color: var(--ink); font-weight: 600; }
+.chip .car { color: var(--ink-30); font-size: 9px; }
+.chip.active { border-color: var(--night); }
+.chip.active .lbl { color: var(--ink); }
+.chip select { position: absolute; inset: 0; opacity: 0; cursor: pointer; font-family: inherit; }
+
+/* TABLE */
+.table-wrap { flex: 1; background: var(--cream); border-top: 1px solid var(--ink-12); overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+.table-scroll { overflow: auto; flex: 1; }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table thead th {
+  position: sticky; top: 0;
+  text-align: left;
+  font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-60); font-weight: 600;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ink-12);
+  background: var(--paper);
+  white-space: nowrap;
+  z-index: 1;
+}
+.table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--ink-06);
+  vertical-align: middle;
+  color: var(--ink);
+}
+.table tbody tr:hover td { background: var(--paper); }
+.table tbody tr { cursor: pointer; }
+.table tbody tr.date-row td { background: rgba(10,10,10,.018); }
+.table tbody tr.date-row:hover td { background: var(--paper); }
+.table tbody tr.date-row td:first-child { padding-left: 34px; }
+.table tbody tr.inactive .nm, .table tbody tr.inactive .when-main { text-decoration: line-through; color: var(--ink-30); }
+
+/* marca de tipo de renglón: ▸ serie (expandible) · ● puntual */
+.rowmark { width: 20px; display: inline-grid; place-items: center; color: var(--ink-30); flex-shrink: 0; }
+.rowmark .car { transition: transform 120ms ease; display: inline-block; font-size: 10px; }
+.rowmark.open .car { transform: rotate(90deg); }
+.rowmark .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-30); display: block; }
+
+.name-cell { display: flex; align-items: center; gap: 10px; }
+.name-cell .info { line-height: 1.3; min-width: 0; }
+.name-cell .nm { font-weight: 600; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
+.name-cell .sub { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-30); margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.name-cell .sub .serie-chip { background: var(--night); color: var(--yg); padding: 1px 6px; border-radius: 999px; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap; }
+.name-cell .sub .addr { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+
+/* la hora es identidad visible, nunca decoración */
+.hour-pill {
+  font-family: var(--f-mono); font-size: 11px; font-weight: 600;
+  background: var(--ink-06); color: var(--ink-80);
+  padding: 3px 7px; border-radius: 6px; white-space: nowrap;
+}
+.when-cell { line-height: 1.35; white-space: nowrap; }
+.when-cell .when-main { font-weight: 600; font-size: 12.5px; }
+.when-cell .when-sub { font-family: var(--f-mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-30); margin-top: 2px; }
+
+.tagline { display: flex; gap: 4px; flex-wrap: wrap; max-width: 220px; }
+.tagline .t { font-size: 11px; background: var(--ink-06); color: var(--ink-60); padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+.tagline .t.none { color: var(--red); background: rgba(217,74,74,.08); }
+
+.status-cell { display: flex; align-items: center; gap: 6px; font-size: 12.5px; white-space: nowrap; }
+.status-cell .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.status-cell .dot.on { background: var(--green); box-shadow: 0 0 0 3px rgba(37,211,102,.18); }
+.status-cell .dot.off { background: var(--ink-30); }
+.status-cell .dot.mixed { background: var(--amber); box-shadow: 0 0 0 3px rgba(245,185,66,.2); }
+
+.gap-cell { display: flex; gap: 4px; }
+.gap-cell .g { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: var(--ink-06); color: var(--ink-30); font-weight: 600; }
+.gap-cell .g.has { background: rgba(37,211,102,.14); color: #128c46; }
+
+.actions-cell { display: flex; gap: 4px; color: var(--ink-30); }
+.actions-cell button { width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center; color: var(--ink-60); }
+.actions-cell button:hover { background: var(--ink-06); color: var(--ink); }
+
+.table-foot { padding: 12px 24px; border-top: 1px solid var(--ink-12); display: flex; align-items: center; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-60); background: var(--paper); flex-wrap: wrap; }
+.table-foot b { color: var(--ink); font-weight: 600; }
+.table-foot .note { text-transform: none; letter-spacing: 0.02em; font-family: var(--f-sans); font-size: 11.5px; color: var(--ink-30); }
+
+/* loader / empty / error */
+.state {
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--ink-60);
+  font-size: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.state .title { font-size: 17px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+.state .spinner { width: 22px; height: 22px; border: 2px solid var(--ink-12); border-right-color: var(--ink); border-radius: 50%; animation: spin 720ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.state.err { color: var(--red); }
+
+.toast {
+  position: fixed;
+  left: 50%; bottom: 30px;
+  transform: translateX(-50%);
+  background: var(--night); color: #fff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 13.5px; font-weight: 600;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 14px 32px -10px rgba(0,0,0,.35);
+  z-index: 50;
+  opacity: 0; pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+.toast.err { background: var(--red); }
+.toast.ok { background: var(--night); color: var(--yg); }
+
+@media (max-width: 960px) {
+  .console { grid-template-columns: 64px 1fr; }
+  .sidebar { padding: 16px 8px; }
+  .sidebar .brand .word, .sidebar .brand .tag, .sidebar .search span, .sidebar .nav-label, .sidebar .nav-item span, .sidebar .nav-item .count, .sidebar .user .meta { display: none; }
+  .sidebar .nav-item { justify-content: center; padding: 10px; }
+  .sidebar .user { justify-content: center; }
+  .page-head h1 { font-size: 32px; }
+  .page-head { padding: 18px 18px 0; flex-direction: column; align-items: flex-start; gap: 14px; }
+  .viewbar, .filters { padding-left: 18px; padding-right: 18px; }
+  .viewbar { overflow-x: auto; }
+  .viewbar .grouping { display: none; }
+  .filters .search-input { flex: 1 1 100%; }
+  .name-cell .nm { max-width: 200px; }
+}
+</style>
+</head>
+<body>
+
+<div class="console">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="#D4F542">
+          <rect x="44" y="4" width="12" height="92" rx="6"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/>
+          <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/>
+        </g>
+      </svg>
+      <span class="word">Quepa</span>
+      <span class="tag">Console</span>
+    </div>
+
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <span>Buscar</span>
+      <span class="kbd">⌘K</span>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Operación</div>
+      <a class="nav-item" href="welcome.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-item" href="lugares.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7 8-13a8 8 0 1 0-16 0c0 6 8 13 8 13z"/><circle cx="12" cy="9" r="3"/></svg>
+        <span>Lugares</span>
+      </a>
+      <a class="nav-item active" href="eventos.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span>Eventos</span>
+        <span class="count" id="navCount">—</span>
+      </a>
+      <a class="nav-item" href="mapa.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><path d="M9 3v15"/><path d="M15 6v15"/></svg>
+        <span>Mapa</span>
+      </a>
+      <a class="nav-item" href="descubrir.html">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+        <span>Descubrir</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+        <span>Comercios</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Curaduría</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <span>Agente WhatsApp</span>
+        <span class="pulse"></span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+        <span>Quepa Stars</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Insights</div>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 4-4 4 4 5-5"/></svg>
+        <span>Métricas</span>
+      </a>
+      <a class="nav-item">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span>Reportes</span>
+      </a>
+    </div>
+
+    <div class="user">
+      <div class="av" id="userAvatar">—</div>
+      <div class="meta">
+        <b id="userName">—</b>
+        <span id="userRole">Staff</span>
+      </div>
+      <button class="logout" id="logoutBtn" title="Cerrar sesión">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <section class="main">
+    <div class="topbar">
+      <div class="crumbs">
+        <span>Quepa Console</span>
+        <span class="sep">/</span>
+        <b>Eventos</b>
+      </div>
+      <div class="right">
+        <span class="env"><span class="dot"></span> Prod · BOG-1</span>
+      </div>
+    </div>
+
+    <div class="page-head">
+      <div class="ltitle">
+        <div class="eyebrow">· Módulo · Programación</div>
+        <h1>Eventos <span class="count" id="totalCount">—</span></h1>
+        <p class="sub">Lo que Quepa ofrece cuando alguien pregunta qué hacer hoy. Las actividades que se repiten varios días se agrupan en <b>series</b>: una fila por día en la base, un renglón acá.</p>
+      </div>
+      <div class="actions">
+        <a class="btn primary" href="evento.html?id=new">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Nuevo evento
+          <span class="kbd">N</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="viewbar">
+      <a class="tab active" data-tab="upcoming">Próximos <span class="pill" data-count="upcoming">—</span></a>
+      <a class="tab" data-tab="today">Hoy <span class="pill" data-count="today">—</span></a>
+      <a class="tab" data-tab="past">Vencidos <span class="pill" data-count="past">—</span></a>
+      <a class="tab" data-tab="all">Todos <span class="pill" data-count="all">—</span></a>
+      <div class="grouping">
+        <span>Ordenar</span>
+        <div class="sw" id="sortSwitch">
+          <button data-sort="date" class="on">Por fecha</button>
+          <button data-sort="serie">Por serie</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="search-input">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="searchInput" placeholder="Busca por nombre, organizador, dirección…" />
+        <span class="kbd">/</span>
+      </div>
+
+      <button class="chip" id="cityChip">
+        <span class="lbl">Ciudad</span>
+        <span class="val" id="cityVal" hidden></span>
+        <span class="car">▾</span>
+        <select id="cityFilter"><option value="">Todas</option></select>
+      </button>
+
+      <button class="chip" id="tagChip">
+        <span class="lbl">Etiqueta</span>
+        <span class="val" id="tagVal" hidden></span>
+        <span class="car">▾</span>
+        <select id="tagFilter"><option value="">Todas</option></select>
+      </button>
+
+      <button class="chip" id="stateChip">
+        <span class="lbl">Estado</span>
+        <span class="val" id="stateVal" hidden></span>
+        <span class="car">▾</span>
+        <select id="stateFilter">
+          <option value="">Todos</option>
+          <option value="active">Activos</option>
+          <option value="inactive">Inactivos</option>
+        </select>
+      </button>
+
+      <button class="chip" id="gapChip">
+        <span class="lbl">Le falta</span>
+        <span class="val" id="gapVal" hidden></span>
+        <span class="car">▾</span>
+        <select id="gapFilter">
+          <option value="">Nada en particular</option>
+          <option value="flyer">Flyer</option>
+          <option value="maps">Link de Maps</option>
+          <option value="contact">Contacto</option>
+          <option value="end">Hora de cierre</option>
+        </select>
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-scroll" id="tableScroll">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="min-width: 320px;">Evento</th>
+              <th>Hora</th>
+              <th>Cuándo</th>
+              <th>Ciudad</th>
+              <th>Etiquetas</th>
+              <th>Le falta</th>
+              <th>Estado</th>
+              <th style="width: 60px;"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="8"><div class="state"><div class="spinner"></div><div>Cargando eventos…</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <span>Mostrando <b id="footRows">—</b> · <b id="footEvents">—</b> <span id="footFilters"></span></span>
+        <span class="note" id="footNote">Vencido se calcula por día de calendario, no al minuto: una verbena que cruza medianoche puede seguir viva para el agente.</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(() => {
+  const SUPABASE_URL = 'https://ttengnyhesunaqqbhmkc.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_piW0GXJJtYRitrVpvoM8Lg_3fvcu4Y4';
+  const LOGIN_URL = 'index.html';
+  // La agrupación en series necesita el conjunto COMPLETO: no se puede agrupar
+  // una página. A escala actual (196 filas) es trivial; el tope existe para que
+  // un crecimiento inesperado se note en el pie en vez de truncar en silencio.
+  const MAX_ROWS = 3000;
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storageKey: 'quepa-console-auth' },
+  });
+
+  // ---------- helpers ----------
+  const MONTHS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function debounce(fn, ms) {
+    let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  }
+  function initials(s) {
+    if (!s) return '—';
+    return s.trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+  }
+  function nameFromEmail(email) {
+    const local = (email || '').split('@')[0] || 'staff';
+    return local.split(/[._-]+/).filter(Boolean).map(s => s[0].toUpperCase() + s.slice(1)).join(' ');
+  }
+  function toast(msg, kind) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + (kind || '');
+    setTimeout(() => { t.classList.remove('show'); }, 2400);
+  }
+
+  // Día de HOY en América/Bogotá ('YYYY-MM-DD'). Mismo criterio que bogotaToday
+  // del webhook, pero acá solo se usa para clasificar por día de CALENDARIO:
+  // el Console NO reimplementa isEventVigente (design D5).
+  function bogotaToday() {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit',
+    }).format(new Date());
+  }
+
+  // 'YYYY-MM-DD' → "6 ago" (o "6 ago 2027" si es de otro año). Se formatea a
+  // mano y no con Intl+timeZone: event_date es un día del calendario, no un
+  // instante, y aplicarle zona horaria es lo que corre la fecha un día.
+  function fmtDate(iso, withYear) {
+    if (!iso) return '—';
+    const [y, m, d] = iso.split('-').map(Number);
+    const base = `${d} ${MONTHS[m - 1] || '?'}`;
+    return withYear ? `${base} ${y}` : base;
+  }
+  function fmtDateSmart(iso) {
+    const thisYear = Number(bogotaToday().slice(0, 4));
+    return fmtDate(iso, Number(String(iso).slice(0, 4)) !== thisYear);
+  }
+  // 'HH:MM:SS' → "9:00 p.m." (formato de presentación, no aritmética).
+  function fmtTime(t) {
+    if (!t) return '—';
+    const [h, m] = String(t).split(':').map(Number);
+    const suffix = h < 12 ? 'a.m.' : 'p.m.';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m ?? 0).padStart(2, '0')} ${suffix}`;
+  }
+  function fmtRange(dates) {
+    if (!dates.length) return '—';
+    const first = dates[0], last = dates[dates.length - 1];
+    return first === last ? fmtDateSmart(first) : `${fmtDateSmart(first)} → ${fmtDateSmart(last)}`;
+  }
+  function dayLabel(iso, today) {
+    if (iso === today) return 'hoy';
+    const diff = dayNumber(iso) - dayNumber(today);
+    if (diff === 1) return 'mañana';
+    if (diff === -1) return 'ayer';
+    return '';
+  }
+  function dayNumber(iso) {
+    const [y, m, d] = String(iso).split('-').map(Number);
+    return Math.floor(Date.UTC(y, m - 1, d) / 86400000);
+  }
+
+  // ---------- agrupación en series (design D1/D2) ----------
+  // La serie es DERIVADA: se calcula acá y no se persiste en ninguna parte.
+  // La clave lleva start_time porque una misma actividad puede correr a dos
+  // horas distintas y son series genuinamente separadas — sin la hora, una
+  // edición de serie escribiría sobre las dos.
+  function serieKey(ev) {
+    return [ev.name || '', ev.city || '', ev.start_time || ''].join('\u001f');
+  }
+  function groupIntoSeries(events) {
+    const map = new Map();
+    for (const ev of events) {
+      const key = serieKey(ev);
+      let s = map.get(key);
+      if (!s) {
+        s = { key, name: ev.name, city: ev.city, start_time: ev.start_time, events: [] };
+        map.set(key, s);
+      }
+      s.events.push(ev);
+    }
+    for (const s of map.values()) {
+      s.events.sort((a, b) => a.event_date.localeCompare(b.event_date));
+      s.isSerie = s.events.length > 1;
+    }
+    return Array.from(map.values());
+  }
+
+  // ---------- huecos de datos (lo que falta llenar) ----------
+  function gapsOf(ev) {
+    return {
+      flyer: !ev.flyer_url,
+      maps: !ev.maps_url,
+      contact: !(ev.contact_phones && ev.contact_phones.length),
+      end: !ev.end_time,
+    };
+  }
+
+  // ---------- state ----------
+  const state = {
+    tab: 'upcoming',
+    sort: 'date',
+    search: '',
+    city: '',
+    tag: '',
+    estado: '',
+    gap: '',
+    today: bogotaToday(),
+    events: [],
+    tagsByEvent: {},
+    tagCatalog: [],
+    expanded: new Set(),
+    truncated: false,
+  };
+
+  // ---------- session ----------
+  async function ensureSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.replace(LOGIN_URL); return null; }
+    const user = session.user;
+    const displayName = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || nameFromEmail(user.email);
+    document.getElementById('userName').textContent = displayName;
+    document.getElementById('userAvatar').textContent = initials(displayName);
+    return session;
+  }
+
+  // ---------- carga ----------
+  async function loadEvents() {
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '<tr><td colspan="8"><div class="state"><div class="spinner"></div><div>Cargando eventos…</div></div></td></tr>';
+
+    const { data, error } = await sb
+      .from('events')
+      .select('id, name, city, address, event_date, start_time, end_time, organizer, flyer_url, maps_url, ticket_url, contact_phones, priority, active, updated_at')
+      .order('event_date')
+      .order('start_time')
+      .limit(MAX_ROWS);
+
+    if (error) {
+      tbody.innerHTML = `<tr><td colspan="8"><div class="state err"><div class="title">No pudimos cargar los eventos</div><div>${escapeHtml(error.message)}</div></div></td></tr>`;
+      return;
+    }
+    state.events = data || [];
+    state.truncated = state.events.length >= MAX_ROWS;
+
+    // Etiquetas de todos los eventos en una sola query. Un fallo acá deja la
+    // tabla sin etiquetas, nunca sin eventos.
+    state.tagsByEvent = {};
+    const ids = state.events.map(e => e.id);
+    if (ids.length) {
+      const { data: links } = await sb
+        .from('event_tag_links')
+        .select('event_id, event_tags(id, slug, label)')
+        .in('event_id', ids);
+      (links || []).forEach(l => {
+        if (!l.event_tags) return;
+        (state.tagsByEvent[l.event_id] = state.tagsByEvent[l.event_id] || []).push(l.event_tags);
+      });
+    }
+
+    fillCityFilter();
+    render();
+  }
+
+  async function loadTagCatalog() {
+    const { data } = await sb.from('event_tags').select('id, slug, label').order('label');
+    state.tagCatalog = data || [];
+    const sel = document.getElementById('tagFilter');
+    state.tagCatalog.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.slug; opt.textContent = t.label;
+      sel.appendChild(opt);
+    });
+  }
+
+  function fillCityFilter() {
+    const sel = document.getElementById('cityFilter');
+    const current = sel.value;
+    const unique = Array.from(new Set(state.events.map(e => e.city).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'es'));
+    sel.innerHTML = '<option value="">Todas</option>';
+    unique.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+    sel.value = current;
+  }
+
+  // ---------- filtros ----------
+  // Clasificación por DÍA DE CALENDARIO (design D5). No se evalúa vigencia fina.
+  function bucketOf(ev) {
+    if (ev.event_date === state.today) return 'today';
+    return ev.event_date > state.today ? 'upcoming' : 'past';
+  }
+  function matchesFilters(ev) {
+    if (state.tab !== 'all' && bucketOf(ev) !== state.tab) return false;
+    if (state.city && ev.city !== state.city) return false;
+    if (state.estado === 'active' && !ev.active) return false;
+    if (state.estado === 'inactive' && ev.active) return false;
+    if (state.tag) {
+      const tags = state.tagsByEvent[ev.id] || [];
+      if (!tags.some(t => t.slug === state.tag)) return false;
+    }
+    if (state.gap) {
+      const g = gapsOf(ev);
+      if (!g[state.gap]) return false;
+    }
+    if (state.search.trim()) {
+      const s = state.search.trim().toLowerCase();
+      const hay = [ev.name, ev.organizer, ev.address, ev.city].filter(Boolean).join(' ').toLowerCase();
+      if (!hay.includes(s)) return false;
+    }
+    return true;
+  }
+
+  function counts() {
+    const c = { upcoming: 0, today: 0, past: 0, all: state.events.length };
+    state.events.forEach(e => { c[bucketOf(e)]++; });
+    return c;
+  }
+
+  // ---------- render ----------
+  function render() {
+    const tbody = document.getElementById('tbody');
+    const c = counts();
+    document.querySelector('[data-count="upcoming"]').textContent = c.upcoming;
+    document.querySelector('[data-count="today"]').textContent = c.today;
+    document.querySelector('[data-count="past"]').textContent = c.past;
+    document.querySelector('[data-count="all"]').textContent = c.all;
+    document.getElementById('totalCount').textContent = c.all.toLocaleString('es-CO') + ' en la base';
+    document.getElementById('navCount').textContent = c.all.toLocaleString('es-CO');
+
+    const visible = state.events.filter(matchesFilters);
+    const series = groupIntoSeries(visible);
+
+    if (state.sort === 'serie') {
+      // Por serie: primero las que más fechas tienen — vista de "qué me falta llenar".
+      series.sort((a, b) => b.events.length - a.events.length
+        || a.name.localeCompare(b.name, 'es'));
+    } else {
+      // Por fecha: el renglón se ancla en su primera fecha visible.
+      series.sort((a, b) => a.events[0].event_date.localeCompare(b.events[0].event_date)
+        || String(a.start_time).localeCompare(String(b.start_time))
+        || a.name.localeCompare(b.name, 'es'));
+    }
+
+    if (!series.length) {
+      tbody.innerHTML = '<tr><td colspan="8"><div class="state"><div class="title">Sin resultados</div><div>Ajusta los filtros o crea un evento nuevo.</div></div></td></tr>';
+      renderFoot(0, 0);
+      return;
+    }
+
+    const html = [];
+    series.forEach(s => {
+      html.push(serieRowHtml(s));
+      // La expansión se lleva por el id del evento ancla, no por serieKey: esa
+      // clave usa un separador de control y no tiene por qué viajar al DOM.
+      if (s.isSerie && state.expanded.has(s.events[0].id)) {
+        s.events.forEach(ev => html.push(dateRowHtml(ev, s)));
+      }
+    });
+    tbody.innerHTML = html.join('');
+    renderFoot(series.length, visible.length);
+  }
+
+  function tagsHtml(ev) {
+    const tags = state.tagsByEvent[ev.id] || [];
+    if (!tags.length) return '<div class="tagline"><span class="t none">sin etiqueta</span></div>';
+    return '<div class="tagline">' + tags.slice(0, 3).map(t => `<span class="t">${escapeHtml(t.label)}</span>`).join('')
+      + (tags.length > 3 ? `<span class="t">+${tags.length - 3}</span>` : '') + '</div>';
+  }
+
+  // Huecos agregados de la serie: un chip se enciende si TODAS las fechas lo tienen.
+  function gapsHtml(events) {
+    const labels = { flyer: 'Flyer', maps: 'Maps', contact: 'Tel', end: 'Cierre' };
+    const has = { flyer: 0, maps: 0, contact: 0, end: 0 };
+    events.forEach(ev => {
+      const g = gapsOf(ev);
+      Object.keys(has).forEach(k => { if (!g[k]) has[k]++; });
+    });
+    return '<div class="gap-cell">' + Object.keys(labels).map(k => {
+      const all = has[k] === events.length;
+      return `<span class="g ${all ? 'has' : ''}" title="${labels[k]}: ${has[k]} de ${events.length}">${labels[k]}</span>`;
+    }).join('') + '</div>';
+  }
+
+  function statusHtml(events) {
+    const on = events.filter(e => e.active).length;
+    if (on === events.length) return `<div class="status-cell"><span class="dot on"></span>${events.length > 1 ? on + ' activos' : 'Activo'}</div>`;
+    if (on === 0) return `<div class="status-cell"><span class="dot off"></span>${events.length > 1 ? 'Todos inactivos' : 'Inactivo'}</div>`;
+    return `<div class="status-cell"><span class="dot mixed"></span>${on} de ${events.length}</div>`;
+  }
+
+  function serieRowHtml(s) {
+    const anchor = s.events[0];
+    const open = state.expanded.has(anchor.id);
+    const scope = s.isSerie ? 'serie' : 'fecha';
+    const allInactive = s.events.every(e => !e.active);
+    const mark = s.isSerie
+      ? `<span class="rowmark ${open ? 'open' : ''}" data-toggle="${escapeHtml(anchor.id)}"><span class="car">▸</span></span>`
+      : '<span class="rowmark"><span class="dot"></span></span>';
+    const dates = s.events.map(e => e.event_date);
+    const whenMain = s.isSerie ? fmtRange(dates) : fmtDateSmart(dates[0]);
+    const rel = s.isSerie ? '' : dayLabel(dates[0], state.today);
+    const whenSub = s.isSerie
+      ? `${s.events.length} fecha${s.events.length === 1 ? '' : 's'}`
+      : (rel || '');
+    return `
+      <tr data-open="${escapeHtml(anchor.id)}" data-scope="${scope}" class="${allInactive ? 'inactive' : ''}">
+        <td>
+          <div class="name-cell">
+            ${mark}
+            <div class="info">
+              <div class="nm">${escapeHtml(s.name)}</div>
+              <div class="sub">
+                ${s.isSerie ? `<span class="serie-chip">serie · ${s.events.length} fechas</span>` : ''}
+                <span class="addr">${escapeHtml(anchor.address || '—')}</span>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td><span class="hour-pill">${escapeHtml(fmtTime(s.start_time))}</span></td>
+        <td class="when-cell"><div class="when-main">${escapeHtml(whenMain)}</div>${whenSub ? `<div class="when-sub">${escapeHtml(whenSub)}</div>` : ''}</td>
+        <td>${escapeHtml(s.city || '—')}</td>
+        <td>${tagsHtml(anchor)}</td>
+        <td>${gapsHtml(s.events)}</td>
+        <td>${statusHtml(s.events)}</td>
+        <td>
+          <div class="actions-cell">
+            <a href="evento.html?id=${encodeURIComponent(anchor.id)}&scope=${scope}" title="${s.isSerie ? 'Editar la serie' : 'Editar'}">
+              <button>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+              </button>
+            </a>
+          </div>
+        </td>
+      </tr>`;
+  }
+
+  function dateRowHtml(ev, s) {
+    const rel = dayLabel(ev.event_date, state.today);
+    const bucket = bucketOf(ev);
+    return `
+      <tr class="date-row ${ev.active ? '' : 'inactive'}" data-open="${escapeHtml(ev.id)}" data-scope="fecha">
+        <td>
+          <div class="name-cell">
+            <div class="info">
+              <div class="nm" style="font-weight:500; color:var(--ink-60);">${escapeHtml(s.name)}</div>
+              <div class="sub"><span>${escapeHtml(ev.id.slice(0, 8))}</span></div>
+            </div>
+          </div>
+        </td>
+        <td><span class="hour-pill">${escapeHtml(fmtTime(ev.start_time))}${ev.end_time ? '' : ' ·'}</span></td>
+        <td class="when-cell">
+          <div class="when-main">${escapeHtml(fmtDateSmart(ev.event_date))}</div>
+          <div class="when-sub">${escapeHtml(rel || (bucket === 'past' ? 'vencido' : ''))}</div>
+        </td>
+        <td>${escapeHtml(ev.city || '—')}</td>
+        <td>${tagsHtml(ev)}</td>
+        <td>${gapsHtml([ev])}</td>
+        <td>${statusHtml([ev])}</td>
+        <td>
+          <div class="actions-cell">
+            <a href="evento.html?id=${encodeURIComponent(ev.id)}&scope=fecha" title="Editar esta fecha">
+              <button>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+              </button>
+            </a>
+          </div>
+        </td>
+      </tr>`;
+  }
+
+  function renderFoot(rows, events) {
+    document.getElementById('footRows').textContent = `${rows} renglón${rows === 1 ? '' : 'es'}`;
+    document.getElementById('footEvents').textContent = `${events} evento${events === 1 ? '' : 's'}`;
+    const frags = [];
+    const TAB_LABEL = { upcoming: 'Próximos', today: 'Hoy', past: 'Vencidos', all: 'Todos' };
+    if (state.tab !== 'all') frags.push(TAB_LABEL[state.tab]);
+    if (state.city) frags.push(state.city);
+    if (state.tag) {
+      const t = state.tagCatalog.find(x => x.slug === state.tag);
+      frags.push(t ? t.label : state.tag);
+    }
+    if (state.estado) frags.push(state.estado === 'active' ? 'Activos' : 'Inactivos');
+    if (state.gap) frags.push('sin ' + state.gap);
+    if (state.search) frags.push(`"${state.search}"`);
+    document.getElementById('footFilters').textContent = frags.length ? ' · Filtros: ' + frags.join(' · ') : '';
+    if (state.truncated) {
+      document.getElementById('footNote').textContent = `Se cargaron las primeras ${MAX_ROWS} filas — hay más eventos de los que caben en esta vista.`;
+    }
+  }
+
+  // ---------- chip label sync ----------
+  function syncChip(chipId, val, valEl, formatter) {
+    const chip = document.getElementById(chipId);
+    if (val) {
+      chip.classList.add('active');
+      valEl.hidden = false;
+      valEl.textContent = formatter ? formatter(val) : val;
+    } else {
+      chip.classList.remove('active');
+      valEl.hidden = true;
+    }
+  }
+
+  // ---------- wiring ----------
+  function wire() {
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.replace(LOGIN_URL);
+    });
+
+    document.querySelectorAll('.viewbar .tab').forEach(t => {
+      t.addEventListener('click', () => {
+        const tab = t.dataset.tab;
+        if (!tab) return;
+        document.querySelectorAll('.viewbar .tab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        state.tab = tab;
+        state.expanded.clear();
+        render();
+      });
+    });
+
+    document.getElementById('sortSwitch').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-sort]');
+      if (!b) return;
+      state.sort = b.dataset.sort;
+      document.querySelectorAll('#sortSwitch button').forEach(x => x.classList.toggle('on', x === b));
+      render();
+    });
+
+    const onSearch = debounce(() => {
+      state.search = document.getElementById('searchInput').value;
+      render();
+    }, 240);
+    document.getElementById('searchInput').addEventListener('input', onSearch);
+
+    document.getElementById('cityFilter').addEventListener('change', (e) => {
+      state.city = e.target.value;
+      syncChip('cityChip', state.city, document.getElementById('cityVal'));
+      render();
+    });
+    document.getElementById('tagFilter').addEventListener('change', (e) => {
+      state.tag = e.target.value;
+      syncChip('tagChip', state.tag, document.getElementById('tagVal'), v => {
+        const t = state.tagCatalog.find(x => x.slug === v);
+        return t ? t.label : v;
+      });
+      render();
+    });
+    document.getElementById('stateFilter').addEventListener('change', (e) => {
+      state.estado = e.target.value;
+      syncChip('stateChip', state.estado, document.getElementById('stateVal'), v => v === 'active' ? 'Activos' : 'Inactivos');
+      render();
+    });
+    document.getElementById('gapFilter').addEventListener('change', (e) => {
+      state.gap = e.target.value;
+      const LBL = { flyer: 'Flyer', maps: 'Maps', contact: 'Contacto', end: 'Hora de cierre' };
+      syncChip('gapChip', state.gap, document.getElementById('gapVal'), v => LBL[v] || v);
+      render();
+    });
+
+    document.getElementById('tbody').addEventListener('click', (e) => {
+      const toggle = e.target.closest('[data-toggle]');
+      if (toggle) {
+        e.stopPropagation();
+        const key = toggle.dataset.toggle;
+        if (state.expanded.has(key)) state.expanded.delete(key);
+        else state.expanded.add(key);
+        render();
+        return;
+      }
+      if (e.target.closest('a[href]')) return;
+      const tr = e.target.closest('tr[data-open]');
+      if (tr) {
+        window.location.href = 'evento.html?id=' + encodeURIComponent(tr.dataset.open) + '&scope=' + tr.dataset.scope;
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const active = document.activeElement;
+      const isInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT');
+      if (e.key === '/' && !isInput) {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }
+      if ((e.key === 'n' || e.key === 'N') && !isInput && !e.metaKey && !e.ctrlKey) {
+        window.location.href = 'evento.html?id=new';
+      }
+    });
+  }
+
+  // ---------- boot ----------
+  (async function boot() {
+    const session = await ensureSession();
+    if (!session) return;
+    wire();
+    await Promise.all([loadTagCatalog(), loadEvents()]);
+  })();
+})();
+</script>
+</body>
+</html>
