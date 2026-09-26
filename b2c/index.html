@@ -1,0 +1,1422 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Quepa — ¡Que parche! Háblale por WhatsApp y te tira el parche.</title>
+<meta name="description" content="Quepa es el agente conversacional de IA que vive en WhatsApp y te tira el parche. Recomendaciones humanas, no algoritmos. Pilotos: Neiva y Pereira." />
+<meta name="theme-color" content="#0A0A0A" />
+<meta property="og:title" content="Quepa — ¡Que parche!" />
+<meta property="og:description" content="Háblale por WhatsApp. Te tira un sitio. Recomendaciones humanas, no algoritmos." />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="es_CO" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%23D4F542'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>" />
+
+<!-- Hanken Grotesk + JetBrains Mono — del brandbook -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   QUEPA — B2C LANDING
+   Brandbook v1.0 / Mayo 2026
+   Paleta: #0A0A0A noche · #D4F542 verde-amarillo · #25D366 wsp
+   Tipografía: Hanken Grotesk (display/body) · JetBrains Mono (meta)
+   ============================================================ */
+
+:root {
+  --noche:  #0A0A0A;
+  --yg:     #D4F542;
+  --wsp:    #25D366;
+  --wsp-dk: #1faa54;
+  --paper:  #F3F1EC;
+  --white:  #FFFFFF;
+  --line:   rgba(10,10,10,.12);
+  --line-d: rgba(255,255,255,.14);
+  --muted:  rgba(10,10,10,.62);
+
+  --f-sans: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --max: 1180px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--f-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--noche);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+
+/* ---------- Tipografía del brandbook ---------- */
+.display {
+  font-family: var(--f-sans);
+  font-weight: 900;
+  font-size: clamp(64px, 11vw, 152px);
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+.h1 {
+  font-weight: 900;
+  font-size: clamp(40px, 6vw, 72px);
+  letter-spacing: -0.035em;
+  line-height: 0.96;
+  margin: 0;
+}
+.h2 {
+  font-weight: 900;
+  font-size: clamp(28px, 3.4vw, 44px);
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  margin: 0 0 20px;
+}
+.lead {
+  font-weight: 500;
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1.4;
+  max-width: 56ch;
+}
+.eyebrow {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.meta {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.display, .h1, .h2 { text-wrap: balance; }
+section[id] { scroll-margin-top: 76px; }
+
+/* ---------- Foco visible (navegación por teclado) ---------- */
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--noche);
+  outline-offset: 3px;
+}
+.vs a:focus-visible, .vs button:focus-visible,
+.cta-final a:focus-visible, .cta-final button:focus-visible {
+  outline-color: var(--yg);
+}
+.topics-track:focus-visible { outline: 2px dashed rgba(10,10,10,.3); outline-offset: 6px; }
+.waitlist:focus-within {
+  box-shadow: 0 0 0 3px rgba(10,10,10,.28), 0 20px 40px -20px rgba(10,10,10,.45);
+}
+.cta-final .waitlist:focus-within {
+  box-shadow: 0 0 0 3px var(--yg), 0 20px 40px -20px rgba(10,10,10,.45);
+}
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: saturate(140%) blur(8px);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.03em; font-size: 22px; }
+.brand .qstar { width: 22px; height: 22px; }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a { font-weight: 500; font-size: 14px; opacity: .8; }
+.nav-links a:hover { opacity: 1; }
+.nav-cta {
+  background: var(--noche); color: var(--paper);
+  padding: 10px 16px; border-radius: 999px;
+  font-weight: 700; font-size: 14px;
+}
+.nav-cta:hover { background: #1a1a1a; }
+@media (max-width: 720px) {
+  .nav-links a:not(.nav-cta) { display: none; }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  background: var(--yg);
+  color: var(--noche);
+  position: relative;
+  overflow: hidden;
+  padding: clamp(56px, 9vw, 112px) 0 clamp(72px, 11vw, 140px);
+  border-bottom: 2px solid var(--noche);
+}
+.hero::before {
+  /* asterisco gigante de fondo decorativo */
+  content: "";
+  position: absolute; right: -120px; top: -120px;
+  width: 540px; height: 540px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230a0a0a' opacity='0.07'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>") center/contain no-repeat;
+  pointer-events: none;
+  animation: spin-slow 140s linear infinite;
+}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.hero .eyebrow { display: inline-flex; align-items: center; gap: 8px; }
+.hero .eyebrow::before {
+  content: ""; display: inline-block; width: 8px; height: 8px;
+  background: var(--noche); border-radius: 50%;
+}
+.hero-grid {
+  display: grid; grid-template-columns: 1fr; gap: 40px;
+  position: relative;
+}
+.hero h1 { margin-top: 18px; }
+.hero h1 em {
+  font-style: normal;
+  display: inline-block;
+  position: relative;
+}
+.hero-sub { margin-top: 24px; max-width: 30ch; }
+
+/* CTA card chat */
+.chat-card {
+  background: var(--noche);
+  color: var(--paper);
+  border-radius: 22px;
+  padding: 22px 22px 18px;
+  box-shadow: 0 30px 60px -30px rgba(10,10,10,.45);
+  max-width: 420px;
+  margin-top: 36px;
+}
+.chat-head {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line-d);
+  margin-bottom: 16px;
+}
+.chat-head .avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--yg);
+  display: grid; place-items: center;
+}
+.chat-head .avatar svg { width: 22px; height: 22px; }
+.chat-head .name { font-weight: 700; letter-spacing: -0.01em; }
+.chat-head .status {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--yg); display: flex; align-items: center; gap: 6px;
+}
+.chat-head .status::before { content:""; width:6px; height:6px; border-radius: 50%; background: var(--yg); }
+.bubble {
+  max-width: 86%;
+  padding: 10px 14px; border-radius: 14px;
+  font-size: 15px; line-height: 1.45;
+  margin-bottom: 8px;
+  background: #1a1a1a;
+  border-bottom-left-radius: 4px;
+}
+.bubble.me {
+  background: var(--wsp); color: #042716;
+  margin-left: auto;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 4px;
+}
+.bubble.q { border-bottom-left-radius: 4px; }
+.bubble.q strong { color: var(--yg); }
+.typing {
+  display: inline-flex; gap: 4px; align-items: center;
+  background: #1a1a1a; padding: 10px 14px; border-radius: 14px;
+  border-bottom-left-radius: 4px;
+}
+.typing span {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--paper);
+  opacity: .35; animation: blink 1.2s infinite;
+}
+.typing span:nth-child(2){ animation-delay: .15s; }
+.typing span:nth-child(3){ animation-delay: .3s; }
+@keyframes blink { 0%,80%,100% { opacity: .25 } 40% { opacity: 1 } }
+
+/* La conversación del hero se reproduce escalonada al cargar */
+.chat-card > .bubble, .chat-card > .typing {
+  opacity: 0;
+  animation: msg-in .45s cubic-bezier(.2,.7,.3,1) forwards;
+}
+.chat-card > .bubble:nth-of-type(2) { animation-delay: .6s; }
+.chat-card > .bubble:nth-of-type(3) { animation-delay: 1.6s; }
+.chat-card > .bubble:nth-of-type(4) { animation-delay: 2.5s; }
+.chat-card > .bubble:nth-of-type(5) { animation-delay: 3.6s; }
+.chat-card > .typing { animation-delay: 4.5s; }
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (min-width: 900px) {
+  .hero-grid { grid-template-columns: 1.05fr .95fr; align-items: end; gap: 64px; }
+  .chat-card { margin-top: 0; max-width: none; }
+}
+
+/* ---------- Waitlist hero form ---------- */
+.waitlist {
+  margin-top: 36px;
+  background: var(--noche);
+  border-radius: 999px;
+  padding: 8px 8px 8px 22px;
+  display: flex; align-items: center; gap: 8px;
+  max-width: 600px;
+  box-shadow: 0 20px 40px -20px rgba(10,10,10,.45);
+  flex-wrap: wrap;
+}
+.waitlist input {
+  flex: 1 1 auto;
+  background: transparent; border: 0; outline: 0;
+  color: var(--paper); font-family: var(--f-sans);
+  font-size: 16px; font-weight: 500;
+  padding: 14px 8px;
+  min-width: 0;
+}
+/* Modificador para forms con un solo campo (hero) */
+.waitlist--compact { max-width: 440px; }
+.waitlist .email-input { flex: 2 1 220px; }
+.waitlist .city-input  { flex: 1 1 130px; }
+.waitlist .sep {
+  width: 1px; align-self: stretch; margin: 10px 0;
+  background: rgba(243,241,236,.16);
+  flex: 0 0 1px;
+}
+@media (max-width: 560px) {
+  .waitlist { border-radius: 22px; padding: 14px; }
+  .waitlist input { width: 100%; flex-basis: 100%; padding: 10px 10px; border-bottom: 1px solid rgba(243,241,236,.12); }
+  .waitlist .email-input { border-bottom: 1px solid rgba(243,241,236,.12); }
+  .waitlist .sep { display: none; }
+  .waitlist button { width: 100%; }
+}
+.waitlist input::placeholder { color: rgba(243,241,236,.55); }
+.waitlist button {
+  background: var(--yg); color: var(--noche);
+  border: 0; cursor: pointer;
+  font-family: var(--f-sans); font-weight: 700; font-size: 15px;
+  letter-spacing: -0.01em;
+  padding: 14px 22px; border-radius: 999px;
+  transition: transform .15s ease, background .15s ease;
+}
+.waitlist button:hover { transform: translateY(-1px); background: #c5e635; }
+.waitlist button:active { transform: translateY(0); }
+.waitlist .err { color: #ff8e8e; font-size: 13px; margin: 8px 0 0 14px; flex-basis: 100%; }
+.waitlist.success {
+  background: var(--wsp);
+  justify-content: center;
+  padding: 16px 22px;
+  color: #052613;
+  font-weight: 700;
+}
+.waitlist-meta { margin-top: 12px; }
+.waitlist-meta .meta { color: var(--noche); opacity: .55; }
+.hero-meta { margin-top: 36px; }
+.hero-meta .meta { color: var(--noche); opacity: .55; }
+
+/* ---------- Ticker ---------- */
+.ticker {
+  background: var(--noche);
+  color: rgba(243,241,236,.85);
+  overflow: hidden;
+  padding: 13px 0;
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll 44s linear infinite;
+}
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.tick-group {
+  display: flex; align-items: center; gap: 44px;
+  padding-right: 44px;
+  font-family: var(--f-mono); font-weight: 500; font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.tick-group svg { width: 11px; height: 11px; fill: var(--yg); flex: none; }
+@keyframes ticker-scroll { to { transform: translateX(-50%); } }
+
+/* ---------- Sections ---------- */
+section { padding: clamp(72px, 10vw, 128px) 0; }
+.section-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 56px; max-width: 720px; }
+.section-head .eyebrow { color: var(--muted); }
+
+/* ---------- Cómo funciona — pasos ---------- */
+.steps {
+  display: grid; grid-template-columns: 1fr; gap: 16px;
+}
+.step {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 20px;
+  align-items: start;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.step:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -20px rgba(10,10,10,.18); }
+.step .num {
+  font-family: var(--f-mono); font-weight: 500; font-size: 13px;
+  letter-spacing: 0.1em; color: var(--noche);
+  background: var(--yg);
+  border-radius: 12px;
+  width: 64px; height: 64px;
+  display: grid; place-items: center;
+}
+.step h3 { margin: 0 0 8px; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; }
+.step p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.5; }
+@media (min-width: 820px) {
+  .steps { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step { grid-template-columns: 1fr; gap: 18px; padding: 32px; }
+}
+
+/* ---------- Vs. tabla comparativa ---------- */
+.vs {
+  background: var(--noche);
+  color: var(--paper);
+  margin: clamp(72px, 10vw, 128px) 0;
+  padding: clamp(72px, 10vw, 120px) 0;
+}
+.vs .section-head .eyebrow { color: rgba(243,241,236,.55); }
+.vs h2 { color: var(--paper); }
+.vs h2 span { color: var(--yg); }
+.compare {
+  display: grid; grid-template-columns: 1fr; gap: 14px;
+  margin-top: 16px;
+}
+.compare-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-d);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: border-color .2s ease, background .2s ease;
+}
+.compare-row .label {
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(243,241,236,.55);
+}
+.compare-row .alt { color: rgba(243,241,236,.7); }
+.compare-row .alt::before { content: "✗  "; color: #ff8e8e; font-weight: 700; }
+.compare-row .quepa { color: var(--yg); font-weight: 700; }
+.compare-row .quepa::before { content: "✓  "; color: var(--yg); }
+.compare-row:hover:not(.compare-head) { border-color: rgba(212,245,66,.4); background: rgba(255,255,255,.07); }
+.compare-head { display: none; background: transparent; border-color: transparent; }
+.compare-head .q-h { color: var(--yg); }
+@media (min-width: 760px) {
+  .compare-row {
+    grid-template-columns: 200px 1fr 1fr;
+    align-items: center;
+    gap: 24px;
+  }
+  .compare-row .quepa { border-left: 1px dashed var(--line-d); padding-left: 24px; }
+  .compare-head { display: grid; padding-top: 0; padding-bottom: 4px; }
+}
+
+/* ---------- Stars ---------- */
+.stars-wrap {
+  display: grid; grid-template-columns: 1fr; gap: 16px;
+}
+.star-card {
+  background: var(--noche);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.star-card .sg { display: flex; align-items: center; gap: 4px; margin-bottom: 22px; }
+.star-card .sg svg { width: 22px; height: 22px; }
+.star-card h3 { margin: 0 0 8px; font-weight: 900; font-size: 26px; letter-spacing: -0.02em; }
+.star-card p { margin: 0; color: rgba(243,241,236,.7); font-size: 15px; line-height: 1.5; }
+.star-card .meta { color: rgba(243,241,236,.45); margin-top: 18px; }
+@media (min-width: 820px) {
+  .stars-wrap { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+
+/* ---------- "Pregúntale lo que sea" — slider de capacidades ---------- */
+.topics {
+  background: var(--paper);
+}
+.topics .hl {
+  position: relative; white-space: nowrap; color: var(--noche);
+}
+.topics .hl::after {
+  content: ""; position: absolute; left: -3px; right: -3px; bottom: 6px;
+  height: 14px; background: var(--yg); z-index: -1; border-radius: 2px;
+}
+
+.topics-slider { position: relative; }
+.topics-track {
+  display: flex; gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 4px 4px 18px;
+  margin: 0 -4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.topics-track::-webkit-scrollbar { display: none; }
+
+.topic-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 26px;
+  display: flex; flex-direction: column;
+  position: relative;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  scroll-snap-align: start;
+  flex: 0 0 calc(100% - 8px);
+  min-width: 0;
+}
+@media (min-width: 720px) {
+  .topic-card { flex: 0 0 calc(50% - 13px); }
+}
+@media (min-width: 1080px) {
+  .topic-card { flex: 0 0 calc(33.333% - 16px); }
+}
+.topic-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--noche);
+  box-shadow: 0 18px 36px -20px rgba(10,10,10,.18);
+}
+
+.topic-icon {
+  width: 56px; height: 56px;
+  background: var(--yg);
+  border-radius: 14px;
+  display: grid; place-items: center;
+  margin-bottom: 14px;
+  color: var(--noche);
+  flex-shrink: 0;
+}
+.topic-icon svg { width: 28px; height: 28px; }
+
+.topic-num {
+  font-family: var(--f-mono); font-weight: 500; font-size: 11px;
+  letter-spacing: 0.12em; color: var(--muted);
+}
+.topic-tag {
+  font-family: var(--f-mono); font-weight: 500; font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--noche);
+  background: var(--yg);
+  padding: 4px 10px; border-radius: 999px;
+  display: inline-flex; align-self: flex-start;
+  margin: 6px 0 18px;
+}
+
+/* Mini conversación dentro de cada tarjeta */
+.topic-convo {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 18px;
+  flex: 1;
+}
+.topic-convo .bubble {
+  padding: 10px 13px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  max-width: 92%;
+}
+.topic-convo .bubble.user {
+  background: var(--wsp);
+  color: #042716;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+.topic-convo .bubble.quepa {
+  background: var(--noche);
+  color: var(--paper);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+.topic-convo .bubble.quepa strong { color: var(--yg); font-weight: 700; }
+
+.topic-cta {
+  font-family: var(--f-sans); font-weight: 700; font-size: 14px;
+  color: var(--noche);
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+.topic-cta .arrow { transition: transform .15s ease; }
+.topic-cta:hover .arrow { transform: translateX(3px); }
+
+/* Controles del slider B2C */
+.topics-controls {
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  margin-top: 28px;
+}
+.topics-btn {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--noche); color: var(--paper);
+  border: 0; cursor: pointer;
+  display: grid; place-items: center;
+  font-size: 18px; font-weight: 700;
+  font-family: var(--f-sans);
+  transition: transform .15s ease, background .15s ease, color .15s ease;
+}
+.topics-btn:hover:not(:disabled) {
+  background: var(--yg); color: var(--noche);
+  transform: scale(1.06);
+}
+.topics-btn:disabled { opacity: .25; cursor: not-allowed; }
+.topics-dots {
+  display: flex; gap: 8px; align-items: center;
+}
+.topics-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgba(10,10,10,.18);
+  border: 0; cursor: pointer;
+  padding: 0;
+  transition: background .15s ease, transform .15s ease, width .2s ease;
+}
+.topics-dot:hover { background: rgba(10,10,10,.4); }
+.topics-dot.active {
+  background: var(--noche);
+  width: 28px; border-radius: 5px;
+}
+
+/* ---------- Ciudades ---------- */
+.cities {
+  background: var(--paper);
+}
+.city-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.city {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.city .name { font-weight: 700; letter-spacing: -0.02em; font-size: 18px; }
+.tag {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 999px;
+}
+.tag.live {
+  background: var(--noche); color: var(--yg);
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.tag.live::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--yg);
+  animation: pulse-dot 2.2s ease-in-out infinite;
+}
+@keyframes pulse-dot { 0%,100% { opacity: 1 } 50% { opacity: .3 } }
+.tag.soon { background: var(--paper); color: var(--muted); border: 1px solid var(--line); }
+
+/* CTA tile dentro del grid de ciudades */
+.city.cta {
+  background: var(--yg);
+  color: var(--noche);
+  border: 2px solid var(--noche);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.city.cta::after {
+  content: ""; position: absolute; right: -28px; top: -28px;
+  width: 90px; height: 90px; opacity: .12;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%230a0a0a'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>") center/contain no-repeat;
+  pointer-events: none;
+}
+.city.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px -18px rgba(10,10,10,.4);
+}
+.city.cta .name { font-weight: 900; letter-spacing: -0.02em; }
+.city.cta .tag-cta {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 700;
+  padding: 6px 12px; border-radius: 999px;
+  background: var(--noche); color: var(--yg);
+  display: inline-flex; align-items: center; gap: 6px;
+  position: relative; z-index: 1;
+}
+
+/* ---------- CTA final ---------- */
+.cta-final {
+  background: var(--noche);
+  color: var(--paper);
+  position: relative; overflow: hidden;
+}
+.cta-final::before {
+  content: ""; position: absolute; left: -100px; bottom: -100px;
+  width: 460px; height: 460px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='%23D4F542' opacity='0.08'><rect x='44' y='4' width='12' height='92' rx='6'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(45 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(90 50 50)'/><rect x='44' y='4' width='12' height='92' rx='6' transform='rotate(135 50 50)'/></g></svg>") center/contain no-repeat;
+}
+.cta-final h2 { color: var(--paper); }
+.cta-final h2 span { color: var(--yg); }
+.cta-final .lead { color: rgba(243,241,236,.7); }
+.cta-final .waitlist { background: var(--white); }
+.cta-final .waitlist input { color: var(--noche); }
+.cta-final .waitlist input::placeholder { color: rgba(10,10,10,.45); }
+.cta-final .waitlist .sep { background: rgba(10,10,10,.12); }
+@media (max-width: 560px) {
+  .cta-final .waitlist input,
+  .cta-final .waitlist .email-input { border-bottom-color: rgba(10,10,10,.08); }
+}
+
+/* ---------- Footer ---------- */
+footer {
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  padding: 56px 0 32px;
+  font-size: 14px;
+}
+.foot-grid {
+  display: grid; grid-template-columns: 1fr; gap: 32px;
+  margin-bottom: 40px;
+}
+.foot-grid .brand { font-size: 26px; }
+.foot-grid .brand .qstar { width: 26px; height: 26px; }
+.foot-col h4 {
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 12px; font-weight: 500;
+}
+.foot-col ul { list-style: none; padding: 0; margin: 0; }
+.foot-col li { margin: 0 0 8px; }
+.foot-col a { opacity: .85; }
+.foot-col a:hover { opacity: 1; text-decoration: underline; }
+.foot-bot {
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.foot-bot .meta { color: var(--muted); }
+@media (min-width: 760px) {
+  .foot-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+}
+
+/* ---------- Utilities ---------- */
+.flex-spread { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.scroll-hint {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  margin-top: 22px; opacity: .65;
+}
+.scroll-hint::after {
+  content: "↓"; display: inline-block;
+  animation: bob 1.6s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(4px) } }
+
+/* ---------- Reveal on scroll (el JS marca .rv y .in) ---------- */
+.rv:not(.in) { opacity: 0; }
+.rv.in {
+  animation: rise .55s cubic-bezier(.2,.7,.3,1) backwards;
+  animation-delay: var(--rv-delay, 0ms);
+}
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+::selection { background: var(--noche); color: var(--yg); }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     QUEPA STAR — símbolo inlineado
+     Reusable como <svg class="qstar"><use href="#quepa-star"/></svg>
+     ============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="quepa-star" viewBox="0 0 100 100">
+    <rect x="44" y="4" width="12" height="92" rx="6"/>
+    <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(45 50 50)"/>
+    <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(90 50 50)"/>
+    <rect x="44" y="4" width="12" height="92" rx="6" transform="rotate(135 50 50)"/>
+  </symbol>
+</svg>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="/">
+      <svg class="qstar" fill="#0A0A0A" aria-hidden="true"><use href="#quepa-star"/></svg>
+      <span>Quepa</span>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#preguntale">Pregúntale</a>
+      <a href="#stars">Quepa Stars</a>
+      <a href="#ciudades">Ciudades</a>
+      <a class="nav-cta" href="https://comercios.quepa.co">Soy comercio →</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">EL AMIGO QUE SABE · 24/7 · POR WHATSAPP</span>
+      <h1 class="display"><em>¡Que parche!</em></h1>
+      <p class="lead hero-sub">
+        Háblale a Quepa por WhatsApp. Te lee la ciudad, conoce los sitios buenos y te tira el parche.
+        Sin scrollear, sin reseñas falsas, sin algoritmos.
+      </p>
+
+      <!-- Waitlist principal del hero — solo correo (rápido, sin fricción) -->
+      <form class="waitlist waitlist--compact" id="waitlist-hero" novalidate>
+        <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" value="" />
+        <input type="email" name="email" placeholder="tu@correo.co" autocomplete="email" required aria-label="Correo electrónico" />
+        <button type="submit">Avísame</button>
+      </form>
+
+      <!-- Datalist global de ciudades — usada por el waitlist final -->
+      <datalist id="quepa-ciudades">
+        <option value="Neiva"></option>
+        <option value="Pereira"></option>
+        <option value="Bogotá"></option>
+        <option value="Medellín"></option>
+        <option value="Cali"></option>
+        <option value="Cartagena"></option>
+        <option value="Barranquilla"></option>
+        <option value="Bucaramanga"></option>
+        <option value="Manizales"></option>
+        <option value="Armenia"></option>
+        <option value="Ibagué"></option>
+        <option value="Santa Marta"></option>
+      </datalist>
+
+      <div class="waitlist-meta"><span class="meta">PRE-LANZAMIENTO · NEIVA · PEREIRA</span></div>
+      <span class="scroll-hint">Mira cómo</span>
+    </div>
+
+    <!-- Mock chat -->
+    <div class="chat-card" aria-hidden="true">
+      <div class="chat-head">
+        <div class="avatar">
+          <svg fill="#0A0A0A" aria-hidden="true"><use href="#quepa-star"/></svg>
+        </div>
+        <div>
+          <div class="name">Quepa</div>
+          <div class="status">en línea</div>
+        </div>
+      </div>
+
+      <div class="bubble me">parce, café por circunvalar?</div>
+      <div class="bubble q">¡Que parche! Te tengo tres:</div>
+      <div class="bubble q"><strong>1. La Catación</strong> — pour-over brutal, a 3 cuadras de ti.<br>
+        <strong>2. Café del Eje</strong> — para quedarte a leer un rato.<br>
+        <strong>3. Conejo Lento</strong> — si quieres un V60 serio.</div>
+      <div class="bubble me">la primera, resérvame mesa para 2 a las 4</div>
+      <div class="typing"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TICKER ============ -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <div class="tick-group">
+      <span>Sin app · sin login</span><svg><use href="#quepa-star"/></svg>
+      <span>Recomendaciones humanas, no algoritmos</span><svg><use href="#quepa-star"/></svg>
+      <span>Pilotos: Neiva y Pereira</span><svg><use href="#quepa-star"/></svg>
+      <span>24/7 en tu WhatsApp</span><svg><use href="#quepa-star"/></svg>
+      <span>El equipo visita los lugares</span><svg><use href="#quepa-star"/></svg>
+    </div>
+    <div class="tick-group">
+      <span>Sin app · sin login</span><svg><use href="#quepa-star"/></svg>
+      <span>Recomendaciones humanas, no algoritmos</span><svg><use href="#quepa-star"/></svg>
+      <span>Pilotos: Neiva y Pereira</span><svg><use href="#quepa-star"/></svg>
+      <span>24/7 en tu WhatsApp</span><svg><use href="#quepa-star"/></svg>
+      <span>El equipo visita los lugares</span><svg><use href="#quepa-star"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CÓMO FUNCIONA ============ -->
+<section id="como-funciona">
+  <div class="wrap">
+    <header class="section-head">
+      <span class="eyebrow">CÓMO FUNCIONA</span>
+      <h2 class="h1">Tres mensajes y tienes plan.</h2>
+      <p class="lead">Sin app, sin login, sin descargar nada. Quepa vive en el WhatsApp que ya tienes abierto.</p>
+    </header>
+
+    <div class="steps">
+      <article class="step">
+        <div class="num">01</div>
+        <div>
+          <h3>Le escribes</h3>
+          <p>Como le escribirías a un amigo. "Quiero almorzar rico cerca", "algo para el viernes", "café para trabajar". Sin formularios.</p>
+        </div>
+      </article>
+      <article class="step">
+        <div class="num">02</div>
+        <div>
+          <h3>Te entiende</h3>
+          <p>Lee tu zona, hora, presupuesto, vibe. Si le falta algo te pregunta — corto, una cosa a la vez. Nada de chequeos infinitos.</p>
+        </div>
+      </article>
+      <article class="step">
+        <div class="num">03</div>
+        <div>
+          <h3>Te tira el parche</h3>
+          <p>Tres opciones máximo, con foto y por qué te las recomienda. Si quieres, reserva por ti. Si no, "muéstrame otras" y listo.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PREGÚNTALE LO QUE SEA ============ -->
+<section id="preguntale" class="topics">
+  <div class="wrap">
+    <header class="section-head">
+      <span class="eyebrow">QUEPA SABE DE TODO</span>
+      <h2 class="h1">Pregúntale a Quepa <span class="hl">lo que sea.</span></h2>
+      <p class="lead">Comida, café, planes, deporte, escapadas, experiencias raras. Quepa lee la ciudad y te lo tira directo en el chat — como tu parcero más enterado.</p>
+    </header>
+
+    <div class="topics-slider">
+      <div class="topics-track" id="top-track">
+
+        <article class="topic-card">
+          <div class="topic-icon" aria-hidden="true">
+            <!-- Plato + vapor -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 14h24"/>
+              <path d="M6 14a10 10 0 0 0 20 0"/>
+              <path d="M10 4v6"/>
+              <path d="M16 4v6"/>
+              <path d="M22 4v6"/>
+            </svg>
+          </div>
+          <span class="topic-num">01</span>
+          <span class="topic-tag">Comer rico</span>
+          <div class="topic-convo">
+            <div class="bubble user">parce, almuerzo bueno cerca?</div>
+            <div class="bubble quepa">¡Que parche! Te tira <strong>La Catación</strong> a 3 cuadras. Bandeja paisa criminal, pour-over brutal.</div>
+          </div>
+          <a class="topic-cta" href="#sumate">Hablale a Quepa <span class="arrow">→</span></a>
+        </article>
+
+        <article class="topic-card">
+          <div class="topic-icon" aria-hidden="true">
+            <!-- Copa de cóctel -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 6h20"/>
+              <path d="M6 6l10 11"/>
+              <path d="M26 6l-10 11"/>
+              <path d="M16 17v9"/>
+              <path d="M11 26h10"/>
+              <circle cx="22" cy="9" r="1.5"/>
+            </svg>
+          </div>
+          <span class="topic-num">02</span>
+          <span class="topic-tag">Tomarse algo</span>
+          <div class="topic-convo">
+            <div class="bubble user">un trago tranqui, hoy?</div>
+            <div class="bubble quepa"><strong>El Hueco</strong>. Coctelería de autor, sin reggaeton, atiende un bartender que sabe.</div>
+          </div>
+          <a class="topic-cta" href="#sumate">Hablale a Quepa <span class="arrow">→</span></a>
+        </article>
+
+        <article class="topic-card">
+          <div class="topic-icon" aria-hidden="true">
+            <!-- Taza de café -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 12h18v8a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z"/>
+              <path d="M24 14h2.5a3 3 0 0 1 0 6H24"/>
+              <path d="M11 4c0 2 -1 2 -1 4"/>
+              <path d="M16 4c0 2 -1 2 -1 4"/>
+              <path d="M21 4c0 2 -1 2 -1 4"/>
+            </svg>
+          </div>
+          <span class="topic-num">03</span>
+          <span class="topic-tag">Café para chambear</span>
+          <div class="topic-convo">
+            <div class="bubble user">café con buen wifi para trabajar?</div>
+            <div class="bubble quepa"><strong>Conejo Lento</strong>. Enchufes en cada mesa, V60 de 6 mil, te quedas todo el día sin que te boten.</div>
+          </div>
+          <a class="topic-cta" href="#sumate">Hablale a Quepa <span class="arrow">→</span></a>
+        </article>
+
+        <article class="topic-card">
+          <div class="topic-icon" aria-hidden="true">
+            <!-- Pesa / barra -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="13" width="3.2" height="6" rx="1"/>
+              <rect x="25.8" y="13" width="3.2" height="6" rx="1"/>
+              <rect x="8" y="11" width="2" height="10" rx="1"/>
+              <rect x="22" y="11" width="2" height="10" rx="1"/>
+              <line x1="10" y1="16" x2="22" y2="16"/>
+            </svg>
+          </div>
+          <span class="topic-num">04</span>
+          <span class="topic-tag">Mover el cuerpo</span>
+          <div class="topic-convo">
+            <div class="bubble user">cancha de pádel sábado 6pm?</div>
+            <div class="bubble quepa"><strong>Pádel Pereira</strong> tiene cupo. $35k la hora, 4 jugadores. ¿Te separo?</div>
+          </div>
+          <a class="topic-cta" href="#sumate">Hablale a Quepa <span class="arrow">→</span></a>
+        </article>
+
+        <article class="topic-card">
+          <div class="topic-icon" aria-hidden="true">
+            <!-- Montañas + sol -->
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="23" cy="9" r="3"/>
+              <path d="M3 26l8-12 6 8 4-5 8 9"/>
+              <path d="M3 26h26"/>
+            </svg>
+          </div>
+          <span class="topic-num">05</span>
+          <span class="topic-tag">Escapada de finde</span>
+          <div class="topic-convo">
+            <div class="bubble user">finde en el Eje, dos personas?</div>
+            <div class="bubble quepa"><strong>Posada Ananké</strong>, Pinares. Vista a la cordillera, desayuno incluido. Cupo el sábado.</div>
+          </div>
+          <a class="topic-cta" href="#sumate">Hablale a Quepa <span class="arrow">→</span></a>
+        </article>
+
+        <article class="topic-card">
+          <div class="topic-icon" aria-hidden="true">
+            <!-- Quepa Star como símbolo de "algo distinto" -->
+            <svg viewBox="0 0 100 100" fill="currentColor">
+              <use href="#quepa-star"/>
+            </svg>
+          </div>
+          <span class="topic-num">06</span>
+          <span class="topic-tag">Algo distinto</span>
+          <div class="topic-convo">
+            <div class="bubble user">algo diferente para sábado mañana?</div>
+            <div class="bubble quepa"><strong>Café tour en Salento</strong>. 4 horas en español, $80k, te recogen en Pereira. Termina con catación.</div>
+          </div>
+          <a class="topic-cta" href="#sumate">Hablale a Quepa <span class="arrow">→</span></a>
+        </article>
+
+      </div>
+
+      <div class="topics-controls">
+        <button class="topics-btn topics-prev" id="top-prev" aria-label="Categoría anterior">←</button>
+        <div class="topics-dots" id="top-dots" role="tablist" aria-label="Páginas de categorías"></div>
+        <button class="topics-btn topics-next" id="top-next" aria-label="Siguiente categoría">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VS ============ -->
+<section class="vs">
+  <div class="wrap">
+    <header class="section-head">
+      <span class="eyebrow">POR QUÉ QUEPA</span>
+      <h2 class="h1">Recomendaciones humanas, <span>no algoritmos.</span></h2>
+      <p class="lead">TikTok te entretiene. Maps te satura. Las reseñas mienten. Quepa entra al chat y te resuelve.</p>
+    </header>
+
+    <div class="compare">
+      <div class="compare-row compare-head" aria-hidden="true">
+        <span class="label"></span>
+        <span class="label">Lo de siempre</span>
+        <span class="label q-h">Con Quepa</span>
+      </div>
+      <div class="compare-row">
+        <span class="label">Tiempo a decisión</span>
+        <span class="alt">45 min entre 5 apps</span>
+        <span class="quepa">Bajo 30 segundos</span>
+      </div>
+      <div class="compare-row">
+        <span class="label">Curaduría</span>
+        <span class="alt">Reseñas falsas y pago por destacar</span>
+        <span class="quepa">Equipo Quepa visita los lugares</span>
+      </div>
+      <div class="compare-row">
+        <span class="label">Contexto local</span>
+        <span class="alt">Listas genéricas para turistas</span>
+        <span class="quepa">Sabe tu barrio y tu hora</span>
+      </div>
+      <div class="compare-row">
+        <span class="label">Reservar</span>
+        <span class="alt">Llamar, esperar, "te confirmo"</span>
+        <span class="quepa">Un mensaje y queda</span>
+      </div>
+      <div class="compare-row">
+        <span class="label">Costo</span>
+        <span class="alt">Tu tiempo · tu data · tu paciencia</span>
+        <span class="quepa">Gratis, sin app, sin spam</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STARS ============ -->
+<section id="stars" class="cities">
+  <div class="wrap">
+    <header class="section-head">
+      <span class="eyebrow">SISTEMA DE DISTINCIÓN</span>
+      <h2 class="h1">Quepa Stars.</h2>
+      <p class="lead">No es rating de usuarios. Es la distinción que damos a los lugares más curados de cada ciudad. Otorgada y firmada por Quepa.</p>
+    </header>
+
+    <div class="stars-wrap">
+      <article class="star-card">
+        <div class="sg" aria-label="1 estrella">
+          <svg fill="#D4F542" aria-hidden="true"><use href="#quepa-star"/></svg>
+        </div>
+        <h3>Recomendado por Quepa</h3>
+        <p>Lugar de calidad consistente. Vale la pena conocerlo. Lo recomendamos sin dudarlo.</p>
+        <div class="meta">UNA · ★</div>
+      </article>
+      <article class="star-card">
+        <div class="sg" aria-label="2 estrellas">
+          <svg fill="#D4F542" aria-hidden="true"><use href="#quepa-star"/></svg>
+          <svg fill="#D4F542" aria-hidden="true"><use href="#quepa-star"/></svg>
+        </div>
+        <h3>De los mejores en su categoría</h3>
+        <p>Excelencia. Cuando alguien pregunta "el mejor de su tipo", aparece. Sale temprano por algo.</p>
+        <div class="meta">DOS · ★★</div>
+      </article>
+      <article class="star-card">
+        <div class="sg" aria-label="3 estrellas">
+          <svg fill="#D4F542" aria-hidden="true"><use href="#quepa-star"/></svg>
+          <svg fill="#D4F542" aria-hidden="true"><use href="#quepa-star"/></svg>
+          <svg fill="#D4F542" aria-hidden="true"><use href="#quepa-star"/></svg>
+        </div>
+        <h3>Imperdible. Top ciudad.</h3>
+        <p>El sello máximo. Reservados con semanas. Si vienes a la ciudad, hay que verlos. Anuario público anual.</p>
+        <div class="meta">TRES · ★★★</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CIUDADES ============ -->
+<section id="ciudades">
+  <div class="wrap">
+    <header class="section-head">
+      <span class="eyebrow">DÓNDE</span>
+      <h2 class="h1">Empezamos por Colombia.</h2>
+      <p class="lead">Después LATAM. Cada ciudad arranca con un embajador local que cura el catálogo, no con un raspado de Google.</p>
+    </header>
+
+    <div class="city-grid">
+      <div class="city"><span class="name">Neiva</span><span class="tag live">PILOTO</span></div>
+      <div class="city"><span class="name">Pereira</span><span class="tag live">PILOTO</span></div>
+      <div class="city"><span class="name">Bogotá</span><span class="tag soon">PRONTO</span></div>
+      <div class="city"><span class="name">Medellín</span><span class="tag soon">EN LISTA</span></div>
+      <div class="city"><span class="name">Cali</span><span class="tag soon">EN LISTA</span></div>
+      <a class="city cta" href="#sumate">
+        <span class="name">¿Tu ciudad? Pídela.</span>
+        <span class="tag-cta">Avísame ↓</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA FINAL ============ -->
+<section id="sumate" class="cta-final">
+  <div class="wrap">
+    <header class="section-head">
+      <span class="eyebrow" style="color: rgba(243,241,236,.55)">SÚMATE AL PARCHE</span>
+      <h2 class="h1">¿Qué parche <span>hoy?</span></h2>
+      <p class="lead">Déjanos tu correo y tu ciudad. Te avisamos apenas Quepa abra cerca de ti. Cero spam — solo el aviso, en la palabra.</p>
+    </header>
+
+    <form class="waitlist" id="waitlist-foot" novalidate>
+      <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" value="" />
+      <input class="email-input" type="email" name="email" placeholder="tu@correo.co" autocomplete="email" required aria-label="Correo electrónico" />
+      <span class="sep" aria-hidden="true"></span>
+      <input class="city-input" type="text" name="city" placeholder="¿en qué ciudad?" autocomplete="address-level2" required aria-label="Tu ciudad" list="quepa-ciudades" />
+      <button type="submit">Avísame</button>
+    </form>
+    <p class="meta" style="margin-top: 14px; color: rgba(243,241,236,.55);">PRE-MVP · QUEPA · COLOMBIA 2026</p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="/">
+          <svg class="qstar" fill="#0A0A0A" aria-hidden="true"><use href="#quepa-star"/></svg>
+          <span>Quepa</span>
+        </a>
+        <p style="margin-top: 14px; color: var(--muted); max-width: 30ch;">
+          El agente conversacional de IA que vive en WhatsApp y te tira el parche.
+        </p>
+      </div>
+      <div class="foot-col">
+        <h4>Quepa</h4>
+        <ul>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#stars">Quepa Stars</a></li>
+          <li><a href="#ciudades">Ciudades</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Comercios</h4>
+        <ul>
+          <li><a href="https://comercios.quepa.co">Suma tu negocio →</a></li>
+          <li><a href="https://comercios.quepa.co#planes">Planes</a></li>
+          <li><a href="https://comercios.quepa.co#demo">Agendar demo</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="mailto:hola@quepa.co">hola@quepa.co</a></li>
+          <li><a href="https://instagram.com/quepa.co">Instagram</a></li>
+          <li><a href="https://tiktok.com/@quepa.co">TikTok</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span class="meta">© 2026 QUEPA · HECHO EN COLOMBIA</span>
+      <span class="meta">V1.0 · MAYO 2026</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ JS · waitlist ============ -->
+<script>
+/*
+ * WAITLIST — placeholder de integración.
+ * Reemplazá WAITLIST_ENDPOINT con tu endpoint real:
+ *   - Formspree:  https://formspree.io/f/XXXXXX
+ *   - Mailchimp:  endpoint embed
+ *   - Notion form / Tally / Getform / propio backend
+ *
+ * El handler:
+ *   1) valida email
+ *   2) hace POST con { email, source }
+ *   3) reemplaza el form con un mensaje de éxito (estilo verde-WhatsApp)
+ *   4) si falla la red, deja el form igual y muestra error inline
+ */
+const WAITLIST_ENDPOINT = "https://webhook.quepa.co/subscribe";
+
+const isEmail = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((s||"").trim());
+
+function bind(formId, source) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    // limpiar errores previos
+    form.querySelectorAll(".err").forEach((n) => n.remove());
+    const emailInput = form.querySelector("input[name='email']");
+    const cityInput  = form.querySelector("input[name='city']");
+    const honeyInput = form.querySelector("input[name='company']");
+    const email = (emailInput.value || "").trim();
+    const city  = (cityInput ? cityInput.value : "").trim();
+    const company = (honeyInput ? honeyInput.value : "").trim();
+
+    function showError(msg, focusEl) {
+      const err = document.createElement("span");
+      err.className = "err";
+      err.textContent = msg;
+      form.appendChild(err);
+      if (focusEl) focusEl.focus();
+    }
+
+    if (!isEmail(email)) {
+      showError("Mmm, ese correo no me cuadra. ¿Lo revisas?", emailInput);
+      return;
+    }
+    // La ciudad solo se exige si el form la pide (form final del CTA).
+    if (cityInput && (!city || city.length < 2)) {
+      showError("Faltó la ciudad — escríbela y le decimos a Quepa.", cityInput);
+      return;
+    }
+
+    const btn = form.querySelector("button");
+    const prevLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Enviando…";
+    try {
+      if (WAITLIST_ENDPOINT) {
+        const resp = await fetch(WAITLIST_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ email, city, source, company })
+        });
+        if (!resp.ok) throw new Error("net");
+      } else {
+        // Demo offline: simula latencia
+        await new Promise((r) => setTimeout(r, 500));
+        console.log("[WAITLIST DEMO] email=", email, "city=", city, "source=", source);
+      }
+      const cityLabel = city ? city.replace(/(^|\s)\S/g, (c) => c.toUpperCase()) : "tu ciudad";
+      form.classList.add("success");
+      form.innerHTML = '¡Listo! Te avisamos apenas Quepa abra en ' + cityLabel + '.';
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = prevLabel;
+      showError("Algo se cayó. Prueba de nuevo en un momento.");
+    }
+  });
+}
+
+bind("waitlist-hero", "hero");
+bind("waitlist-foot", "foot");
+
+/* ============================================================
+ * SLIDER · Pregúntale lo que sea
+ * Scroll-snap nativo + dots de página + prev/next + flechas teclado
+ * Páginas dinámicas según breakpoint: 3 / 2 / 1 tarjetas visibles
+ * ============================================================ */
+(function () {
+  const track = document.getElementById("top-track");
+  const dotsBox = document.getElementById("top-dots");
+  const prevBtn = document.getElementById("top-prev");
+  const nextBtn = document.getElementById("top-next");
+  if (!track || !dotsBox) return;
+
+  const cards = Array.from(track.querySelectorAll(".topic-card"));
+  const total = cards.length;
+  let visibleCount = 1;
+
+  function getVisibleCount() {
+    const w = window.innerWidth;
+    if (w >= 1080) return 3;
+    if (w >= 720)  return 2;
+    return 1;
+  }
+  function pagesCount() { return Math.max(1, Math.ceil(total / visibleCount)); }
+  function getCardStep() {
+    if (!cards[0]) return 0;
+    return cards[0].getBoundingClientRect().width + 18;
+  }
+  function getCurrentPage() {
+    const step = getCardStep();
+    if (!step) return 0;
+    return Math.round(track.scrollLeft / (step * visibleCount));
+  }
+  function buildDots() {
+    visibleCount = getVisibleCount();
+    const pages = pagesCount();
+    dotsBox.innerHTML = "";
+    for (let i = 0; i < pages; i++) {
+      const b = document.createElement("button");
+      b.className = "topics-dot";
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-label", "Página " + (i + 1) + " de " + pages);
+      b.addEventListener("click", () => goToPage(i));
+      dotsBox.appendChild(b);
+    }
+    updateUI();
+  }
+  function updateUI() {
+    const cur = getCurrentPage();
+    const pages = pagesCount();
+    Array.from(dotsBox.children).forEach((d, i) => {
+      d.classList.toggle("active", i === cur);
+      d.setAttribute("aria-selected", i === cur ? "true" : "false");
+    });
+    if (prevBtn) prevBtn.disabled = cur <= 0;
+    if (nextBtn) nextBtn.disabled = cur >= pages - 1;
+  }
+  function goToPage(p) {
+    const pages = pagesCount();
+    p = Math.max(0, Math.min(pages - 1, p));
+    const step = getCardStep();
+    track.scrollTo({ left: step * visibleCount * p, behavior: "smooth" });
+  }
+
+  prevBtn && prevBtn.addEventListener("click", () => goToPage(getCurrentPage() - 1));
+  nextBtn && nextBtn.addEventListener("click", () => goToPage(getCurrentPage() + 1));
+
+  let scrollTimer;
+  track.addEventListener("scroll", () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(updateUI, 80);
+  });
+  track.tabIndex = 0;
+  track.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft")  { e.preventDefault(); goToPage(getCurrentPage() - 1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); goToPage(getCurrentPage() + 1); }
+  });
+
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const newCount = getVisibleCount();
+      if (newCount !== visibleCount) {
+        track.scrollLeft = 0;
+        buildDots();
+      } else {
+        updateUI();
+      }
+    }, 120);
+  });
+
+  buildDots();
+})();
+
+/* ============================================================
+ * REVEAL · entrada suave de tarjetas al hacer scroll
+ * Progresivo: sin JS o con reduced-motion no se oculta nada.
+ * ============================================================ */
+(function () {
+  if (!("IntersectionObserver" in window)) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const els = document.querySelectorAll(".step, .topic-card, .compare-row, .star-card, .city, .section-head");
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      en.target.classList.add("in");
+      io.unobserve(en.target);
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -40px" });
+  els.forEach((el) => {
+    const sibs = el.parentElement ? Array.from(el.parentElement.children) : [];
+    const i = Math.max(0, sibs.indexOf(el));
+    el.style.setProperty("--rv-delay", Math.min(i, 5) * 80 + "ms");
+    el.classList.add("rv");
+    io.observe(el);
+  });
+  // Red de seguridad: al terminar de cargar (con el salto a #anchor ya hecho),
+  // revela de una lo que quedó dentro del viewport sin esperar al observer.
+  function revealVisible() {
+    els.forEach((el) => {
+      if (el.classList.contains("in")) return;
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) el.classList.add("in");
+    });
+  }
+  revealVisible();
+  window.addEventListener("load", revealVisible);
+})();
+</script>
+
+</body>
+</html>

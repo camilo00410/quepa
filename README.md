@@ -1,120 +1,66 @@
-# Quepa — Landings
+# Quepa — Landings + Console
 
-Landings web de Quepa: agente conversacional de IA que vive en WhatsApp y recomienda lugares.
+Sitios estáticos de Quepa. Cada HTML es **autocontenido**: SVGs inlineados, CSS en `<style>`, JS en `<script>`, fuentes desde Google Fonts CDN. No hay build step ni dependencias.
 
 ## Estructura
 
 ```
-quepa-web/
-├── index.html             ← Landing B2C (quepa.co)
-├── comercios/
-│   └── index.html         ← Landing B2B (comercios.quepa.co)
-├── vercel.json            ← Config de routing y dominios para Vercel
-├── netlify.toml           ← Config equivalente para Netlify
-├── .gitignore
-└── README.md              ← este archivo
+quepa-landing/
+├── index.html              ← Landing principal (quepa.co) · Quepa Canchas · v2.0 · sep 2026
+├── b2c/index.html          ← Landing B2C anterior (v1.0, mayo 2026), conservada tal cual
+├── web-comercios/index.html← Redirección a quepa.co (la landing de comercios se movió a la raíz)
+├── console/                ← Quepa Console: panel interno de staff (login Supabase, catálogo)
+├── openspec/               ← Changes y specs del Console
+├── vercel.json · netlify.toml
+└── README.md               ← este archivo
 ```
 
-Cada HTML es **autocontenido**: SVGs inlineados, fuentes desde Google Fonts CDN, JS embebido. No hay build step. No hay dependencias externas.
+## Landing principal — Quepa Canchas (`index.html`)
 
-## Antes de publicar
+Landing B2B para dueños de canchas: **Quepa automatiza las reservas por WhatsApp**. Una sola conversión — **agendar una reunión** por WhatsApp. Sin formularios y sin precios expuestos (el precio se ve en la reunión).
 
-Hay tres placeholders que hay que reemplazar:
+Las dos constantes que importan están en el `<script>` al final del archivo:
 
-### 1. Waitlist endpoint (`index.html`, B2C)
+| Constante | Estado | Qué hace |
+|---|---|---|
+| `WA_VENTAS` | Configurada (`573142751611`) | Todos los botones "Agenda una reunión" y "Escríbenos" abren WhatsApp con un mensaje ya escrito que termina en `[web·<sección>]`, para saber desde dónde llegó cada prospecto. Si se vacía, los CTA caen a `mailto:hola@quepa.co`. |
+| `PANEL_URL` | **Vacía a propósito** | Botón **"Ingresar"** de la barra superior (acceso de clientes actuales). No hace nada hasta que se ponga aquí la URL del panel real, p. ej. `https://panel.quepa.co`. |
 
-Busca esta línea (cerca del final del archivo, dentro del `<script>`):
+Notas:
 
-```js
-const WAITLIST_ENDPOINT = ""; // ej: "https://formspree.io/f/abcd1234"
-```
+- Los chats de WhatsApp de demostración **no son scrolleables por el usuario** (ni rueda, ni trackpad, ni dedo): solo los mueve la animación.
+- Toda animación respeta `prefers-reduced-motion`.
+- Cualquier botón nuevo de agendar debe llevar la clase `js-wa` y un `data-cta="<sección>"`.
 
-Reemplaza la cadena vacía por tu endpoint real. Opciones:
+## Landing B2C archivada (`b2c/index.html`)
 
-- **Formspree** → `https://formspree.io/f/<ID>` (gratis hasta 50 envíos/mes)
-- **Getform** → `https://getform.io/f/<ID>`
-- **Netlify Forms** → si despliegas en Netlify, agrega `data-netlify="true"` al `<form>` y omite el endpoint
-- **Tally / Notion** → endpoint propio
-- **Backend propio** → tu URL POST que recibe `{ email, city?, source }`
+La landing de consumidor v1.0 (mayo 2026, con el refinamiento de motion y tipografía de ago 2026). Se conserva tal cual: ahí sigue viviendo el formulario de waitlist que hace POST a `https://webhook.quepa.co/subscribe` con `{ email, city?, source, company }` (`company` es honeypot — no quitarlo). Sus cross-links a `comercios.quepa.co` ahora redirigen a la raíz.
 
-### 2. Cal.com / Calendly URL (`comercios/index.html`, B2B)
-
-Busca esta línea:
-
-```js
-const DEMO_URL = "https://cal.com/quepa/demo"; // <-- reemplazar cuando tengamos el link real
-```
-
-Cambia por tu link real de agenda.
-
-### 3. Cross-links B2C ↔ B2B
-
-Si vas a usar dominios distintos a `quepa.co` y `comercios.quepa.co`, busca y reemplaza esas dos cadenas en ambos HTMLs (varios `<a href>` y enlaces del footer).
-
-## Deploy — opciones
-
-### Opción A · Vercel (recomendada)
-
-1. Crea cuenta en [vercel.com](https://vercel.com) y conecta tu GitHub.
-2. **Import Project** → selecciona el repo.
-3. Vercel detecta automáticamente el sitio estático. **Deploy**.
-4. Para tener `quepa.co` y `comercios.quepa.co` como subdominio real:
-   - **Project Settings → Domains → Add** `quepa.co`
-   - El B2B en `/comercios` quedará accesible en `quepa.co/comercios` por defecto.
-   - Para el subdominio aparte (`comercios.quepa.co`) necesitas un **segundo proyecto en Vercel** apuntando al mismo repo pero con **Root Directory = `comercios`**.
-
-### Opción B · Netlify
-
-1. Crea cuenta en [netlify.com](https://netlify.com) y conecta GitHub.
-2. **Add new site → Import from Git**.
-3. Build command: vacío. Publish directory: `.` (raíz).
-4. Para subdominios distintos, mismo patrón que Vercel: dos sitios apuntando a la misma repo, uno con base en `/`, otro con base en `/comercios`.
-
-### Opción C · GitHub Pages (más simple, sin subdominios)
-
-1. En tu repo, **Settings → Pages → Source: main / root**.
-2. Tu landing B2C queda en `https://<usuario>.github.io/<repo>/` y el B2B en `https://<usuario>.github.io/<repo>/comercios/`.
-3. Para dominio propio, configura un `CNAME` en el repo y en tu DNS.
-
-## Subir el repo a GitHub — paso a paso
-
-Asumiendo que ya estás en esta carpeta (`quepa-web/`):
+## Correr en local
 
 ```bash
-# 1. Inicializar repo local
-git init
-git add .
-git commit -m "Quepa — landings B2C + B2B v1.0"
-
-# 2. Renombrar rama a main si fuera necesario
-git branch -M main
-
-# 3. Crear repo en github.com (sin README ni .gitignore — los tienes ya)
-#    Después copia la URL que GitHub te da, ej: https://github.com/<usuario>/quepa-web.git
-
-# 4. Conectar y empujar
-git remote add origin https://github.com/<usuario>/quepa-web.git
-git push -u origin main
+python3 -m http.server 8000
+# http://localhost:8000/        → landing Canchas
+# http://localhost:8000/b2c/    → landing B2C archivada
+# http://localhost:8000/console/→ Quepa Console
 ```
 
-Eso es todo. A partir de ahí cada vez que cambies algo:
+El endpoint `/subscribe` de `webhook.quepa.co` solo permite `http://localhost:8000` y `http://127.0.0.1:8000` cuando el webhook corre con `NODE_ENV !== 'production'` — ver `quepa-webhook/src/index.ts`.
 
-```bash
-git add .
-git commit -m "describe el cambio"
-git push
-```
+## Deploy
 
-Y si tienes Vercel/Netlify conectado, el sitio se redeploya automáticamente en ~30 segundos.
+Vercel (`vercel.json`) y Netlify (`netlify.toml`) publican la raíz del repo como sitio estático, con headers de seguridad y `must-revalidate` en `*.html`. Sin build command.
+
+Si existía un proyecto aparte para `comercios.quepa.co` con raíz `/web-comercios`, ahora ese subdominio redirige a `quepa.co`.
 
 ## Cosas que valdría la pena agregar más adelante
 
-- **Open Graph image (`og:image`)** — un PNG 1200×630 con el lockup Quepa para previews en WhatsApp/Twitter/LinkedIn. Falta en ambos HTMLs.
+- **Open Graph image (`og:image`)** — un PNG 1200×630 con el lockup Quepa para previews en WhatsApp/Twitter/LinkedIn.
 - **Google Tag Manager / Plausible** para analítica.
 - **Sitemap.xml** y **robots.txt** para SEO.
-- **Hosteo de fuentes propio** (descargar Hanken Grotesk + JetBrains Mono y servirlas con `@font-face`) para no depender de Google Fonts CDN.
-- **Compresión de imágenes** cuando agreguen fotos reales de lugares al catálogo.
+- **Hosteo de fuentes propio** (Hanken Grotesk + JetBrains Mono con `@font-face`) para no depender de Google Fonts CDN.
 
 ## Versión
 
-v1.0 · Mayo 2026
+- Landing principal (Canchas): v2.0 · sep 2026
+- Landing B2C archivada: v1.0 · mayo 2026

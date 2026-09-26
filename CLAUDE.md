@@ -4,11 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Two static landing pages for **Quepa** — an AI conversational agent on WhatsApp that recommends places — plus the internal staff panel. No build step, no package manager, no dependencies. Each HTML file is fully self-contained: SVGs inlined, CSS in `<style>`, JS in `<script>`, fonts from Google Fonts CDN.
+Static pages for **Quepa** plus the internal staff panel. No build step, no package manager, no dependencies. Each HTML file is fully self-contained: SVGs inlined, CSS in `<style>`, JS in `<script>`, fonts from Google Fonts CDN.
 
-- `index.html` — B2C landing (intended domain: `quepa.co`)
-- `web-comercios/index.html` — B2B landing for merchants (intended domain: `comercios.quepa.co`)
+- `index.html` — **Quepa Canchas**, landing principal (intended domain: `quepa.co`) · v2.0 · sep 2026. Es B2B: le habla al dueño de la cancha, no al jugador. Ver sección abajo.
+- `b2c/index.html` — landing B2C anterior (v1.0 mayo 2026 + refinamiento ago 2026), **archivada tal cual**. Ahí sigue el formulario de waitlist.
+- `web-comercios/index.html` — stub de redirección a `https://quepa.co/` (la landing de comercios se movió a la raíz). Ya no es una landing.
 - `console/` — **Quepa Console**, panel interno de staff (login Supabase, catálogo de lugares). Ver sección abajo.
+
+El producto cambió de dirección en sep 2026 (de "recomendamos lugares" a "automatizamos las reservas de tu cancha por WhatsApp"): la landing de Canchas v2.0 se portó desde el repo hermano `Dangk20/quepa` y la B2C pasó a `b2c/` sin tocarla. La voz del bot y de la marca sigue viniendo de `quepa-webhook/context-company-quepa.md`.
+
+## Landing principal: Quepa Canchas (`index.html`)
+
+Una sola conversión: **agendar una reunión por WhatsApp**. Sin formularios (es la misma promesa que se le hace al dueño) y **sin precios expuestos** — el precio se ve en la reunión. Contrato del archivo:
+
+- `WA_VENTAS` (configurada, `573142751611`) — todos los CTA `.js-wa` se reescriben en el load a `https://wa.me/<WA_VENTAS>?text=…`. Si se vacía, caen a `mailto:hola@quepa.co` con el mismo mensaje.
+- Cada CTA lleva `data-cta="<sección>"` (hero, nav, como-funciona, montaje, final, footer, flotante) y el mensaje termina en `[web·<sección>]` para que ventas sepa de dónde llegó el prospecto. **Cualquier botón nuevo de agendar debe llevar `js-wa` + `data-cta`** o queda muerto.
+- `PANEL_URL` está **vacía a propósito**: es el botón "Ingresar" de la barra superior (acceso de clientes actuales). Mientras esté vacía el click se cancela con `preventDefault()`. Cuando exista el panel real (p. ej. `https://panel.quepa.co`) se pone ahí.
+- Los chats de WhatsApp de demostración **no son scrolleables por el usuario** (ni rueda, ni trackpad, ni dedo): solo los mueve la animación. Es deliberado — no "arreglarlo".
+- El guion de la conversación del hero vive en `QP_GUION` (pasos `day`/`in`/`out`/`tap`/`sys`/`loc`, con `wait` opcional en ms). Editar copy del demo = editar ese array, no el DOM.
+- Toda animación respeta `prefers-reduced-motion`.
 
 ## Quepa Console: sedes (`place_locations`)
 
@@ -66,19 +80,22 @@ There is no dev server config. Use any static server from the repo root, e.g.:
 
 ```bash
 python3 -m http.server 8000
-# then open http://localhost:8000/
-# and    http://localhost:8000/web-comercios/
+# http://localhost:8000/         → landing Canchas
+# http://localhost:8000/b2c/     → landing B2C archivada (la del formulario)
+# http://localhost:8000/console/ → Quepa Console
 ```
 
 The `/subscribe` endpoint on `webhook.quepa.co` whitelists `http://localhost:8000` and `http://127.0.0.1:8000` only when the webhook is running with `NODE_ENV !== 'production'` — see `quepa-webhook/src/index.ts`. To exercise the form against the real production endpoint locally, set `WAITLIST_ENDPOINT` temporarily to a tunneled URL (e.g., ngrok pointing at a local webhook instance).
 
 ## Deploy
 
-Vercel (`vercel.json`) and Netlify (`netlify.toml`) are both pre-configured to publish the repo root as a static site with security headers and `must-revalidate` caching on `*.html`. No build command. To get `quepa.co` + `comercios.quepa.co` as separate subdomains on either platform, create **two** projects pointing at the same repo with different root directories (`/` and `/web-comercios`).
+Vercel (`vercel.json`) and Netlify (`netlify.toml`) are both pre-configured to publish the repo root as a static site with security headers and `must-revalidate` caching on `*.html`. No build command. Si existe un proyecto aparte para `comercios.quepa.co` con root `/web-comercios`, ese subdominio ahora solo sirve el stub que redirige a `quepa.co` — se puede dejar así o apagar el proyecto.
 
-## Waitlist endpoint (B2C)
+## Waitlist endpoint (B2C archivada)
 
-The B2C form posts JSON `{ email, city?, source, company }` to `WAITLIST_ENDPOINT` defined in `index.html` (~line 1110). It currently points at `https://webhook.quepa.co/subscribe`, which is the Fastify endpoint in the sibling repo `quepa-webhook` (writes to a Supabase `waitlist` table, dedupes by email, rate-limits 5/min/IP).
+El formulario vive ahora en **`b2c/index.html`** (~line 1110), no en la raíz: la landing de Canchas **no tiene formulario**. El origen (`https://quepa.co`) no cambió, así que el whitelist CORS del webhook sigue sirviendo.
+
+The B2C form posts JSON `{ email, city?, source, company }` to `WAITLIST_ENDPOINT` defined in `b2c/index.html`. It currently points at `https://webhook.quepa.co/subscribe`, which is the Fastify endpoint in the sibling repo `quepa-webhook` (writes to a Supabase `waitlist` table, dedupes by email, rate-limits 5/min/IP).
 
 - `source` is `"hero"` or `"foot"` depending on which form was used.
 - `company` is a **honeypot** — an off-screen input the user never sees. The backend silently discards any submission where it's non-empty. Do not remove the input, do not stop sending it in the payload.
@@ -86,18 +103,21 @@ The B2C form posts JSON `{ email, city?, source, company }` to `WAITLIST_ENDPOIN
 
 If you change the endpoint URL, also update the CORS whitelist on the webhook side (`quepa-webhook/src/index.ts`, `CORS_ORIGINS`).
 
-## B2B placeholder still pending
+## Placeholder pendiente
 
-`DEMO_URL` in `web-comercios/index.html` (~line 1275) is `https://cal.com/quepa/demo` — replace with the real Cal.com / Calendly link when it's ready. The script rewrites the `href` of every CTA matched by its selector to this constant on page load, so changing CTA markup may silently break the rewrite — verify the selector after structural edits.
+`PANEL_URL` en `index.html` — URL del panel de clientes, ver la sección de la landing principal. El viejo `DEMO_URL` de Cal.com desapareció con la landing B2B v1.0 (la conversión es WhatsApp, no agenda web).
 
 ## Cross-links
 
-`https://quepa.co` ↔ `https://comercios.quepa.co` are hardcoded in both files (nav CTAs and footer). Search for these strings if changing domains.
+- `index.html` (Canchas) no enlaza a otros dominios de Quepa: solo `wa.me`, `mailto:hola@quepa.co` y el futuro `PANEL_URL`.
+- `b2c/index.html` tiene hardcodeado `https://comercios.quepa.co` (nav CTA y footer), que hoy redirige a la raíz. Se deja así: la B2C es un archivo histórico.
+- `web-comercios/index.html` apunta a `https://quepa.co/` en `<meta refresh>`, `<link rel=canonical>` y `location.replace`. Si cambia el dominio, los tres.
 
 ## Editing conventions
 
 - Keep files self-contained — do not introduce a build step, bundler, or external JS/CSS files unless explicitly asked.
-- Brand tokens (colors `#0A0A0A`, `#D4F542`, `#25D366`; fonts Hanken Grotesk + JetBrains Mono) are duplicated in both files' `<style>` blocks. When changing brand values, update both.
+- Brand tokens (colors `#0A0A0A`, `#D4F542`, `#25D366`, papel `#F3F1EC`; fonts Hanken Grotesk + JetBrains Mono) están duplicados en el `<style>` de cada landing. Al cambiar valores de marca, actualizar todos los archivos.
+- El acento verde-amarillo en la landing de Canchas se reserva a CTA y destacados; el dominante es noche/papel. El rojo `--loss` es **fuera de la paleta de marca** a propósito (solo pérdidas en "Lo que pasa hoy").
 - **Console typography diverges from the landings on purpose** (decisión 2026-07-23): las 6 páginas de `console/` usan **Manrope** (400–800) + JetBrains Mono; las landings B2C/B2B mantienen Hanken Grotesk. No "normalizar" el Console de vuelta a Hanken.
 - Comments and copy are in Spanish (es_CO). Match the existing voice when adding text.
 
@@ -112,4 +132,5 @@ These are tracked as roadmap items, not oversights — don't "fix" them unless t
 
 ## Version
 
-v1.0 · Mayo 2026 (per README)
+- Landing principal (Quepa Canchas): **v2.0 · sep 2026**
+- Landing B2C archivada (`b2c/`): v1.0 · mayo 2026 (+ refinamiento ago 2026)
