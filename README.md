@@ -23,7 +23,7 @@ Las dos constantes que importan están en el `<script>` al final del archivo:
 
 | Constante | Estado | Qué hace |
 |---|---|---|
-| `WA_VENTAS` | Configurada (`573142751611`) | Todos los botones "Agenda una reunión" y "Escríbenos" abren WhatsApp con un mensaje ya escrito que termina en `[web·<sección>]`, para saber desde dónde llegó cada prospecto. Si se vacía, los CTA caen a `mailto:hola@quepa.co`. |
+| `WA_VENTAS` | Configurada (`573021047466`) | Todos los botones "Agenda una reunión" y "Escríbenos" abren WhatsApp con un mensaje ya escrito que termina en `[web·<sección>]`, para saber desde dónde llegó cada prospecto. Si se vacía, los CTA caen a `mailto:hola@quepa.co`. |
 | `PANEL_URL` | **Vacía a propósito** | Botón **"Ingresar"** de la barra superior (acceso de clientes actuales). No hace nada hasta que se ponga aquí la URL del panel real, p. ej. `https://panel.quepa.co`. |
 
 Notas:
