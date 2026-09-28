@@ -17,7 +17,7 @@ El producto cambió de dirección en sep 2026 (de "recomendamos lugares" a "auto
 
 Una sola conversión: **agendar una reunión por WhatsApp**. Sin formularios (es la misma promesa que se le hace al dueño) y **sin precios expuestos** — el precio se ve en la reunión. Contrato del archivo:
 
-- `WA_VENTAS` (configurada, `573142751611`) — todos los CTA `.js-wa` se reescriben en el load a `https://wa.me/<WA_VENTAS>?text=…`. Si se vacía, caen a `mailto:hola@quepa.co` con el mismo mensaje.
+- `WA_VENTAS` (configurada, `573021047466`) — todos los CTA `.js-wa` se reescriben en el load a `https://wa.me/<WA_VENTAS>?text=…`. Si se vacía, caen a `mailto:hola@quepa.co` con el mismo mensaje.
 - Cada CTA lleva `data-cta="<sección>"` (hero, nav, como-funciona, montaje, final, footer, flotante) y el mensaje termina en `[web·<sección>]` para que ventas sepa de dónde llegó el prospecto. **Cualquier botón nuevo de agendar debe llevar `js-wa` + `data-cta`** o queda muerto.
 - `PANEL_URL` está **vacía a propósito**: es el botón "Ingresar" de la barra superior (acceso de clientes actuales). Mientras esté vacía el click se cancela con `preventDefault()`. Cuando exista el panel real (p. ej. `https://panel.quepa.co`) se pone ahí.
 - Los chats de WhatsApp de demostración **no son scrolleables por el usuario** (ni rueda, ni trackpad, ni dedo): solo los mueve la animación. Es deliberado — no "arreglarlo".
