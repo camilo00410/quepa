@@ -6,16 +6,23 @@ Sitios estáticos de Quepa. Cada HTML es **autocontenido**: SVGs inlineados, CSS
 
 ```
 quepa-landing/
-├── index.html              ← Landing principal (quepa.co) · Quepa Canchas · v2.0 · sep 2026
+├── index.html              ← Sitio principal (quepa.co) · Quepa AI · v6 · nov 2026 (generado, ver abajo)
+├── casos/                  ← Páginas de casos de Quepa AI (KORA, Educar, Surya, Casa Bohemia, La Brasa de Ofelia)
+├── img/                    ← Mascotas (video con alfa), fotos del equipo, ilustraciones de Quepa AI
+├── quepa-canchas/index.html← Landing Quepa Canchas · v2.0 · sep 2026 (antes en la raíz)
 ├── b2c/index.html          ← Landing B2C anterior (v1.0, mayo 2026), conservada tal cual
-├── web-comercios/index.html← Redirección a quepa.co (la landing de comercios se movió a la raíz)
+├── web-comercios/index.html← Redirección a quepa.co/quepa-canchas/
 ├── console/                ← Quepa Console: panel interno de staff (login Supabase, catálogo)
 ├── openspec/               ← Changes y specs del Console
 ├── vercel.json · netlify.toml
 └── README.md               ← este archivo
 ```
 
-## Landing principal — Quepa Canchas (`index.html`)
+## Sitio principal — Quepa AI (`index.html`, `casos/`, `img/`)
+
+El asistente con IA que vive en el WhatsApp de cada negocio. Los HTML son **generados** por Daniel (`generar.py`) y se publican desde `Dangk20/quepa-web`: para actualizar, copiar `index.html`, `casos/` e `img/` de ese repo a la raíz, sin editarlos a mano. Constantes: `WA_VENTAS = 573021047466`, `WA_DEMO` vacío (pendiente del número de demo).
+
+## Landing Quepa Canchas (`quepa-canchas/index.html`)
 
 Landing B2B para dueños de canchas: **Quepa automatiza las reservas por WhatsApp**. Una sola conversión — **agendar una reunión** por WhatsApp. Sin formularios y sin precios expuestos (el precio se ve en la reunión).
 
@@ -40,7 +47,8 @@ La landing de consumidor v1.0 (mayo 2026, con el refinamiento de motion y tipogr
 
 ```bash
 python3 -m http.server 8000
-# http://localhost:8000/        → landing Canchas
+# http://localhost:8000/        → Quepa AI
+# http://localhost:8000/quepa-canchas/ → landing Canchas
 # http://localhost:8000/b2c/    → landing B2C archivada
 # http://localhost:8000/console/→ Quepa Console
 ```
@@ -51,7 +59,7 @@ El endpoint `/subscribe` de `webhook.quepa.co` solo permite `http://localhost:80
 
 Vercel (`vercel.json`) y Netlify (`netlify.toml`) publican la raíz del repo como sitio estático, con headers de seguridad y `must-revalidate` en `*.html`. Sin build command.
 
-Si existía un proyecto aparte para `comercios.quepa.co` con raíz `/web-comercios`, ahora ese subdominio redirige a `quepa.co`.
+Si existía un proyecto aparte para `comercios.quepa.co` con raíz `/web-comercios`, ahora ese subdominio redirige a `quepa.co/quepa-canchas/`.
 
 ## Cosas que valdría la pena agregar más adelante
 
@@ -62,5 +70,6 @@ Si existía un proyecto aparte para `comercios.quepa.co` con raíz `/web-comerci
 
 ## Versión
 
-- Landing principal (Canchas): v2.0 · sep 2026
+- Sitio principal (Quepa AI): v6 · nov 2026
+- Landing Canchas (`quepa-canchas/`): v2.0 · sep 2026
 - Landing B2C archivada: v1.0 · mayo 2026
