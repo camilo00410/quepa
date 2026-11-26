@@ -6,14 +6,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Static pages for **Quepa** plus the internal staff panel. No build step, no package manager, no dependencies. Each HTML file is fully self-contained: SVGs inlined, CSS in `<style>`, JS in `<script>`, fonts from Google Fonts CDN.
 
-- `index.html` — **Quepa Canchas**, landing principal (intended domain: `quepa.co`) · v2.0 · sep 2026. Es B2B: le habla al dueño de la cancha, no al jugador. Ver sección abajo.
+- `index.html` + `casos/*.html` + `img/` — **Quepa AI**, sitio principal (`quepa.co`) · v6 · nov 2026: el agente con IA que vive en el WhatsApp de cada negocio. **Generados**: la fuente es `generar.py` en el cerebro de Daniel (repo `Dangk20/quepa-web`); se copian tal cual, sin editar a mano (la próxima generación pisa los cambios). Ver sección abajo.
+- `quepa-canchas/index.html` — **Quepa Canchas** v2.0 (sep 2026), antes en la raíz. El sitio principal la enlaza como `quepa-canchas/`. Es B2B: le habla al dueño de la cancha. Su logo enlaza a `/` (Quepa AI).
 - `b2c/index.html` — landing B2C anterior (v1.0 mayo 2026 + refinamiento ago 2026), **archivada tal cual**. Ahí sigue el formulario de waitlist.
-- `web-comercios/index.html` — stub de redirección a `https://quepa.co/` (la landing de comercios se movió a la raíz). Ya no es una landing.
+- `web-comercios/index.html` — stub de redirección a `https://quepa.co/quepa-canchas/`. Ya no es una landing.
 - `console/` — **Quepa Console**, panel interno de staff (login Supabase, catálogo de lugares). Ver sección abajo.
 
 El producto cambió de dirección en sep 2026 (de "recomendamos lugares" a "automatizamos las reservas de tu cancha por WhatsApp"): la landing de Canchas v2.0 se portó desde el repo hermano `Dangk20/quepa` y la B2C pasó a `b2c/` sin tocarla. La voz del bot y de la marca sigue viniendo de `quepa-webhook/context-company-quepa.md`.
 
-## Landing principal: Quepa Canchas (`index.html`)
+## Sitio principal: Quepa AI (`index.html`, `casos/`, `img/`)
+
+Portado el 2026-11-26 desde `Dangk20/quepa-web` (commit `5b8ca6a`, v6). Para actualizarlo: copiar `index.html`, `casos/` e `img/` de ese repo sobre la raíz, sin tocarlos. Contrato (detalle en el README de `quepa-web`):
+
+- Una sola conversión: **«Agenda una reunión»** por WhatsApp. `WA_VENTAS = 573021047466`; `WA_DEMO` vacío hasta que exista el número del agente de demo (mientras tanto «Escríbele a Quepa» va a `WA_VENTAS`). Cada botón lleva `js-wa` + `data-cta`.
+- Videos de mascota: el `.mov` (HEVC+alfa, Safari) va **primero** dentro de `<video>`, el `.webm` (VP9+alfa, Chrome) después. No reordenar.
+- Casos: KORA es el único cliente; Educar, Surya y Casa Bohemia son casos de estudio; La Brasa de Ofelia es un ejemplo inventado. Sin testimonios, métricas ni precios falsos.
+
+## Landing Quepa Canchas (`quepa-canchas/index.html`)
 
 Una sola conversión: **agendar una reunión por WhatsApp**. Sin formularios (es la misma promesa que se le hace al dueño) y **sin precios expuestos** — el precio se ve en la reunión. Contrato del archivo:
 
@@ -80,7 +89,8 @@ There is no dev server config. Use any static server from the repo root, e.g.:
 
 ```bash
 python3 -m http.server 8000
-# http://localhost:8000/         → landing Canchas
+# http://localhost:8000/         → Quepa AI (sitio principal)
+# http://localhost:8000/quepa-canchas/ → landing Canchas
 # http://localhost:8000/b2c/     → landing B2C archivada (la del formulario)
 # http://localhost:8000/console/ → Quepa Console
 ```
@@ -89,7 +99,7 @@ The `/subscribe` endpoint on `webhook.quepa.co` whitelists `http://localhost:800
 
 ## Deploy
 
-Vercel (`vercel.json`) and Netlify (`netlify.toml`) are both pre-configured to publish the repo root as a static site with security headers and `must-revalidate` caching on `*.html`. No build command. Si existe un proyecto aparte para `comercios.quepa.co` con root `/web-comercios`, ese subdominio ahora solo sirve el stub que redirige a `quepa.co` — se puede dejar así o apagar el proyecto.
+Vercel (`vercel.json`) and Netlify (`netlify.toml`) are both pre-configured to publish the repo root as a static site with security headers and `must-revalidate` caching on `*.html`. No build command. Si existe un proyecto aparte para `comercios.quepa.co` con root `/web-comercios`, ese subdominio ahora solo sirve el stub que redirige a `quepa.co/quepa-canchas/` — se puede dejar así o apagar el proyecto.
 
 ## Waitlist endpoint (B2C archivada)
 
@@ -105,13 +115,13 @@ If you change the endpoint URL, also update the CORS whitelist on the webhook si
 
 ## Placeholder pendiente
 
-`PANEL_URL` en `index.html` — URL del panel de clientes, ver la sección de la landing principal. El viejo `DEMO_URL` de Cal.com desapareció con la landing B2B v1.0 (la conversión es WhatsApp, no agenda web).
+`PANEL_URL` en `quepa-canchas/index.html` (y también en el `index.html` de Quepa AI, vacía) — URL del panel de clientes, ver la sección de la landing principal. El viejo `DEMO_URL` de Cal.com desapareció con la landing B2B v1.0 (la conversión es WhatsApp, no agenda web).
 
 ## Cross-links
 
-- `index.html` (Canchas) no enlaza a otros dominios de Quepa: solo `wa.me`, `mailto:hola@quepa.co` y el futuro `PANEL_URL`.
+- `quepa-canchas/index.html` (Canchas) no enlaza a otros dominios de Quepa: solo `wa.me`, `mailto:hola@quepa.co` y el futuro `PANEL_URL`.
 - `b2c/index.html` tiene hardcodeado `https://comercios.quepa.co` (nav CTA y footer), que hoy redirige a la raíz. Se deja así: la B2C es un archivo histórico.
-- `web-comercios/index.html` apunta a `https://quepa.co/` en `<meta refresh>`, `<link rel=canonical>` y `location.replace`. Si cambia el dominio, los tres.
+- `web-comercios/index.html` apunta a `https://quepa.co/quepa-canchas/` en `<meta refresh>`, `<link rel=canonical>` y `location.replace`. Si cambia el dominio, los tres.
 
 ## Editing conventions
 
@@ -132,5 +142,6 @@ These are tracked as roadmap items, not oversights — don't "fix" them unless t
 
 ## Version
 
-- Landing principal (Quepa Canchas): **v2.0 · sep 2026**
+- Sitio principal (Quepa AI): **v6 · nov 2026**
+- Landing Quepa Canchas (`quepa-canchas/`): **v2.0 · sep 2026**
 - Landing B2C archivada (`b2c/`): v1.0 · mayo 2026 (+ refinamiento ago 2026)
